@@ -1,11 +1,4 @@
-<<<<<<< HEAD
 grant
 {
   permission java.security.AllPermission; // Allow everything for now
-=======
-grant 
-{ 
-  // Allow everything for now 
-  permission java.security.AllPermission; 
->>>>>>> serverComputer
 };
