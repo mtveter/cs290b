@@ -8,6 +8,7 @@ import api.Task;
 
 public class TaskEuclideanTsp implements Task<List<Integer>>{
 	private double[][] cities;
+	private List<List<Integer>> permutations;
 	
 
 	public TaskEuclideanTsp(double[][] cities) {
@@ -20,7 +21,8 @@ public class TaskEuclideanTsp implements Task<List<Integer>>{
 		cityTour = null;
 		
 		double shortestEuclideanDistance = 0;
-		List<List<Integer>> permutations = Permute.permute(0,1,2,3,4,5,6,7,8,9);
+		// TODO: Pass parameter as the numbers from 0->cities.size() instead og having to manually change sequence
+		permutations = Permute.permute(0,1,2,3,4,5,6,7,8,9);
 		// Go through all possible permutations to find shortest cycle
 		for(int i = 0; i < permutations.size(); i++) {
 			List<Integer> tempTour = permutations.get(i);
