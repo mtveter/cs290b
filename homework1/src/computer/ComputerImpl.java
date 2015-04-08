@@ -8,7 +8,7 @@ import api.Task;
 
 public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
-	protected ComputerImpl() throws RemoteException {
+	public ComputerImpl() throws RemoteException {
 		super();
 		// TODO Auto-generated constructor stub
 	}
