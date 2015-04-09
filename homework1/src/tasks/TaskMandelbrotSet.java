@@ -2,15 +2,28 @@ package tasks;
 
 import api.Task;
 
-public class TaskMandelbrotSet implements Task<Integer[][]>{
+public final class TaskMandelbrotSet implements Task<Integer[][]>{
 	
-	private double lowerLeftX; 
-	private double lowerLeftY; 
-	private double edgeLength; 
-	private int n;
-	private int iterationLimit; 
+	/** X-coordinate of lower left corner of a square in the complex plane */
+	private final double lowerLeftX;
+	/** Y-coordinate of lower left corner of a square in the complex plane */
+	private final double lowerLeftY;
+	/** The edge length of a square in the complex plane, whose sides are parallel to the axes */
+	private final double edgeLength;
+	/** An integer such that the square region of the complex plane is subdivided into n X n squares,
+	 *  each of which is visualized by 1 pixel*/
+	private final int n;
+	/** The representative point of a region that is considered to be in the Mandelbrot set */
+	private final int iterationLimit; 
 	
-
+	/**
+	 * 
+	 * @param lowerLeftX		X-coordinate of lower left corner of a square in the complex plane	
+	 * @param lowerLeftY		Y-coordinate of lower left corner of a square in the complex plane
+	 * @param edgeLength		The edge length of a square in the complex plane
+	 * @param nPixels			Number of subdivisions of the square in the complex plane
+	 * @param iterationLimit	Representative point of a region that is considered to be in set
+	 */
 	public TaskMandelbrotSet(double lowerLeftX, double lowerLeftY,
 			double edgeLength, int nPixels, int iterationLimit) {
 		this.lowerLeftX = lowerLeftX;
@@ -20,7 +33,10 @@ public class TaskMandelbrotSet implements Task<Integer[][]>{
 		this.iterationLimit = iterationLimit;
 	}
 
-
+	/**
+	 * Calculates the Mandelbrot set
+	 * @return nXn array that represents the color values of all pixels
+	 */
 	@Override
 	public Integer[][] execute() {
 		Integer count[][] = new Integer[n][n];
@@ -43,5 +59,4 @@ public class TaskMandelbrotSet implements Task<Integer[][]>{
 		}
 		return count;
 	}
-
 }
