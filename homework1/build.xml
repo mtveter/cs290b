@@ -56,7 +56,7 @@
   	<java classname="clients.Client" fork="true">
   	  <jvmarg value="-Djava.rmi.server.codebase=${client_web_codebase}"/>
   	  <jvmarg value="-Djava.security.policy=policy"/>
-  	  <arg value="169.231.95.216"/>
+  	  <arg value="${arg0}"/>
   	  <classpath>
   	    <pathelement location="dist/client.jar"/>
   	  </classpath>
@@ -67,7 +67,7 @@
   	<java classname="clients.ClientMandelbrotSet" fork="true">
   	  <!-- <jvmarg value="-Djava.rmi.server.codebase=${client_web_codebase}"/> -->
   	  <jvmarg value="-Djava.security.policy=policy"/>
-  	  <arg value="169.231.95.216"/>
+  	  <arg value="${arg0}"/>
   	  <classpath>
   	    <pathelement location="dist/client.jar"/>
   	  </classpath>
@@ -78,7 +78,7 @@
   	<java classname="clients.ClientEuclideanTsp" fork="true">
   	  <jvmarg value="-Djava.rmi.server.codebase=${client_web_codebase}"/>
   	  <jvmarg value="-Djava.security.policy=policy"/>
-  	  <arg value="169.231.95.216"/>
+  	  <arg value="${arg0}"/>
   	  <classpath>
   	    <pathelement location="dist/client.jar"/>
   	  </classpath>

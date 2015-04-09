@@ -26,9 +26,9 @@ public class ClientMandelbrotSet extends Client<Integer[][]>
     private static final int N_PIXELS = 256;
     private static final int ITERATION_LIMIT = 64;
     
-    public ClientMandelbrotSet() throws RemoteException, NotBoundException, MalformedURLException 
+    public ClientMandelbrotSet(String args) throws RemoteException, NotBoundException, MalformedURLException 
     { 
-        super( "Mandelbrot Set Visualizer", "169.231.95.216",
+        super( "Mandelbrot Set Visualizer", args,
                new TaskMandelbrotSet( LOWER_LEFT_X, LOWER_LEFT_Y, EDGE_LENGTH, N_PIXELS, 
                                                        ITERATION_LIMIT) ); 
     }
@@ -41,7 +41,7 @@ public class ClientMandelbrotSet extends Client<Integer[][]>
     public static void main( String[] args ) throws Exception
     {  
         System.setSecurityManager( new SecurityManager() );
-        final ClientMandelbrotSet client = new ClientMandelbrotSet();
+        final ClientMandelbrotSet client = new ClientMandelbrotSet(args[0]);
         client.begin();
         Integer[][] value = client.runTask();
         client.add( client.getLabel( value ) );

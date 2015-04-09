@@ -38,15 +38,15 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
         { 6, 6 }
     };
     
-    public ClientEuclideanTsp() throws RemoteException, NotBoundException, MalformedURLException
+    public ClientEuclideanTsp(String args) throws RemoteException, NotBoundException, MalformedURLException
     { 
-        super( "Euclidean TSP", "169.231.95.216", new TaskEuclideanTsp( CITIES ) ); 
+        super( "Euclidean TSP", args, new TaskEuclideanTsp( CITIES ) ); 
     }
     
     public static void main( String[] args ) throws Exception
     {
         System.setSecurityManager( new SecurityManager() );
-        final ClientEuclideanTsp client = new ClientEuclideanTsp();
+        final ClientEuclideanTsp client = new ClientEuclideanTsp(args[0]);
         client.begin();
         final List<Integer> value = client.runTask();
         client.add( client.getLabel( value.toArray( new Integer[0] ) ) );
