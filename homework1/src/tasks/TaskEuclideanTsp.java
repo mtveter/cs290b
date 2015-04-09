@@ -11,6 +11,10 @@ import api.Task;
  * Implementation of Task interface to solve the general Euclidean Traveling Salesman Person Problem
  */
 public final class TaskEuclideanTsp implements Task<List<Integer>>{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7295824401317037138L;
 	/** 2D array to store cities to visit in TSP */
 	private final double[][] cities;
 	/** 2D List of integer that gives the shortest path solution, stored with ID of each city */

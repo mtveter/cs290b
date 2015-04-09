@@ -4,6 +4,10 @@ import api.Task;
 
 public final class TaskMandelbrotSet implements Task<Integer[][]>{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7723233187547469315L;
 	/** X-coordinate of lower left corner of a square in the complex plane */
 	private final double lowerLeftX;
 	/** Y-coordinate of lower left corner of a square in the complex plane */

@@ -19,7 +19,11 @@ import tasks.TaskEuclideanTsp;
  */
 public class ClientEuclideanTsp extends Client<List<Integer>>
 {
-    private static final int NUM_PIXALS = 600;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2126088283156584907L;
+	private static final int NUM_PIXALS = 600;
     private static final double[][] CITIES = 
     {
         { 6, 3 },
@@ -36,7 +40,7 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
     
     public ClientEuclideanTsp() throws RemoteException, NotBoundException, MalformedURLException
     { 
-        super( "Euclidean TSP", "localhost", new TaskEuclideanTsp( CITIES ) ); 
+        super( "Euclidean TSP", "169.231.95.216", new TaskEuclideanTsp( CITIES ) ); 
     }
     
     public static void main( String[] args ) throws Exception

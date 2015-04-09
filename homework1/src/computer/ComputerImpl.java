@@ -13,6 +13,11 @@ import api.Task;
  */
 public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2114761905163841375L;
+
 	public ComputerImpl() throws RemoteException {
 		super();
 		// TODO Auto-generated constructor stub
