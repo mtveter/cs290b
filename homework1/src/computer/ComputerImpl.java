@@ -8,6 +8,9 @@ import java.rmi.server.UnicastRemoteObject;
 import api.Computer;
 import api.Task;
 
+/**
+ * Implementation of Computer interface to create RMI-Server
+ */
 public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
 	public ComputerImpl() throws RemoteException {
@@ -17,24 +20,30 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
 	@Override
 	public <T> T execute(Task<T> task) throws RemoteException {
-		// TODO Auto-generated method stub
 		return task.execute();
 	}
 	
+	/**
+	 * Main class to run computer server
+	 * 
+	 * @param args			No arguments
+	 * @throws Exception	Can throw exceptions due to errors with registry or remote server
+	 */
 	public static void main(String[] args) throws Exception
     {
-        // construct & set a security manager (unnecessary in this case)
+        // Construct and set a security manager
         System.setSecurityManager( new SecurityManager() );
 
-        // instantiate a server object
-        ComputerImpl computer = new ComputerImpl(); // can throw RemoteException
+        // Instantiate a computer server object
+        ComputerImpl computer = new ComputerImpl();
 
-        // construct an rmiregistry within this JVM using the default port
+        // Construct an RMI-registry within this JVM using the default port
         Registry registry = LocateRegistry.createRegistry( Computer.PORT  );
 
-        // bind server in rmiregistry. Can throw exceptions. See api.
+        // Bind computer server in RMI-registry
         registry.rebind( Computer.SERVICE_NAME, computer );
-
+        
+        // Print acknowledgement
         System.out.println("Computer Server: Ready. on port " + Computer.PORT);
     
     }

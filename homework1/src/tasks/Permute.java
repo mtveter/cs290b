@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Set;
 
 public class Permute {
-
+	/**
+	 * @param Integer...myInts 	List of integer that corresponds to id of each element in list
+	 * @return 					2-dimensional list of possible factorial permutations
+	 */
     public static List<List<Integer>> permute(Integer...myInts){
 
         if(myInts.length==1){
@@ -45,10 +48,4 @@ public class Permute {
 
         return listOfLists;
     }
-
-//    public static void main(String[] args) {
-//        List<List<Integer>> permute = permute(1,2,3,4);
-//        System.out.println(permute);
-//    }
-
 }
