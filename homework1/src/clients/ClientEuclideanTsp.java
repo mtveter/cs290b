@@ -11,7 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import tasks.TaskEuclideanTsp;
+import tasks.TaskEuclideanTsp2;
 
 /**
  *
@@ -40,7 +40,7 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
     
     public ClientEuclideanTsp(String args) throws RemoteException, NotBoundException, MalformedURLException
     { 
-        super( "Euclidean TSP", args, new TaskEuclideanTsp( CITIES ) ); 
+        super( "Euclidean TSP", args, new TaskEuclideanTsp2( CITIES ) ); 
     }
     
     public static void main( String[] args ) throws Exception
