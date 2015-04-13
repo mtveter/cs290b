@@ -11,7 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import tasks.TaskEuclideanTsp;
+import tasks.TaskEuclideanTsp2;
 
 /**
  *
@@ -19,7 +19,11 @@ import tasks.TaskEuclideanTsp;
  */
 public class ClientEuclideanTsp extends Client<List<Integer>>
 {
-    private static final int NUM_PIXALS = 600;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2126088283156584907L;
+	private static final int NUM_PIXALS = 600;
     private static final double[][] CITIES = 
     {
         { 6, 3 },
@@ -34,15 +38,15 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
         { 6, 6 }
     };
     
-    public ClientEuclideanTsp() throws RemoteException, NotBoundException, MalformedURLException
+    public ClientEuclideanTsp(String args) throws RemoteException, NotBoundException, MalformedURLException
     { 
-        super( "Euclidean TSP", "localhost", new TaskEuclideanTsp( CITIES ) ); 
+        super( "Euclidean TSP", args, new TaskEuclideanTsp2( CITIES ) ); 
     }
     
     public static void main( String[] args ) throws Exception
     {
         System.setSecurityManager( new SecurityManager() );
-        final ClientEuclideanTsp client = new ClientEuclideanTsp();
+        final ClientEuclideanTsp client = new ClientEuclideanTsp(args[0]);
         client.begin();
         final List<Integer> value = client.runTask();
         client.add( client.getLabel( value.toArray( new Integer[0] ) ) );
