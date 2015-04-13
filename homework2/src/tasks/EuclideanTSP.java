@@ -4,21 +4,40 @@ import java.util.List;
 
 import api.Task;
 
+/**
+ *  Implementation of Task interface to solve the general Euclidean Traveling Salesman Person Problem
+ *	Implements a general approximation algorithm
+ *  Algorithm constructs a minimum-weight spanning tree(MST), a Multigraph of MST, 
+ *  and then relaxation on edges until tour has been found
+ *  
+ *  Does not produce an optimal solution since euclidean TSP is NP-complete
+ */
 public class EuclideanTSP implements Task<List<Integer>>{
 	/**
-	 * 
+	 * Generated serial ID
 	 */
 	private static final long serialVersionUID = 5779120438091516215L;
+	/**
+	 * Array to store cities to visit in TSP
+	 */
 	private final ArrayList<City> inputCities;
-	//
-	// Minimum Spanning Tree Method
-	//
+	
+	/**
+	 * 
+	 * @param cities	The constructor takes a double[][] cities 
+	 * 					that codes the x and y coordinates of city[i]: 
+	 * 					cities[i][0] is the x-coordinate of city[i] 
+	 * 					and cities[i][1] is the y-coordinate of city[i].
+	 */
 	public EuclideanTSP(double[][] cities){
 		this.inputCities = new ArrayList<City>();
 		addCitiesToList(cities);
 		
 	}
-	
+	/**
+	 * Calculates the shortest path solution of TSP-problem
+     * @return The order cities be visited in the tour, represented by their IDs.
+     */
 	public List<Integer> execute() {
 		ArrayList<City> cities = new ArrayList<City>();
 		ArrayList<Edge> MST = new ArrayList<Edge>();
@@ -56,24 +75,35 @@ public class EuclideanTSP implements Task<List<Integer>>{
 		List<Integer> cityTour = getCityIDList(MSTtour);
 		return cityTour;
 	}
-	
+	/**
+	 * Takes cities represented as integer in an array and converts them to City-objects and adds to list
+	 * @param cities Cities to be added in list
+	 * 
+	 */
 	private void addCitiesToList(double[][] cities) {
 		for (int i = 0; i < cities.length; i++){
 			City tempCity = new City(i, cities[i][0], cities[i][1]);
 			this.inputCities.add(tempCity);
 		}
 	}
+	/**
+	 * Gets a list of ID's of the cities in a list
+	 * @param cityList	An array of cities represented as City Objects
+	 * @return			List of ID
+	 */
 	public List<Integer> getCityIDList(ArrayList<City> cityList) {
-		List<Integer> cityTour = new ArrayList<Integer>();
+		List<Integer> cityIDs = new ArrayList<Integer>();
 		for(int i = 0; i < cityList.size(); i++) {
-			cityTour.add(cityList.get(i).getId());
+			cityIDs.add(cityList.get(i).getId());
 		}
-		return cityTour;
+		return cityIDs;
 	}
 	
-	//
-	// Min Spanning Tree Tour Method using depth first search
-	//
+	/**
+	 * Takes a list of edges and creates a MST and calculates tour 
+	 * @param m	List of edges that form a minimal spanning tree(MST)
+	 * @return	
+	 */
 	private ArrayList<City> MSTTour(ArrayList<Edge> m){	
 		
 		ArrayList<Edge> MST = new ArrayList<Edge>();
@@ -85,7 +115,13 @@ public class EuclideanTSP implements Task<List<Integer>>{
 		
 		return MSTTour(MST.get(0).getStart(), MST, MSTTour);
 	}
-	
+	/**
+	 * 
+	 * @param city 		City to perform calculations on
+	 * @param MST		Minimal spanning tree
+	 * @param MSTTour	Current tour of minimal spanning tree
+	 * @return			Final tour of minimal spanning tree
+	 */
 	private ArrayList<City> MSTTour(City city, ArrayList<Edge> MST, ArrayList<City> MSTTour){
 		
 		MSTTour.add(city);
@@ -93,7 +129,7 @@ public class EuclideanTSP implements Task<List<Integer>>{
 		for(Edge edge : MST){
 			City parent = edge.getStart();
 			City child = edge.getEnd();
-			if( parent.equals(city) && !MSTTour.contains(child)){		// for each child not already in tour
+			if( parent.equals(city) && !MSTTour.contains(child)){	// for each child not already in tour
 				MSTTour = MSTTour(edge.getEnd(), MST, MSTTour);
 			}
 		}
