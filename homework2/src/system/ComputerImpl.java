@@ -3,6 +3,8 @@ package system;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import api.Task;
+
 public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
 	/**
@@ -12,6 +14,16 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
 	protected ComputerImpl() throws RemoteException {
 		super();
+	}
+
+	@Override
+	public <V> V execute(Task<V> task) throws RemoteException {
+		// TODO Auto-generated method stub
+		return task.call();
+	}
+	
+	public static void main(String[] args) {
+		
 	}
 
 }

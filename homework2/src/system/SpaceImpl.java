@@ -43,4 +43,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 		
 	}
 
+	public static void main(String[] args) {
+		
+	}
+	
 }
