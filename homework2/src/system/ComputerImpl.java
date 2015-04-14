@@ -12,7 +12,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 	 */
 	private static final long serialVersionUID = 8694827504541478153L;
 
-	protected ComputerImpl() throws RemoteException {
+	public ComputerImpl() throws RemoteException {
 		super();
 	}
 

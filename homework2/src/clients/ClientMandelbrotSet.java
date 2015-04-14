@@ -18,9 +18,7 @@ import tasks.TaskMandelbrotSet;
  */
 public class ClientMandelbrotSet extends Client<Integer[][]>
 {
-    /**
-	 * 
-	 */
+    /** Generated serial ID */
 	private static final long serialVersionUID = 6880792391195873610L;
 	private static final double LOWER_LEFT_X = -2.0;
     private static final double LOWER_LEFT_Y = -2.0;
@@ -50,7 +48,7 @@ public class ClientMandelbrotSet extends Client<Integer[][]>
 		else{domain = "localhost";}
     	
         System.setSecurityManager( new SecurityManager() );
-        final ClientMandelbrotSet client = new ClientMandelbrotSet(args[0]);
+        final ClientMandelbrotSet client = new ClientMandelbrotSet(domain);
         client.begin();
         Integer[][] value = client.runTask();
         client.add( client.getLabel( value ) );

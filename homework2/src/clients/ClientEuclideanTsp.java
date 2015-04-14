@@ -9,9 +9,12 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+
 import tasks.TaskEuclideanTsp2;
+import tasks.TaskTsp;
 
 /**
  *
@@ -40,7 +43,7 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
     
     public ClientEuclideanTsp(String args) throws RemoteException, NotBoundException, MalformedURLException
     { 
-        super( "Euclidean TSP", args, new TaskEuclideanTsp2( CITIES ) ); 
+        super( "Euclidean TSP", args, new TaskTsp( CITIES ) ); 
     }
     
     
@@ -54,7 +57,7 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
 		else{domain = "localhost";}
     	
         System.setSecurityManager( new SecurityManager() );
-        final ClientEuclideanTsp client = new ClientEuclideanTsp(args[0]);
+        final ClientEuclideanTsp client = new ClientEuclideanTsp(domain);
         client.begin();
         final List<Integer> value = client.runTask();
         client.add( client.getLabel( value.toArray( new Integer[0] ) ) );
