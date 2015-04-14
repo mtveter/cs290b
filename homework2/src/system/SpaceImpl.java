@@ -12,11 +12,16 @@ import api.Result;
 import api.Space;
 import api.Task;
 
+/**
+ * Implementation of {@link Space} interface
+ */
 public class SpaceImpl extends UnicastRemoteObject implements Space{
 	/**
 	 * Generated Serial ID
 	 */
 	private static final long serialVersionUID = 4974914619819929236L;
+	private static final int SLEEP_INTERVAL = 500;
+	
 	
 	private boolean isActive;
 	
@@ -39,7 +44,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 			}
 		}
 	}
-
 	@Override
 	public Result take() throws RemoteException {
 		try {
@@ -49,7 +53,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 		}
 		return null;
 	}
-
 	@Override
 	public void exit() throws RemoteException {
 		// Pop each registered computer from head of queue and exit each until all are shut down
@@ -65,30 +68,37 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 		// Exit space server
 		System.exit(0);
 	}
-	
 	@Override
 	public void register(Computer computer) throws RemoteException {
 		// TODO: Unsure if this will suffice. Might need improvement
 		registeredComputers.add(computer);
 	}
-	
+	/**
+	 * Checks if space is running
+	 * @return True if space is running, false if not
+	 */
 	public boolean isActive() {
 		return this.isActive;
 	}
-	
+	/**
+	 * Initiates the Space, sets it active and runs a new ComputerProxy thread
+	 */
 	private void runComputerProxy() {
 		this.isActive = true; 
 		ComputerProxy proxy = new ComputerProxy();
 		proxy.start();
 	}
-
-
+	/**
+	 * Thread that allocate tasks to computers and execute computation
+	 */
 	public class ComputerProxy extends Thread{
 		
 		@Override
 		public void run() {
+			// Thread runs as long as Space is active
 			while(isActive) {
 				Task task = null;
+				// Takes task in head of queue, allocates it to a computer, and execute operation
 				try {
 					task = receivedTasks.take();
 					Computer computer = registeredComputers.take();
@@ -96,6 +106,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 					receivedResults.put(result);
 					
 				} catch (RemoteException | InterruptedException e) {
+					// If there's a RemoteException, task is put back in the queue
 					try {
 						receivedTasks.put(task);
 					} catch (InterruptedException e1) {
@@ -104,8 +115,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 					}
 					e.printStackTrace();
 				}
+				// Let thread sleep for 500ms
 				try {
-					this.sleep(500);
+					Thread.sleep(SpaceImpl.SLEEP_INTERVAL);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -113,9 +125,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 			}
 		}
 	}
-
-
-
+	/**
+	 * Main method for creating Space
+	 * @param args Not needed
+	 */
 	public static void main(String[] args) throws RemoteException {
 		 // Construct and set a security manager
         System.setSecurityManager( new SecurityManager() );

@@ -9,20 +9,24 @@ import java.rmi.server.UnicastRemoteObject;
 import api.Space;
 import api.Task;
 
+/**
+ * Implementation of {@link Computer} interface
+ */
 public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
 	/**
 	 * Generated Serial ID
 	 */
 	private static final long serialVersionUID = 8694827504541478153L;
-
+	/**
+	 * @throws RemoteException If there is a conncetion error
+	 */
 	public ComputerImpl() throws RemoteException {
 		super();
 	}
-
+	
 	@Override
 	public <V> V execute(Task<V> task) throws RemoteException {
-		// TODO Auto-generated method stub
 		return task.call();
 	}
 	
@@ -30,7 +34,10 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 	public void exit() throws RemoteException {
 		System.exit(0);
 	}
-	
+	/**
+	 * Main method for creating computer
+	 * @param args IP-adress of remote server, localhost is default if no argument is passed
+	 */
 	public static void main(String[] args) {
 		// If no argument is passed, then connect to local host, otherwise to IPv4 specified 
 		String domainName;

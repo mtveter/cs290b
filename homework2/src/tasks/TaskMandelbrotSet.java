@@ -3,7 +3,8 @@ package tasks;
 import api.Task;
 
 public class TaskMandelbrotSet implements Task<Integer[][]> {
-
+	// TODO: Finish implementation of this class
+	
 	/** Generated serial ID */
 	private static final long serialVersionUID = -7723233187547469315L;
 	/** X-coordinate of lower left corner of a square in the complex plane */

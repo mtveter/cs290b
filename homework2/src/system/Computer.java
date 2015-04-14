@@ -14,6 +14,9 @@ public interface Computer {
 	 * @throws 		RemoteException if there is a communication error
 	 */
 	public <V> V execute(Task<V> task) throws RemoteException;
-	
+	/**
+	 * Terminate program
+	 * @throws RemoteException If there is a communication error
+	 */
 	public void exit() throws RemoteException;
 }
