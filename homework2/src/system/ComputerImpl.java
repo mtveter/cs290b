@@ -26,6 +26,11 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 		return task.call();
 	}
 	
+	@Override
+	public void exit() throws RemoteException {
+		System.exit(0);
+	}
+	
 	public static void main(String[] args) {
 		// If no argument is passed, then connect to local host, otherwise to IPv4 specified 
 		String domainName;
@@ -58,11 +63,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 		
 		// Print acknowledgement
 		System.out.println("Computer started and registered at space " + domainName);
-	}
-
-	@Override
-	public void exit() throws RemoteException {
-		System.exit(0);
 	}
 
 }

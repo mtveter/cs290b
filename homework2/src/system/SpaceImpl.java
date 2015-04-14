@@ -66,18 +66,55 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 		System.exit(0);
 	}
 	
-	private void runComputerProxy() {
-		// TODO: Finish implementing method and class:ComputerProxy
-		this.isActive = true; 
-		ComputerProxy proxy = new ComputerProxy();
-		proxy.start();
-	}
-
 	@Override
 	public void register(Computer computer) throws RemoteException {
 		// TODO: Unsure if this will suffice. Might need improvement
 		registeredComputers.add(computer);
 	}
+	
+	public boolean isActive() {
+		return this.isActive;
+	}
+	
+	private void runComputerProxy() {
+		this.isActive = true; 
+		ComputerProxy proxy = new ComputerProxy();
+		proxy.start();
+	}
+
+
+	public class ComputerProxy extends Thread{
+		
+		@Override
+		public void run() {
+			while(isActive) {
+				Task task = null;
+				try {
+					task = receivedTasks.take();
+					Computer computer = registeredComputers.take();
+					Result result = (Result) computer.execute(task);
+					receivedResults.put(result);
+					
+				} catch (RemoteException | InterruptedException e) {
+					try {
+						receivedTasks.put(task);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					e.printStackTrace();
+				}
+				try {
+					this.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+
 
 	public static void main(String[] args) throws RemoteException {
 		 // Construct and set a security manager
