@@ -34,7 +34,10 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 		}
 		else{domainName = "localhost";}
 		
+		 // Construct and set a security manager
 		System.setSecurityManager( new SecurityManager() );
+		
+		
 		
 		// Get url of remote space
 		String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;
@@ -52,6 +55,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 		catch (  RemoteException remoteException) {
 		    System.err.println("Remote Exception: " + remoteException);
 		  }
+		
+		// Print acknowledgement
+		System.out.println("Computer started and registered at space " + domainName);
 	}
 
 }
