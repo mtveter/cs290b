@@ -31,7 +31,7 @@ public final class TaskEuclideanTsp implements Task<List<Integer>>{
 		this.cities = cities;
 		// TODO: Pass parameter as the numbers from 0->cities.size() instead og having to manually change sequence
 		// Calculates the factorial permutations
-		permutations = Permute.permute(0,1,2,3,4,5,6,7,8,9);
+		permutations = Permute.permute(0,1,2,3,4,5,6,7,8,9,10,11);
 	}
 	/**
 	 * Calculates the shortest path solution of TSP-problem
