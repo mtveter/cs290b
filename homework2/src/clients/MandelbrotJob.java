@@ -13,7 +13,7 @@ public class MandelbrotJob implements Job{
 	}
 
 	@Override
-	public Object collectResults(Space space) throws RemoteException {
+	public Integer[][] collectResults(Space space) throws RemoteException {
 		// TODO Auto-generated method stub
 		return null;
 	}
