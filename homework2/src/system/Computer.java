@@ -1,5 +1,6 @@
 package system;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import api.Task;
@@ -7,7 +8,7 @@ import api.Task;
 /**
  * Interface of a Computer 'Server'
  */
-public interface Computer {
+public interface Computer extends Remote{
 	/**
 	 * @param	task {@link Task}Task to be executed
 	 * @return 		A type V
