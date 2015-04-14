@@ -60,4 +60,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 		System.out.println("Computer started and registered at space " + domainName);
 	}
 
+	@Override
+	public void exit() throws RemoteException {
+		System.exit(0);
+	}
+
 }
