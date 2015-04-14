@@ -85,43 +85,53 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 	 */
 	private void runComputerProxy() {
 		this.isActive = true; 
-		ComputerProxy proxy = new ComputerProxy();
-		proxy.start();
+		// Thread runs as long as Space is active
+		while(isActive) {
+			Task task = null;
+			try {
+				task = receivedTasks.take();
+				ComputerProxy proxy = new ComputerProxy(task);
+				proxy.run();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	/**
 	 * Thread that allocate tasks to computers and execute computation
 	 */
-	public class ComputerProxy extends Thread{
+	public class ComputerProxy implements Runnable{
+		Task task;
 		
+		public ComputerProxy(Task task) {
+			this.task = task;
+		}
 		@Override
 		public void run() {
-			// Thread runs as long as Space is active
-			while(isActive) {
-				Task task = null;
-				// Takes task in head of queue, allocates it to a computer, and execute operation
+			// Takes task in head of queue, allocates it to a computer, and execute operation
+			try {
+				Computer computer = registeredComputers.take();
+				Result result = (Result) computer.execute(task);
+				receivedResults.put(result);
+				
+			} catch (RemoteException e) {
+				// If there's a RemoteException, task is put back in the queue
 				try {
-					task = receivedTasks.take();
-					Computer computer = registeredComputers.take();
-					Result result = (Result) computer.execute(task);
-					receivedResults.put(result);
-					
-				} catch (RemoteException | InterruptedException e) {
-					// If there's a RemoteException, task is put back in the queue
-					try {
-						receivedTasks.put(task);
-					} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					e.printStackTrace();
+					receivedTasks.put(task);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
 				}
-				// Let thread sleep for 500ms
-				try {
-					Thread.sleep(SpaceImpl.SLEEP_INTERVAL);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// Let thread sleep for 500ms
+			try {
+				Thread.sleep(SpaceImpl.SLEEP_INTERVAL);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
