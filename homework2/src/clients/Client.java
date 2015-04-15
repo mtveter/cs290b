@@ -64,9 +64,12 @@ public class Client<T> extends JFrame
     public Object runJob() throws RemoteException
     {
         final long taskStartTime = System.nanoTime();
+        
+        // Generate Tasks and send to Space
         job.generateTasks(space);
-        job.collectResults(space);
-        final Object value = job.getAllResults();
+        // Collect results from Space after Computer(s) have completed calculation
+        final Object value = job.collectResults(space);
+        
         final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
         Logger.getLogger( Client.class.getCanonicalName() )
             .log(Level.INFO, "Task {0}Task time: {1} ms.", new Object[]{ job, taskRunTime } );

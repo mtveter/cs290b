@@ -20,7 +20,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 	 */
 	private static final long serialVersionUID = 8694827504541478153L;
 	/**
-	 * @throws RemoteException If there is a conncetion error
+	 * @throws RemoteException If there is a connection error
 	 */
 	public ComputerImpl() throws RemoteException {
 		super();
@@ -41,8 +41,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 		System.exit(0);
 	}
 	/**
-	 * Main method for creating computer
-	 * @param args IP-adress of remote server, localhost is default if no argument is passed
+	 * Main method for creating a Computer
+	 * @param args IP-address of remote server, 'localhost' is default if no argument is passed
 	 */
 	public static void main(String[] args) {
 		// If no argument is passed, then connect to local host, otherwise to IPv4 specified 

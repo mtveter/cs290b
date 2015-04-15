@@ -19,26 +19,15 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 	private double edgeLength;
 	
 	/**
-	 * 
-	 * @param lowerX
-	 *            X-coordinate of the lower left corner of a square in the
-	 *            complex plane
-	 * @param lowerY
-	 *            Y-coordinate of the lower left corner of a square in the
-	 *            complex plane
-	 * @param edgeLength
-	 *            Edge length of the square in the complex plane, whose sides
-	 *            are parallel to the axes
-	 * @param n
-	 *            Square region of the complex plane subdivided into n X n
-	 *            squares, each of which is visualized by 1 pixel
-	 * @param iterLimit
-	 *            Defines when the representative point of a region is
-	 *            considered to be in the Mandelbrot set.
+	 * @param lowerX  	X-coordinate of lower left corner of a square in the complex plane 
+	 * @param lowerY	Y-coordinate of lower left corner of a square in the complex plane
+	 * @param edgeLength	The edge length of a square in the complex plane, whose sides are parallel to the axes
+	 * @param n			An integer such that the square region of the complex plane is subdivided into n X n squares,
+	 *  each of which is visualized by 1 pixel
+	 * @param iterLimit	The representative point of a region that is considered to be in the Mandelbrot set 
 	 * @param taskIdentifier A unique task identifier for this task
 	 */
 	public TaskMandelbrotSet(double lowerX, double lowerY, double edgeLength, int n, int iterLimit, String id) {
-
 		this.lowerX = lowerX;
 		this.lowerY = lowerY;
 		this.edgeLength = edgeLength;
@@ -48,13 +37,9 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 	}
 
 	/**
-	 * 
-	 * Generates the solution
-	 * 
-	 * @see api.Task Task
+	 * Generates the solution to the Mandelbrot Set task
 	 */
 	public int[][] call() {
-		
 		
 		int[][] values = new int[n][n];
 		int i = 0, j = 0;
@@ -69,13 +54,13 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 
 				int k;
 				for (k = 0; k < this.iterLimit
-						&& (modulus(zReal,zComplex) <= TaskMandelbrotSet.MANDELBROT_LIMIT); k++) {
+						&& (distance(zReal,zComplex) <= TaskMandelbrotSet.MANDELBROT_LIMIT); k++) {
 					double zPrevReal = zReal;
 					zReal = zReal * zReal - zComplex * zComplex + zLowerReal;
 					zComplex = 2 * zPrevReal * zComplex + zLowerComplex;
 				}
 
-				if (modulus(zReal,zComplex) <= TaskMandelbrotSet.MANDELBROT_LIMIT) {
+				if (distance(zReal,zComplex) <= TaskMandelbrotSet.MANDELBROT_LIMIT) {
 
 					values[i][j] = this.iterLimit;
 				} else {
@@ -88,16 +73,19 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 	}
 	
 	/**
-	 * Returns the unique identifier of this task
-	 * 
-	 * @see api.Task Task
+	 * Returns the unique ID of task
 	 */
 	public String getId(){
 		return id;
 	}
 	
-	
-	private double modulus(double zReal, double zComplex){
+	/**
+	 * Calculates the euclidean distance between to points
+	 * @param zReal 	The Real Z coordinate
+	 * @param zComplex	The Complex Z coordinate
+	 * @return The distance between the two coordinates
+	 */
+	private double distance(double zReal, double zComplex){
 		return Math.sqrt(zReal * zReal + zComplex * zComplex);
 	}
 }
