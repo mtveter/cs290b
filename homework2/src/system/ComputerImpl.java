@@ -6,6 +6,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import api.Result;
 import api.Space;
 import api.Task;
 
@@ -26,8 +27,13 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 	}
 	
 	@Override
-	public <V> V execute(Task<V> task) throws RemoteException {
-		return task.call();
+	public Result<?> execute(Task<?> task) throws RemoteException {
+		long taskStartTime = System.currentTimeMillis();
+		Object taskReturnValue = task.call();
+		long taskEndTime = System.currentTimeMillis();
+		long taskRunTime = taskEndTime - taskStartTime;
+		Result<?> result = new Result(taskReturnValue, taskRunTime);
+		return result;
 	}
 	
 	@Override
