@@ -19,4 +19,10 @@ public class TspJob implements Job{
 		return null;
 	}
 
+	@Override
+	public Object getAllResults() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
