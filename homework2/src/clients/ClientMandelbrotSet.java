@@ -67,7 +67,7 @@ public class ClientMandelbrotSet extends Client<Integer[][]>
         final ClientMandelbrotSet client = new ClientMandelbrotSet(domain);
         client.begin();
         Integer[][] value = (Integer[][]) client.runJob();
-        System.out.println("This is the value return as result to MandelbrotJob: " + value);
+//        System.out.println("This is the value return as result to MandelbrotJob: " + value);
         client.add( client.getLabel( value ) );
         client.end();
     }

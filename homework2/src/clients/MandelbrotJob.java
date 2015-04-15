@@ -31,7 +31,7 @@ public class MandelbrotJob implements Job {
 	private int n;
 	private int iterLimit;
 
-	private int[][] allValues;
+	private Integer[][] allValues;
 
 	// Maps each Task object to its input
 	private Map<String, Point2D> taskIdentifierMap;
@@ -67,7 +67,7 @@ public class MandelbrotJob implements Job {
 		this.edgeLength = edgeLength;
 		this.n = n;
 		this.iterLimit = iterLimit;
-		this.allValues = new int[n][n];
+		this.allValues = new Integer[n][n];
 		this.taskIdentifierMap = new HashMap<String, Point2D>();
 		this.timeMap = new HashMap<String, Long>();
 		this.numOfTasks = 0;
@@ -176,7 +176,7 @@ public class MandelbrotJob implements Job {
 	 * @see client.Job Job
 	 */
 	@Override
-	public int[][] getAllResults() {
+	public Integer[][] getAllResults() {
 		return allValues;
 	}
 }
