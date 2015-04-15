@@ -129,18 +129,18 @@ public class MandelbrotJob implements Job {
 			Result<int[][]> r = (Result<int[][]>) space.take();
 			long currentTime = System.currentTimeMillis();
 			System.out.println("\nClient Task : " + (i + 1) + " Start time : "
-					+ timeMap.get(r.getTaskIdentifier()) + " ms");
+					+ timeMap.get(r.getId()) + " ms");
 			System.out.println("Client Task : " + (i + 1) + " End   time : "
 					+ currentTime + " ms");
 			System.out.println("Client Task : " + (i + 1)
 					+ " Elapsed   time : "
-					+ (currentTime - timeMap.get(r.getTaskIdentifier()))
+					+ (currentTime - timeMap.get(r.getId()))
 					+ " ms");
 			clientTotalTime += (currentTime - timeMap
-					.get(r.getTaskIdentifier()));
-			computerTotalTime += (r.getEndTime() - r.getStartTime());
-			int[][] values = (int[][]) r.getValue();
-			String identifier = r.getTaskIdentifier();
+					.get(r.getId()));
+			computerTotalTime += (r.getTaskRunTime());
+			int[][] values = (int[][]) r.getTaskReturnValue();
+			String identifier = r.getId();
 			Point2D point = this.taskIdentifierMap.get(identifier);
 			double startX = new Double(point.getX());
 			double startY = new Double(point.getY());
@@ -153,14 +153,10 @@ public class MandelbrotJob implements Job {
 					allValues[actualX][actualY] = values[valuesRow][valuesCol];
 				}
 			}
-			System.out.println("\nComputer Task : " + (i + 1)
-					+ " Start time : " + r.getStartTime() + " ms");
-			System.out.println("Computer Task : " + (i + 1) + " End   time : "
-					+ r.getEndTime() + " ms");
 			System.out.println("Computer Task : " + (i + 1)
 					+ " Elapsed   time : "
-					+ (r.getEndTime() - r.getStartTime()) + " ms");
-			computerTotalTime += (r.getEndTime() - r.getStartTime());
+					+ (r.getTaskRunTime()) + " ms");
+			computerTotalTime += (r.getTaskRunTime());
 		}
 		System.out
 				.println("\n\nClient Total time : " + clientTotalTime + " ms");

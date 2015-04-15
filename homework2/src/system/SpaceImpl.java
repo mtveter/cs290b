@@ -29,14 +29,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 	private BlockingQueue<Task> receivedTasks = new LinkedBlockingQueue<Task>();
 	private BlockingQueue<Result> receivedResults = new LinkedBlockingQueue<Result>();
 
-	protected SpaceImpl() throws RemoteException {
+	public SpaceImpl() throws RemoteException {
 		super();
 		this.isActive = false;
 	}
 
 	@Override
 	public void putAll(List<Task> taskList) throws RemoteException {
-		for(Task task :  taskList) {
+		for(Task<?> task :  taskList) {
 			try {
 				receivedTasks.put(task);
 			} catch (InterruptedException e) {
@@ -45,7 +45,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 		}
 	}
 	@Override
-	public Result take() throws RemoteException {
+	public Result<?> take() throws RemoteException {
 		try {
 			return receivedResults.take();
 		} catch (InterruptedException e) {
@@ -87,7 +87,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
-			Task task = null;
+			Task<?> task = null;
 			try {
 				task = receivedTasks.take();
 				ComputerProxy proxy = new ComputerProxy(task);
@@ -102,9 +102,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 	 * Thread that allocate tasks to computers and execute computation
 	 */
 	public class ComputerProxy implements Runnable{
-		Task task;
+		Task<?> task;
 		
-		public ComputerProxy(Task task) {
+		public ComputerProxy(Task<?> task) {
 			this.task = task;
 		}
 		@Override
@@ -112,7 +112,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 			// Takes task in head of queue, allocates it to a computer, and execute operation
 			try {
 				Computer computer = registeredComputers.take();
-				Result result = (Result) computer.execute(task);
+				Result<?> result = (Result<?>) computer.execute(task);
 				receivedResults.put(result);
 				
 			} catch (RemoteException e) {

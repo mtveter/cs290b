@@ -32,7 +32,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 		Object taskReturnValue = task.call();
 		long taskEndTime = System.currentTimeMillis();
 		long taskRunTime = taskEndTime - taskStartTime;
-		Result<?> result = new Result(taskReturnValue, taskRunTime);
+		Result<?> result = new Result(taskReturnValue, taskRunTime, task.getId());
 		return result;
 	}
 	

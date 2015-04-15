@@ -1,7 +1,9 @@
 package clients;
+import api.Space;
 import api.Task;
-import system.Computer;
 import system.ComputerImpl;
+import system.SpaceImpl;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.net.MalformedURLException;
@@ -10,6 +12,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -25,20 +28,20 @@ public class Client<T> extends JFrame
 	 * 
 	 */
 	private static final long serialVersionUID = 4825731753313244149L;
-	final protected Task<T> task;
-          final private Computer computer;
+	final protected Job<?> job;
+          final private Space space;
                 protected T taskReturnValue;
                 private long clientStartTime;
     
-    public Client( final String title, final String domainName, final Task<T> task ) 
+    public Client( final String title, final String domainName, final Job<?> job ) 
             throws RemoteException, NotBoundException, MalformedURLException
     {     
-        this.task = task;
+        this.job = job;
         setTitle( title );
         setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         
-        String url = "rmi://" + domainName + ":" + Computer.PORT + "/" + Computer.SERVICE_NAME;
-        computer = ( domainName == null ) ? new ComputerImpl() : (Computer) Naming.lookup( url );
+        String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;
+       space = ( domainName == null ) ? new SpaceImpl() : (Space) Naming.lookup( url );
     }
     
     public void begin() { clientStartTime = System.nanoTime(); }
@@ -58,13 +61,15 @@ public class Client<T> extends JFrame
         setVisible( true );
     }
     
-    public T runTask() throws RemoteException
+    public Object runJob() throws RemoteException
     {
         final long taskStartTime = System.nanoTime();
-        final T value = computer.execute( task );
+        job.generateTasks(space);
+        job.collectResults(space);
+        final Object value = job.getAllResults();
         final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
         Logger.getLogger( Client.class.getCanonicalName() )
-            .log(Level.INFO, "Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
+            .log(Level.INFO, "Task {0}Task time: {1} ms.", new Object[]{ job, taskRunTime } );
         return value;
     }
 }

@@ -14,7 +14,7 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 	private double lowerY;
 	private int iterLimit;
 	private static final double MANDELBROT_LIMIT = 2.0;
-	private String taskIdentifier;
+	private String id;
 	private int n;
 	private double edgeLength;
 	
@@ -37,14 +37,14 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 	 *            considered to be in the Mandelbrot set.
 	 * @param taskIdentifier A unique task identifier for this task
 	 */
-	public TaskMandelbrotSet(double lowerX, double lowerY, double edgeLength, int n, int iterLimit, String taskIdentifier) {
+	public TaskMandelbrotSet(double lowerX, double lowerY, double edgeLength, int n, int iterLimit, String id) {
 
 		this.lowerX = lowerX;
 		this.lowerY = lowerY;
 		this.edgeLength = edgeLength;
 		this.n = n;
 		this.iterLimit = iterLimit;
-		this.taskIdentifier=taskIdentifier;
+		this.id = id;
 	}
 
 	/**
@@ -92,8 +92,8 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 	 * 
 	 * @see api.Task Task
 	 */
-	public String getTaskIdentifier(){
-		return taskIdentifier;
+	public String getId(){
+		return id;
 	}
 	
 	
