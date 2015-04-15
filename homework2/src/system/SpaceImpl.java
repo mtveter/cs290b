@@ -22,7 +22,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 	private static final long serialVersionUID = 4974914619819929236L;
 	private static final int SLEEP_INTERVAL = 500;
 	
-	
 	private boolean isActive;
 	
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();

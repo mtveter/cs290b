@@ -10,8 +10,6 @@ import java.rmi.RemoteException;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import tasks.TaskMandelbrotSet;
-
 /**
  *
  * @author Peter Cappello
@@ -29,10 +27,16 @@ public class ClientMandelbrotSet extends Client<Integer[][]>
 //    private static final int ITERATION_LIMIT_HW1 = 64;
     
     /* Variables for homework2 */
+	/** X-coordinate of lower left corner of a square in the complex plane */
  	private static final double LOWER_LEFT_X_HW2 = -0.7510975859375;
+ 	/** Y-coordinate of lower left corner of a square in the complex plane */
     private static final double LOWER_LEFT_Y_HW2 = 0.1315680625;
+    /** The edge length of a square in the complex plane, whose sides are parallel to the axes */
     private static final double EDGE_LENGTH_HW2 = 0.01611;
+    /** An integer such that the square region of the complex plane is subdivided into n X n squares,
+	 *  each of which is visualized by 1 pixel*/
     private static final int N_PIXELS_HW2 = 1024;
+    /** The representative point of a region that is considered to be in the Mandelbrot set */
     private static final int ITERATION_LIMIT_HW2 = 512;
     
     
@@ -46,13 +50,10 @@ public class ClientMandelbrotSet extends Client<Integer[][]>
 //               new TaskMandelbrotSet( LOWER_LEFT_X_HW1, LOWER_LEFT_Y_HW1, EDGE_LENGTH_HW1, N_PIXELS_HW1, 
 //                                                       ITERATION_LIMIT_HW1) ); 
     }
-    
-    
-    
     /**
-     * Run the MandelbrotSet visualizer client.
-     * @param args unused 
-     * @throws java.rmi.RemoteException 
+     * Run a Mandebrot Set visualizer Client
+     * @param args 
+     * @throws RemoteException If there is a connection eror  
      */
     public static void main( String[] args ) throws Exception
     {  

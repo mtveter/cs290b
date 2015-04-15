@@ -1,6 +1,7 @@
 package clients;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 import api.Space;
 
@@ -18,21 +19,8 @@ public class TspJob implements Job{
 	}
 
 	@Override
-	public void collectResults(Space space) throws RemoteException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Object getAllResults() {
+	public List<Integer> collectResults(Space space) throws RemoteException {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public Object getAllResults() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
