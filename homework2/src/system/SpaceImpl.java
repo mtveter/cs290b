@@ -29,23 +29,25 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 	private BlockingQueue<Task> receivedTasks = new LinkedBlockingQueue<Task>();
 	private BlockingQueue<Result> receivedResults = new LinkedBlockingQueue<Result>();
 
-	protected SpaceImpl() throws RemoteException {
+	public SpaceImpl() throws RemoteException {
 		super();
 		this.isActive = false;
 	}
 
 	@Override
 	public void putAll(List<Task> taskList) throws RemoteException {
-		for(Task task :  taskList) {
+//		System.out.println("SPACE: List of tasks received from Job");
+		for(Task<?> task :  taskList) {
 			try {
 				receivedTasks.put(task);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
+//		System.out.println("SPACE: List of tasks is now put");
 	}
 	@Override
-	public Result take() throws RemoteException {
+	public Result<?> take() throws RemoteException {
 		try {
 			return receivedResults.take();
 		} catch (InterruptedException e) {
@@ -87,11 +89,19 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
-			Task task = null;
+			Task<?> task = null;
 			try {
 				task = receivedTasks.take();
+//				System.out.println("SPACE: Task is taken");
 				ComputerProxy proxy = new ComputerProxy(task);
 				proxy.run();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// Let thread sleep for 500ms
+			try {
+				Thread.sleep(SpaceImpl.SLEEP_INTERVAL);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -102,19 +112,23 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 	 * Thread that allocate tasks to computers and execute computation
 	 */
 	public class ComputerProxy implements Runnable{
-		Task task;
+		Task<?> task;
 		
-		public ComputerProxy(Task task) {
+		public ComputerProxy(Task<?> task) {
 			this.task = task;
 		}
 		@Override
 		public void run() {
+//			System.out.println("SPACE: Proxy is running");
 			// Takes task in head of queue, allocates it to a computer, and execute operation
 			try {
 				Computer computer = registeredComputers.take();
-				Result result = (Result) computer.execute(task);
+//				System.out.println("SPACE: Computer is taken");
+				Result<?> result = (Result<?>) computer.execute(task);
+//				System.out.println("SPACE: Result is received from Computer");
 				receivedResults.put(result);
-				
+				registeredComputers.put(computer);
+
 			} catch (RemoteException e) {
 				// If there's a RemoteException, task is put back in the queue
 				try {
@@ -124,13 +138,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 				}
 				e.printStackTrace();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			// Let thread sleep for 500ms
-			try {
-				Thread.sleep(SpaceImpl.SLEEP_INTERVAL);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -156,6 +163,5 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         System.out.println("Computer Space: Ready. on port " + Space.PORT);
         
         space.runComputerProxy();
-	}
-	
+	}	
 }

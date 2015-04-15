@@ -3,6 +3,7 @@ package system;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import api.Result;
 import api.Task;
 
 /**
@@ -14,7 +15,7 @@ public interface Computer extends Remote{
 	 * @return 		A type V
 	 * @throws 		RemoteException if there is a communication error
 	 */
-	public <V> V execute(Task<V> task) throws RemoteException;
+	public Result execute(Task<?> task) throws RemoteException;
 	/**
 	 * Terminate program
 	 * @throws RemoteException If there is a communication error

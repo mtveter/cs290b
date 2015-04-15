@@ -13,4 +13,10 @@ public class TaskTsp implements Task<List<Integer>> {
 		return null;
 	}
 
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

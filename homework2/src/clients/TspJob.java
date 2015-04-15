@@ -7,6 +7,10 @@ import api.Space;
 public class TspJob implements Job{
 	// TODO: Finish implementation of this class
 
+	public TspJob(double[][] cities) {
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public void generateTasks(Space space) throws RemoteException {
 		// TODO Auto-generated method stub
@@ -14,7 +18,13 @@ public class TspJob implements Job{
 	}
 
 	@Override
-	public Object collectResults(Space space) throws RemoteException {
+	public void collectResults(Space space) throws RemoteException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Object getAllResults() {
 		// TODO Auto-generated method stub
 		return null;
 	}

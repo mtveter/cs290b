@@ -175,5 +175,10 @@ public class EuclideanTSP implements Task<List<Integer>>{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
 

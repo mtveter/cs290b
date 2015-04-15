@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import tasks.TaskEuclideanTsp2;
 import tasks.TaskTsp;
 
 /**
@@ -43,7 +42,7 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
     
     public ClientEuclideanTsp(String args) throws RemoteException, NotBoundException, MalformedURLException
     { 
-        super( "Euclidean TSP", args, new TaskTsp( CITIES ) ); 
+        super( "Euclidean TSP", args, new TspJob( CITIES ) ); 
     }
     
     
@@ -59,7 +58,7 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
         System.setSecurityManager( new SecurityManager() );
         final ClientEuclideanTsp client = new ClientEuclideanTsp(domain);
         client.begin();
-        final List<Integer> value = client.runTask();
+        final List<Integer> value = (List<Integer>) client.runJob();
         client.add( client.getLabel( value.toArray( new Integer[0] ) ) );
         client.end();
     }
