@@ -86,7 +86,7 @@ public class MandelbrotJob implements Job {
 	 * @see client.Job Job
 	 */
 	public void generateTasks(Space space) throws RemoteException {
-
+		System.out.println("MANDELBROTJOB: Job received");
 		int i = 0, j = 0;
 		double jump = edgeLength / n;
 		List<Task> taskList = new ArrayList<Task>();
@@ -106,8 +106,8 @@ public class MandelbrotJob implements Job {
 				numOfTasks++;
 			}
 		}
+		System.out.println("MANDELBROT: List of tasks is being sent to Space: " + taskList);
 		space.putAll(taskList);
-
 	}
 
 	/**
@@ -128,10 +128,6 @@ public class MandelbrotJob implements Job {
 		for (int i = 0; i < taskIdentifierMap.size(); i++) {
 			Result<int[][]> r = (Result<int[][]>) space.take();
 			long currentTime = System.currentTimeMillis();
-			System.out.println("\nClient Task : " + (i + 1) + " Start time : "
-					+ timeMap.get(r.getId()) + " ms");
-			System.out.println("Client Task : " + (i + 1) + " End   time : "
-					+ currentTime + " ms");
 			System.out.println("Client Task : " + (i + 1)
 					+ " Elapsed   time : "
 					+ (currentTime - timeMap.get(r.getId()))
