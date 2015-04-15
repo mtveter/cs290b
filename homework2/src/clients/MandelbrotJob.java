@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import tasks.TaskMandelbrotSet;
 import api.Result;
@@ -31,7 +30,7 @@ public class MandelbrotJob implements Job {
 	private int n;
 	private int iterLimit;
 
-	private int[][] allValues;
+	private Integer[][] allValues;
 
 	// Maps each Task object to its input
 	private Map<String, Point2D> taskIdentifierMap;
@@ -67,7 +66,7 @@ public class MandelbrotJob implements Job {
 		this.edgeLength = edgeLength;
 		this.n = n;
 		this.iterLimit = iterLimit;
-		this.allValues = new int[n][n];
+		this.allValues = new Integer[n][n];
 		this.taskIdentifierMap = new HashMap<String, Point2D>();
 		this.timeMap = new HashMap<String, Long>();
 		this.numOfTasks = 0;
@@ -168,14 +167,14 @@ public class MandelbrotJob implements Job {
 	/**
 	 * Returns values cached by {@link #collectResults(Space)
 	 * collectResults(Space space)} method. Each value in the returned array
-	 * represents the colour of a pixel to be displayed on the screen to
+	 * represents the color of a pixel to be displayed on the screen to
 	 * represent the Mandelbrot Set.
 	 * 
 	 * @return An array that contains Mandelbrot Set integer values from all
 	 *         {@link api.Result Result} objects
 	 * @see client.Job Job
 	 */
-	public int[][] getAllResults() {
+	public Integer[][] getAllResults() {
 		return allValues;
 	}
 

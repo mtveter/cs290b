@@ -10,8 +10,6 @@ import java.rmi.RemoteException;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import tasks.TaskMandelbrotSet;
-
 /**
  *
  * @author Peter Cappello
