@@ -108,8 +108,7 @@ public class MandelbrotJob implements Job {
 					+ " Elapsed   time : "
 					+ (currentTime - timeMap.get(r.getId()))
 					+ " ms");
-			clientTotalTime += (currentTime - timeMap
-					.get(r.getId()));
+			clientTotalTime += (currentTime - timeMap.get(r.getId()));
 			computerTotalTime += (r.getTaskRunTime());
 			int[][] values = (int[][]) r.getTaskReturnValue();
 			String identifier = r.getId();
