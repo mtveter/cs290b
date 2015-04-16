@@ -20,7 +20,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 	 * Generated Serial ID
 	 */
 	private static final long serialVersionUID = 4974914619819929236L;
-	private static final int SLEEP_INTERVAL = 500;
+//	private static final int SLEEP_INTERVAL = 1;
 	
 	private boolean isActive;
 	
@@ -109,12 +109,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 				e.printStackTrace();
 			}
 			// Let thread sleep for 500ms
-			try {
-				Thread.sleep(SpaceImpl.SLEEP_INTERVAL);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(SpaceImpl.SLEEP_INTERVAL);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 	}
 	/**
