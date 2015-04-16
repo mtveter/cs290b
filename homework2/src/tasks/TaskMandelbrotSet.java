@@ -10,12 +10,19 @@ import api.Task;
 public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 
 	private static final long serialVersionUID = -7445556151823532932L;
+	/** X-coordinate of lower left corner of a square in the complex plane */
 	private double lowerX;
+	/** Y-coordinate of lower left corner of a square in the complex plane */
 	private double lowerY;
+	/** The representative point of a region that is considered to be in the Mandelbrot set */
 	private int iterLimit;
 	private static final double MANDELBROT_LIMIT = 2.0;
+	/** Identifier og MandelbrotSet task */
 	private String id;
+	/** An integer such that the square region of the complex plane is subdivided into n X n squares,
+	 *  each of which is visualized by 1 pixel*/
 	private int n;
+	/** The edge length of a square in the complex plane, whose sides are parallel to the axes */
 	private double edgeLength;
 	
 	/**
@@ -53,8 +60,7 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 				double zComplex = zLowerComplex;
 
 				int k;
-				for (k = 0; k < this.iterLimit
-						&& (distance(zReal,zComplex) <= TaskMandelbrotSet.MANDELBROT_LIMIT); k++) {
+				for (k = 0; k < this.iterLimit && (distance(zReal,zComplex) <= TaskMandelbrotSet.MANDELBROT_LIMIT); k++) {
 					double zPrevReal = zReal;
 					zReal = zReal * zReal - zComplex * zComplex + zLowerReal;
 					zComplex = 2 * zPrevReal * zComplex + zLowerComplex;
