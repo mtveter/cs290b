@@ -17,20 +17,28 @@ import api.Task;
  */
 public class MandelbrotJob implements Job {
 
+	/** */
 	private static final int TASK_SIZE = 32;
+	/** X-coordinate of lower left corner of a square in the complex plane */
 	private double lowerX;
+	/** Y-coordinate of lower left corner of a square in the complex plane */
 	private double lowerY;
+	/** The edge length of a square in the complex plane, whose sides are parallel to the axes */
 	private double edgeLength;
+	/** An integer such that the square region of the complex plane is subdivided into n X n squares,
+	 *  each of which is visualized by 1 pixel*/
 	private int n;
+	 /** The representative point of a region that is considered to be in the Mandelbrot set */
 	private int iterLimit;
 
+	/** 2D array to store collection of all results of all subtasks */
 	private Integer[][] allValues;
 
-	// Maps each Task object to its input
+	/** Maps each Task object to its input */
 	private Map<String, Point2D> taskIdentifierMap;
-	// Used to time the execution of methods for profiling
+	/** Used to time the execution of methods for profiling */
 	private Map<String, Long> timeMap;
-
+	/** Number of subtasks of job that has been generated and passed to computer Space */
 	private int numOfTasks;
 
 	/**

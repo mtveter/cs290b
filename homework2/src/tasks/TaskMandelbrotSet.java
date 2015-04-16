@@ -5,7 +5,7 @@ import java.io.Serializable;
 import api.Task;
 
 /**
- * Computes the Mandelbrotset
+ * Computes the Mandelbrot Set
  */
 public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 
@@ -17,7 +17,7 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 	/** The representative point of a region that is considered to be in the Mandelbrot set */
 	private int iterLimit;
 	private static final double MANDELBROT_LIMIT = 2.0;
-	/** Identifier og MandelbrotSet task */
+	/** Identifier of MandelbrotSet task */
 	private String id;
 	/** An integer such that the square region of the complex plane is subdivided into n X n squares,
 	 *  each of which is visualized by 1 pixel*/
@@ -60,7 +60,7 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 				double zComplex = zLowerComplex;
 
 				int k;
-				for (k = 0; k < this.iterLimit && ((zReal*zReal - zComplex*zComplex) < 4); k++) {
+				for (k = 0; k < this.iterLimit && ((zReal*zReal - zComplex*zComplex) < MANDELBROT_LIMIT); k++) {
 					double zPrevReal = zReal;
 					zReal = zReal * zReal - zComplex * zComplex + zLowerReal;
 					zComplex = 2 * zPrevReal * zComplex + zLowerComplex;
@@ -84,14 +84,4 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 	public String getId(){
 		return id;
 	}
-	
-	/**
-	 * Calculates the euclidean distance between to points
-	 * @param zReal 	The Real Z coordinate
-	 * @param zComplex	The Complex Z coordinate
-	 * @return The distance between the two coordinates
-	 */
-//	private double distance(double zReal, double zComplex){
-//		return Math.sqrt(zReal * zReal + zComplex * zComplex);
-//	}
 }
