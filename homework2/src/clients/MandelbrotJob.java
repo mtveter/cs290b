@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import system.Computer;
 import tasks.TaskMandelbrotSet;
 import api.Result;
 import api.Space;
@@ -136,4 +135,5 @@ public class MandelbrotJob implements Job {
 		
 		return allValues;
 	}
+
 }
