@@ -85,7 +85,6 @@ public class MandelbrotJob implements Job {
 				numOfTasks++;
 			}
 		}
-		System.out.println("MANDELBROT: List of tasks is being sent to Space: " + taskList);
 		space.putAll(taskList);
 	}
 
@@ -126,10 +125,6 @@ public class MandelbrotJob implements Job {
 					allValues[actualX][actualY] = values[valuesRow][valuesCol];
 				}
 			}
-			System.out.println("Computer Task : " + (i + 1)
-					+ " Elapsed   time : "
-					+ (r.getTaskRunTime()) + " ms");
-			computerTotalTime += (r.getTaskRunTime());
 		}
 		// Print out Total Client time elapsed
 		System.out.println("\n\nClient Total time : " + clientTotalTime + " ms");
