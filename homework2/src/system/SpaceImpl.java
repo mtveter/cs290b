@@ -32,7 +32,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 		super();
 		this.isActive = false;
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void putAll(List<Task> taskList) throws RemoteException {
 //		System.out.println("SPACE: List of tasks received from Job");
@@ -45,6 +47,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 		}
 //		System.out.println("SPACE: List of tasks is now put");
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Result<?> take() throws RemoteException {
 		try {
@@ -54,6 +59,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 		}
 		return null;
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void exit() throws RemoteException {
 		// Pop each registered computer from head of queue and exit each until all are shut down
@@ -69,9 +77,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 		// Exit space server
 		System.exit(0);
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void register(Computer computer) throws RemoteException {
-		// TODO: Unsure if this will suffice. Might need improvement
 		registeredComputers.add(computer);
 	}
 	/**
@@ -116,6 +126,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 		public ComputerProxy(Task<?> task) {
 			this.task = task;
 		}
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void run() {
 //			System.out.println("SPACE: Proxy is running");

@@ -7,13 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import system.Computer;
 import tasks.TaskMandelbrotSet;
 import api.Result;
 import api.Space;
 import api.Task;
 
 /**
- * 
+ * Implementation of {@link Job} interface for the Mandelbrot Set problem
  */
 public class MandelbrotJob implements Job {
 
