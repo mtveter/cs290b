@@ -60,13 +60,13 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 				double zComplex = zLowerComplex;
 
 				int k;
-				for (k = 0; k < this.iterLimit && (distance(zReal,zComplex) <= TaskMandelbrotSet.MANDELBROT_LIMIT); k++) {
+				for (k = 0; k < this.iterLimit && ((zReal*zReal - zComplex*zComplex) < 4); k++) {
 					double zPrevReal = zReal;
 					zReal = zReal * zReal - zComplex * zComplex + zLowerReal;
 					zComplex = 2 * zPrevReal * zComplex + zLowerComplex;
 				}
 
-				if (distance(zReal,zComplex) <= TaskMandelbrotSet.MANDELBROT_LIMIT) {
+				if ((zReal*zReal - zComplex*zComplex) < 4) {
 
 					values[i][j] = this.iterLimit;
 				} else {
@@ -91,7 +91,7 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 	 * @param zComplex	The Complex Z coordinate
 	 * @return The distance between the two coordinates
 	 */
-	private double distance(double zReal, double zComplex){
-		return Math.sqrt(zReal * zReal + zComplex * zComplex);
-	}
+//	private double distance(double zReal, double zComplex){
+//		return Math.sqrt(zReal * zReal + zComplex * zComplex);
+//	}
 }
