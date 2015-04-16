@@ -8,16 +8,31 @@ import api.Task;
 
 public class TaskTsp implements Task<List<Integer>>
 {	
+	/** The first city for this partial task. */
 	private int firstCity;
+	
+	/** The partial list of cities that are to be permuted (excluding the first city). */
 	private List<Integer> partialCityList;
+	
+	/** An array containing the computed values for the distances between all cities. */
 	private double[][] distances;
 
+	/*
+	 * @param firstCity The first city for this partial task.
+	 * @param partialCityList The partial list of cities that are to be permuted (excluding the first city).
+	 * @param distances An array containing the computed values for the distances between all cities.
+	 */
 	public TaskTsp(int firstCity, List<Integer> partialCityList, double[][] distances){
 		this.firstCity = firstCity;
 		this.partialCityList = partialCityList;
 		this.distances = distances;
 	}
 
+	/**
+	 * Finds the shortest tour by permuting the partial city list and comparing the tour distances. Slightly modified version of the code from HW1 by P. Cappello.
+	 * @return Returns the shortest tour for the partial list of cities starting from {@link #firstCity}.
+	 * @author Peter Cappello
+	 */
 	@Override
 	public List<Integer> call() 
 	{
@@ -48,7 +63,10 @@ public class TaskTsp implements Task<List<Integer>>
 	public String getId() {
 		return firstCity+"";
 	}
-
+	
+    /**
+     * @author Peter Cappello
+     */
 	private double tourDistance( final List<Integer> tour  )
 	{
 		double cost = distances[ tour.get( tour.size() - 1 ) ][ tour.get( 0 ) ];
