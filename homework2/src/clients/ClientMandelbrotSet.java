@@ -20,11 +20,11 @@ public class ClientMandelbrotSet extends Client<Integer[][]>
 	private static final long serialVersionUID = 6880792391195873610L;
 	
 	/* Variables for homework1 */
-//	private static final double LOWER_LEFT_X_HW1 = -2.0;
-//    private static final double LOWER_LEFT_Y_HW1 = -2.0;
-//    private static final double EDGE_LENGTH_HW1 = 4.0;
-//    private static final int N_PIXELS_HW1 = 256;
-//    private static final int ITERATION_LIMIT_HW1 = 64;
+//	private static final double LOWER_LEFT_X_HW2 = -2.0;
+//    private static final double LOWER_LEFT_Y_HW2 = -2.0;
+//    private static final double EDGE_LENGTH_HW2 = 4.0;
+//    private static final int N_PIXELS_HW2 = 256;
+//    private static final int ITERATION_LIMIT_HW2 = 64;
     
     /* Variables for homework2 */
 	/** X-coordinate of lower left corner of a square in the complex plane */
@@ -45,10 +45,7 @@ public class ClientMandelbrotSet extends Client<Integer[][]>
     { 	
     	super( "Mandelbrot Set Visualizer", args,
                 new MandelbrotJob( LOWER_LEFT_X_HW2, LOWER_LEFT_Y_HW2, EDGE_LENGTH_HW2, N_PIXELS_HW2, 
-                                                        ITERATION_LIMIT_HW2) ); 
-//        super( "Mandelbrot Set Visualizer", args,
-//               new TaskMandelbrotSet( LOWER_LEFT_X_HW1, LOWER_LEFT_Y_HW1, EDGE_LENGTH_HW1, N_PIXELS_HW1, 
-//                                                       ITERATION_LIMIT_HW1) ); 
+                                                        ITERATION_LIMIT_HW2) );  
     }
     /**
      * Run a Mandebrot Set visualizer Client
