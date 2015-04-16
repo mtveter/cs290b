@@ -30,6 +30,7 @@ public class TspJob implements Job{
 
 	@Override
 	public void generateTasks(Space space) throws RemoteException {
+		jobStartTime = System.currentTimeMillis();
 		partialTasks = new ArrayList<Task>();
         partialCityList = initialTour();
         for (int city : partialCityList){
@@ -41,15 +42,21 @@ public class TspJob implements Job{
         
         space.putAll(partialTasks);
 	}
+	
+	private long totalTaskTime, jobStartTime, totalJobTime;
+	private int numOfTasks;
 
 	@Override
 	public void collectResults(Space space) throws RemoteException {
 		List<List<Integer>> partialResults = new ArrayList<List<Integer>>(Collections.nCopies(cities.length, null));
-		for (int i=0; i<partialTasks.size(); i++){
+		numOfTasks = partialTasks.size();
+		for (int i=0; i<numOfTasks; i++){
 			Result<List<Integer>> r = space.take();
 			int id = Integer.parseInt(r.getId());
 			List<Integer> partialCityList = r.getTaskReturnValue();
 			System.out.println("Partial Result (ID: "+id+"): "+partialCityList);
+			System.out.println("Task Run Time: "+r.getTaskRunTime());
+			totalTaskTime += r.getTaskRunTime();
 			partialResults.set(id, partialCityList);
 		}
 		
@@ -70,10 +77,19 @@ public class TspJob implements Job{
                 shortestTourDistance = tourDistance;
             }
         }
+        
+        totalJobTime = System.currentTimeMillis() - jobStartTime;
 	}
 
 	@Override
 	public Object getAllResults() {
+		System.out.println("\nTimes:");
+		System.out.println("Total Task Time:\t\t" + totalTaskTime + " ms");
+		System.out.println("Avg. Task Time:\t\t\t" + totalTaskTime / numOfTasks + " ms");
+		System.out.println("Total Job Time:\t\t\t" + totalJobTime + " ms");
+		System.out.println("Avg. Job Time (per Task):\t" + totalJobTime / numOfTasks + " ms");
+		System.out.println();
+		
 		System.out.println("Shortest tour: "+shortestTour);
 		System.out.println("Distance: "+shortestTourDistance);
 		return shortestTour;

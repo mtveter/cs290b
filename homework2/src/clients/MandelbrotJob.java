@@ -154,14 +154,10 @@ public class MandelbrotJob implements Job {
 					+ (r.getTaskRunTime()) + " ms");
 			computerTotalTime += (r.getTaskRunTime());
 		}
-		System.out
-				.println("\n\nClient Total time : " + clientTotalTime + " ms");
-		System.out.println("Client Average time : "
-				+ ((0.0f + clientTotalTime) / (numOfTasks + 0.0f)) + " ms");
-		System.out.println("\n\nComputer Total time : " + computerTotalTime
-				+ " ms");
-		System.out.println("Computer Average time : "
-				+ ((0.0f + computerTotalTime) / (numOfTasks + 0.0f)) + " ms");
+		System.out.println("\n\nClient Total time : " + clientTotalTime + " ms");
+		System.out.println("Client Average time : " + ((0.0f + clientTotalTime) / (numOfTasks + 0.0f)) + " ms");
+		System.out.println("\n\nComputer Total time : " + computerTotalTime + " ms");
+		System.out.println("Computer Average time : " + ((0.0f + computerTotalTime) / (numOfTasks + 0.0f)) + " ms");
 
 	}
 

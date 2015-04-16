@@ -28,6 +28,7 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
 	private static final int NUM_PIXALS = 600;
     private static final double[][] CITIES = 
     {
+    	// 12 cities
     	{ 1, 1 },
     	{ 8, 1 },
     	{ 8, 8 },
@@ -40,6 +41,8 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
     	{ 6, 3 },
     	{ 6, 6 },
     	{ 3, 6 }
+    	
+    	// 10 cities
     	/*{ 6, 3 },
         { 2, 2 },
         { 5, 8 },
