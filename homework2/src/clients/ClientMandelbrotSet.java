@@ -49,8 +49,8 @@ public class ClientMandelbrotSet extends Client<Integer[][]>
     }
     /**
      * Run a Mandebrot Set visualizer Client
-     * @param args 
-     * @throws RemoteException If there is a connection eror  
+     * @param args 				IP domain of Space, default is 'localhost'
+     * @throws RemoteException If there is a connection error  
      */
     public static void main( String[] args ) throws Exception
     {  

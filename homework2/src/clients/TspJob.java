@@ -151,7 +151,7 @@ public class TspJob implements Job{
 
 	/**
 	 * 
-	 * @param tour
+	 * @param tour The tour of cities
 	 * @return Total distance of tour
 	 * @author Peter Cappello
 	 */

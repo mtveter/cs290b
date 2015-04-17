@@ -31,8 +31,8 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 	 * @param edgeLength	The edge length of a square in the complex plane, whose sides are parallel to the axes
 	 * @param n			An integer such that the square region of the complex plane is subdivided into n X n squares,
 	 *  each of which is visualized by 1 pixel
-	 * @param iterLimit	The representative point of a region that is considered to be in the Mandelbrot set 
-	 * @param taskIdentifier A unique task identifier for this task
+	 * @param iterLimit	The representative point of a region that is considered to be in the Mandelbrot set
+	 * @param id ID of Task 
 	 */
 	public TaskMandelbrotSet(double lowerX, double lowerY, double edgeLength, int n, int iterLimit, String id) {
 		this.lowerX = lowerX;

@@ -157,6 +157,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 	/**
 	 * Main method for creating Space
 	 * @param args Not needed
+	 * @throws RemoteException If there is a connection error
 	 */
 	public static void main(String[] args) throws RemoteException {
 		 // Construct and set a security manager
