@@ -16,7 +16,7 @@ public final class TaskMandelbrotSet implements Task<int[][]>, Serializable {
 	private double lowerY;
 	/** The representative point of a region that is considered to be in the Mandelbrot set */
 	private int iterLimit;
-	private static final double MANDELBROT_LIMIT = 2.0;
+	private static final double MANDELBROT_LIMIT = 4.0;
 	/** Identifier of MandelbrotSet task */
 	private String id;
 	/** An integer such that the square region of the complex plane is subdivided into n X n squares,
