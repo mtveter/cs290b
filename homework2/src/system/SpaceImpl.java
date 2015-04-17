@@ -45,7 +45,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 				e.printStackTrace();
 			}
 		}
-		System.out.println("SPACE: List of tasks is now put");
+//		System.out.println("SPACE: List of tasks is now put");
 	}
 	/**
 	 * {@inheritDoc}
@@ -101,7 +101,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 			Task<?> task = null;
 			try {
 				task = receivedTasks.take();
-				System.out.println("SPACE: Task is taken");
+//				System.out.println("SPACE: Task is taken");
 				ComputerProxy proxy = new ComputerProxy(task);
 				proxy.run();
 			} catch (InterruptedException e) {
@@ -131,13 +131,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 		 */
 		@Override
 		public void run() {
-			System.out.println("SPACE: Proxy is running");
+//			System.out.println("SPACE: Proxy is running");
 			// Takes task in head of queue, allocates it to a computer, and execute operation
 			try {
 				Computer computer = registeredComputers.take();
-				System.out.println("SPACE: Computer is taken");
+//				System.out.println("SPACE: Computer is taken");
 				Result<?> result = (Result<?>) computer.execute(task);
-				System.out.println("SPACE: Result is received from Computer");
+//				System.out.println("SPACE: Result is received from Computer");
 				receivedResults.put(result);
 				registeredComputers.put(computer);
 
