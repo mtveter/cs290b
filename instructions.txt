@@ -1,5 +1,3 @@
-# cs290b
-
 How to change to java 8:
 
 in terminal:
@@ -11,6 +9,8 @@ this file should contain the following two lines:
   
 to apply the changes from .profile: 
   source ~/.profile
+
+For each terminal, you'll need to run the command above
 
 to check:
   java -version
