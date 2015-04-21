@@ -1,5 +1,5 @@
 package api;
 
-public interface Task {
+public interface Task<T> {
 
 }
