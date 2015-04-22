@@ -43,7 +43,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 		// TODO Auto-generated method stub
 		
 	}
-	
 	/**
 	 * Main method for creating a Computer
 	 * @param args IP-address of remote server, 'localhost' is default if no argument is passed
