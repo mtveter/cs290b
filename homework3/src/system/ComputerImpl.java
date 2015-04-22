@@ -23,7 +23,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Result divide(Task<?> task) throws RemoteException {
+	public Result<?> divide(Task<?> task) throws RemoteException {
 		long taskStartTime = System.currentTimeMillis();
 		Object taskReturnValue = task.divide();
 		long taskEndTime = System.currentTimeMillis();

@@ -26,14 +26,25 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		super();
 		this.isActive = false;
 	}
-
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void putAll(List<Task<?>> taskList) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+		// TODO Need to be fixed to work with HW3?
+		System.out.println("SPACE: List of tasks received from Job");
+		for(Task<?> task :  taskList) {
+			try {
+				receivedTasks.put(task);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+//		System.out.println("SPACE: List of tasks is now put");
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Result<?> take() throws RemoteException {
 		try {
@@ -62,10 +73,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		System.exit(0);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void register(Computer computer) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+		registeredComputers.add(computer);
 	}
 	
 	/**
@@ -92,13 +105,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// Let thread sleep for 500ms
-//			try {
-//				Thread.sleep(SpaceImpl.SLEEP_INTERVAL);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 		}
 	}
 	/**
