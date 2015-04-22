@@ -21,9 +21,7 @@ import tasks.TaskTsp;
  */
 public class ClientEuclideanTsp extends Client<List<Integer>>
 {
-    /**
-	 * 
-	 */
+    /** Generated Serial ID  */
 	private static final long serialVersionUID = 2126088283156584907L;
 	private static final int NUM_PIXALS = 600;
     private static final double[][] CITIES = 
