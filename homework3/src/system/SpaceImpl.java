@@ -10,13 +10,13 @@ import api.Task;
 public class SpaceImpl implements Space {
 
 	@Override
-	public void putAll(List<Task> taskList) throws RemoteException {
+	public void putAll(List<Task<?>> taskList) throws RemoteException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public Result take() throws RemoteException {
+	public Result<?> take() throws RemoteException {
 		// TODO Auto-generated method stub
 		return null;
 	}

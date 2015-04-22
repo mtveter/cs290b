@@ -13,8 +13,6 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import tasks.TaskTsp;
-
 /**
  *
  * @author Peter Cappello

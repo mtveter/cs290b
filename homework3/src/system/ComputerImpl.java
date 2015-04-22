@@ -24,16 +24,24 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 	 */
 	@Override
 	public Result divide(Task<?> task) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+		long taskStartTime = System.currentTimeMillis();
+		Object taskReturnValue = task.divide();
+		long taskEndTime = System.currentTimeMillis();
+		long taskRunTime = taskEndTime - taskStartTime;
+		Result<?> result = new Result(taskReturnValue, taskRunTime, task.getId());
+		return result;
 	}
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Result conquer(Task<?> task) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+	public Result<?> conquer(Task<?> task) throws RemoteException {
+		long taskStartTime = System.currentTimeMillis();
+		Object taskReturnValue = task.conquer();
+		long taskEndTime = System.currentTimeMillis();
+		long taskRunTime = taskEndTime - taskStartTime;
+		Result<?> result = new Result(taskReturnValue, taskRunTime, task.getId());
+		return result;
 	}
 	/**
 	 * {@inheritDoc}

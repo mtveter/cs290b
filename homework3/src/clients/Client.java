@@ -1,6 +1,5 @@
 package clients;
 import api.Space;
-import api.Task;
 import system.SpaceImpl;
 
 import java.awt.BorderLayout;

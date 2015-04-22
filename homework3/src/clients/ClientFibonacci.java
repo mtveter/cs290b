@@ -3,7 +3,6 @@ package clients;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.List;
 
 public class ClientFibonacci extends Client<Integer> {
 

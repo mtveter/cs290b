@@ -12,13 +12,13 @@ public interface Computer extends Remote {
 	 * @return 		A type V
 	 * @throws 		RemoteException if there is a communication error
 	 */
-	public Result divide(Task<?> task) throws RemoteException;
+	public Result<?> divide(Task<?> task) throws RemoteException;
 	/**
 	 * @param	task {@link Task}Task to be conquered
 	 * @return 		A type V
 	 * @throws 		RemoteException if there is a communication error
 	 */
-	public Result conquer(Task<?> task) throws RemoteException;
+	public Result<?> conquer(Task<?> task) throws RemoteException;
 	
 	/**
 	 * Terminate program
