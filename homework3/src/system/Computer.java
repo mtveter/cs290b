@@ -20,6 +20,8 @@ public interface Computer extends Remote {
 	 */
 	public Result<?> conquer(Task<?> task) throws RemoteException;
 	
+	public Result<?> execute(Task<?> task) throws RemoteException;
+	
 	/**
 	 * Terminate program
 	 * @throws RemoteException If there is a communication error
