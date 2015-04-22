@@ -16,7 +16,7 @@ public interface Space extends Remote
 
     void putAll ( List<Task> taskList ) throws RemoteException;
 
-    Result take() throws RemoteException;
+    Result<?> take() throws RemoteException;
 
     void exit() throws RemoteException;
     
