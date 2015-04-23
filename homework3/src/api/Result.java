@@ -17,11 +17,16 @@ public class Result<T> implements Serializable
 	private final T taskReturnValue;
     private final long taskRunTime;
     private final String id;
-    
+    private Status status;
     private List<Closure> childClosures = new ArrayList<>();
+    
+    public enum Status{
+    	WAITING, COMPLETED;
+    }
 
     public Result( T taskReturnValue, long taskRunTime, String id)
     {
+    	this.status = Status.COMPLETED;
         assert taskReturnValue != null;
         assert taskRunTime >= 0;
         this.taskReturnValue = taskReturnValue;
@@ -30,14 +35,14 @@ public class Result<T> implements Serializable
         this.childClosures = null;
     }
     
-    public Result( T taskReturnValue, long taskRunTime, String id, List<Closure> childClosures)
+    public Result(long taskRunTime, String id, List<Closure> childClosures)
     {
-        assert taskReturnValue != null;
+    	this.status = Status.WAITING;
         assert taskRunTime >= 0;
-        this.taskReturnValue = taskReturnValue;
         this.taskRunTime = taskRunTime;
         this.id = id;
         this.childClosures = childClosures;
+        this.taskReturnValue = null;
     }
     
 
@@ -47,6 +52,13 @@ public class Result<T> implements Serializable
     
     public String getId() {
     	return this.id;
+    }
+    
+    public Status getStatus() {
+    	return this.status;
+    }
+    public List<Closure> getChildClosures() {
+    	return this.childClosures;
     }
     
     @Override

@@ -38,14 +38,14 @@ public class TaskFibonacci implements Task<Integer>, Serializable{
 			List<Closure> childClosures = new ArrayList<Closure>();
 			TaskFibonacci subTask1 = new TaskFibonacci(n-1);
 			TaskFibonacci subTask2 = new TaskFibonacci(n-2);
-			Closure closure1 = new Closure(2, this.n, this.id, subTask1);
-			Closure closure2 = new Closure(2, this.n, this.id, subTask2);
+			Closure closure1 = new Closure(2, this.n-1, this.id, subTask1);
+			Closure closure2 = new Closure(2, this.n-2, this.id, subTask2);
 			
 			childClosures.add(closure1);
 			childClosures.add(closure2);
 			long taskEndTime = System.currentTimeMillis();
 			long taskRunTime = taskEndTime - taskStartTime;
-			result = new Result(taskReturnValue, taskRunTime, this.getId(), childClosures);
+			result = new Result(taskRunTime, this.getId(), childClosures);
 
 		}
 		return result;

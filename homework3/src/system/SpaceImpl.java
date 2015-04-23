@@ -9,6 +9,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import api.Result;
+import api.Result.Status;
 import api.Space;
 import api.Task;
 
@@ -19,6 +20,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
 	private BlockingQueue<Task> receivedTasks = new LinkedBlockingQueue<Task>();
 	private BlockingQueue<Result> receivedResults = new LinkedBlockingQueue<Result>();
+	private BlockingQueue<Closure> receivedClosures = new LinkedBlockingQueue<Closure>();
 
 	
 	
@@ -130,6 +132,20 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				Result<?> result = (Result<?>) computer.execute(task);
 //				System.out.println("SPACE: Result is received from Computer");
 				receivedResults.put(result);
+				if(result.getStatus().equals(Status.WAITING)) {
+					List<Closure> closures = result.getChildClosures();
+					// Add Closures from
+					for (Closure closure : closures) {
+						receivedClosures.put(closure);
+						receivedTasks.put(closure.getTask());
+					}
+				}
+				else if(result.getStatus().equals(Status.COMPLETED)) {
+					System.out.println("Result is of type n=0 og n = 1");
+				}
+				else {
+					System.out.println("Result received dit not have a valid Status");
+				}
 				registeredComputers.put(computer);
 
 			} catch (RemoteException e) {
