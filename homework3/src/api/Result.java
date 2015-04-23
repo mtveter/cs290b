@@ -1,5 +1,9 @@
 package api;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import system.Closure;
 
 /**
  *
@@ -13,6 +17,8 @@ public class Result<T> implements Serializable
 	private final T taskReturnValue;
     private final long taskRunTime;
     private final String id;
+    
+    private List<Closure> childClosures = new ArrayList<>();
 
     public Result( T taskReturnValue, long taskRunTime, String id)
     {
@@ -21,7 +27,19 @@ public class Result<T> implements Serializable
         this.taskReturnValue = taskReturnValue;
         this.taskRunTime = taskRunTime;
         this.id = id;
+        this.childClosures = null;
     }
+    
+    public Result( T taskReturnValue, long taskRunTime, String id, List<Closure> childClosures)
+    {
+        assert taskReturnValue != null;
+        assert taskRunTime >= 0;
+        this.taskReturnValue = taskReturnValue;
+        this.taskRunTime = taskRunTime;
+        this.id = id;
+        this.childClosures = childClosures;
+    }
+    
 
     public T getTaskReturnValue() { return taskReturnValue; }
 

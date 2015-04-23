@@ -8,20 +8,11 @@ import api.Task;
 
 public interface Computer extends Remote {
 	/**
-	 * @param	task {@link Task}Task to be divide
+	 * @param	task {@link Task}Task to be executed
 	 * @return 		A type V
 	 * @throws 		RemoteException if there is a communication error
 	 */
-	public Result<?> divide(Task<?> task) throws RemoteException;
-	/**
-	 * @param	task {@link Task}Task to be conquered
-	 * @return 		A type V
-	 * @throws 		RemoteException if there is a communication error
-	 */
-	public Result<?> conquer(Task<?> task) throws RemoteException;
-	
 	public Result<?> execute(Task<?> task) throws RemoteException;
-	
 	/**
 	 * Terminate program
 	 * @throws RemoteException If there is a communication error

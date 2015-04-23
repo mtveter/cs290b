@@ -5,6 +5,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import system.Closure;
+import api.Result;
 import api.Task;
 
 public class TaskFibonacci implements Task<Integer>, Serializable{
@@ -21,27 +23,32 @@ public class TaskFibonacci implements Task<Integer>, Serializable{
 	}
 
 	@Override
-	public Integer divide() throws RemoteException {
+	public Result<?> call() throws RemoteException {
+		long taskStartTime = System.currentTimeMillis();
 		// TODO Auto-generated method stub
-		Integer T = null;
+		Result<?> result = null;
 		if (n < 2 && n >=0 ) {
-			T = n;
-			return T;
+			int taskReturnValue = n;
+			long taskEndTime = System.currentTimeMillis();
+			long taskRunTime = taskEndTime - taskStartTime;
+			result = new Result(taskReturnValue, taskRunTime, this.getId());
+			return result;
 		}
 		else if(n > 2){
-			List<Task<Integer>> subTaskList = new ArrayList<Task<Integer>>();
+			List<Closure> childClosures = new ArrayList<Closure>();
 			TaskFibonacci subTask1 = new TaskFibonacci(n-1);
 			TaskFibonacci subTask2 = new TaskFibonacci(n-2);
-			subTaskList.add(subTask1);
-			subTaskList.add(subTask2);
-		}
-		return T;
-	}
+			Closure closure1 = new Closure(2, this.n, this.id, subTask1);
+			Closure closure2 = new Closure(2, this.n, this.id, subTask2);
+			
+			childClosures.add(closure1);
+			childClosures.add(closure2);
+			long taskEndTime = System.currentTimeMillis();
+			long taskRunTime = taskEndTime - taskStartTime;
+			result = new Result(taskReturnValue, taskRunTime, this.getId(), childClosures);
 
-	@Override
-	public Integer conquer() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+		}
+		return result;
 	}
 
 	@Override
