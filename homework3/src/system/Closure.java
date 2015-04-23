@@ -2,6 +2,7 @@ package system;
 
 import java.io.Serializable;
 
+import api.Result;
 import api.Task;
 
 public class Closure implements Runnable, Serializable{
@@ -41,7 +42,8 @@ public class Closure implements Runnable, Serializable{
 	public int getN() {
 		return this.n;
 	}
-	public void recieveResult(int i){
+	public void recieveResult(Result<?> r){
+		int i= (int) r.getTaskReturnValue();
 		if(joinCounter>0){
 			joinCounter--;
 			adder.addResult(i);

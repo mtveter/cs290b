@@ -67,7 +67,7 @@ public class Result<T> implements Serializable
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append( getClass() );
         stringBuilder.append( "\n\tExecution time:\n\t" ).append( taskRunTime );
-        stringBuilder.append( "\n\tReturn value:\n\t" ).append( taskReturnValue.toString() );
+        //stringBuilder.append( "\n\tReturn value:\n\t" ).append( taskReturnValue.toString() );
         return stringBuilder.toString();
     }
 }

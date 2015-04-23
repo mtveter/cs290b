@@ -21,7 +21,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	private BlockingQueue<Task> receivedTasks = new LinkedBlockingQueue<Task>();
 	private BlockingQueue<Result> receivedResults = new LinkedBlockingQueue<Result>();
 	private BlockingQueue<Closure> receivedClosures = new LinkedBlockingQueue<Closure>();
-	private BlockingQueue<Result> comletedResults = new LinkedBlockingQueue<Result>();
+	private BlockingQueue<Integer> comletedResults = new LinkedBlockingQueue<Integer>();
 
 	
 	
@@ -49,7 +49,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Result<?> takeCompleted() throws RemoteException {
+	public Integer takeCompleted() throws RemoteException {
 		try {
 			return comletedResults.take();
 		} catch (InterruptedException e) {
@@ -159,7 +159,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					for(Closure c: receivedClosures){
 					if(c.getTask().equals(result.getId())){
 						
-						//closure needs to take in result
+						c.recieveResult(result);
 					}
 					}
 				}
