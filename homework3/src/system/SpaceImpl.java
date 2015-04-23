@@ -21,6 +21,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	private BlockingQueue<Task> receivedTasks = new LinkedBlockingQueue<Task>();
 	private BlockingQueue<Result> receivedResults = new LinkedBlockingQueue<Result>();
 	private BlockingQueue<Closure> receivedClosures = new LinkedBlockingQueue<Closure>();
+	private BlockingQueue<Result> comletedResults = new LinkedBlockingQueue<Result>();
 
 	
 	
@@ -48,6 +49,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Result<?> takeCompleted() throws RemoteException {
+		try {
+			return comletedResults.take();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	public Result<?> take() throws RemoteException {
 		try {
 			return receivedResults.take();
@@ -99,6 +108,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		while(isActive) {
 			Task<?> task = null;
 			try {
+				
 				task = receivedTasks.take();
 //				System.out.println("SPACE: Task is taken");
 				ComputerProxy proxy = new ComputerProxy(task);
@@ -126,12 +136,15 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 //			System.out.println("SPACE: Proxy is running");
 			// Takes task in head of queue, allocates it to a computer, and execute operation
 			try {
+				
 				Computer computer = registeredComputers.take();
-//				System.out.println("SPACE: Computer is taken");
+				System.out.println("SPACE: Computer is taken");
 				
 				Result<?> result = (Result<?>) computer.execute(task);
 //				System.out.println("SPACE: Result is received from Computer");
-				receivedResults.put(result);
+				
+				System.out.println("this is result: "+result.toString());
+				//receivedResults.put(result);
 				if(result.getStatus().equals(Status.WAITING)) {
 					List<Closure> closures = result.getChildClosures();
 					// Add Closures from
@@ -142,6 +155,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				}
 				else if(result.getStatus().equals(Status.COMPLETED)) {
 					System.out.println("Result is of type n=0 og n = 1");
+					//return to parent closure
+					for(Closure c: receivedClosures){
+					if(c.getTask().equals(result.getId())){
+						
+						//closure needs to take in result
+					}
+					}
 				}
 				else {
 					System.out.println("Result received dit not have a valid Status");

@@ -18,8 +18,9 @@ public class TaskFibonacci implements Task<Integer>, Serializable{
 	/** */
 	private int n;
 
-	public TaskFibonacci(int n) {
+	public TaskFibonacci(int n,String id) {
 		this.n = n;
+		this.id = id;
 	}
 
 	@Override
@@ -27,17 +28,20 @@ public class TaskFibonacci implements Task<Integer>, Serializable{
 		long taskStartTime = System.currentTimeMillis();
 		// TODO Auto-generated method stub
 		Result<?> result = null;
+		System.out.println("running call");
 		if (n < 2 && n >=0 ) {
+			System.out.println("less than 2");
 			int taskReturnValue = n;
 			long taskEndTime = System.currentTimeMillis();
 			long taskRunTime = taskEndTime - taskStartTime;
 			result = new Result(taskReturnValue, taskRunTime, this.getId());
 			return result;
 		}
-		else if(n > 2){
+		else if(n >= 2){
 			List<Closure> childClosures = new ArrayList<Closure>();
-			TaskFibonacci subTask1 = new TaskFibonacci(n-1);
-			TaskFibonacci subTask2 = new TaskFibonacci(n-2);
+			TaskFibonacci subTask1 = new TaskFibonacci(n-1,this.id+n);
+			TaskFibonacci subTask2 = new TaskFibonacci(n-2,this.id+n);
+			
 			Closure closure1 = new Closure(2, this.n-1, this.id, subTask1);
 			Closure closure2 = new Closure(2, this.n-2, this.id, subTask2);
 			
@@ -54,5 +58,8 @@ public class TaskFibonacci implements Task<Integer>, Serializable{
 	@Override
 	public String getId() {
 		return this.id;
+	}
+	public String toString(){
+		return "fibonachi";
 	}
 }

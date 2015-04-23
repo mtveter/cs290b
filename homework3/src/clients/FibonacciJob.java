@@ -30,7 +30,7 @@ public class FibonacciJob implements Job {
 	@Override
 	public void generateTasks(Space space) throws RemoteException {
 		List<Task<?>> taskList = new ArrayList<Task<?>>();
-		Task<Integer> taskFibo = new TaskFibonacci(this.n);
+		Task<Integer> taskFibo = new TaskFibonacci(this.n, ""+n);
 		taskList.add(taskFibo);
 		this.jobStartTime = System.currentTimeMillis();
 		space.putAll(taskList);
@@ -40,7 +40,7 @@ public class FibonacciJob implements Job {
 	 */
 	@Override
 	public Integer collectResults(Space space) throws RemoteException {
-		Result<?> result = (Result<?>) space.take();
+		Result<?> result = (Result<?>) space.takeCompleted();
 		this.finalValue = (int) result.getTaskReturnValue();
 		System.out.println("Elapsed Time=" + (System.currentTimeMillis() - jobStartTime));
 		return finalValue;
