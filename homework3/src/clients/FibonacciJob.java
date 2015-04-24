@@ -15,6 +15,7 @@ import api.Task;
  */
 public class FibonacciJob implements Job {
 	
+	/** The N'th fibonacci number*/
 	private int n;
 	/**	Start time of job in milliseconds */
 	private long jobStartTime;
@@ -25,7 +26,7 @@ public class FibonacciJob implements Job {
 		this.n = n;
 	}
 	/**
-	 * {@inheritDoc}
+	 * @see clients.Job Job
 	 */
 	@Override
 	public void generateTasks(Space space) throws RemoteException {
@@ -36,12 +37,11 @@ public class FibonacciJob implements Job {
 		space.putAll(taskList);
 	}
 	/**
-	 * {@inheritDoc}
+	 * @see clients.Job Job
 	 */
 	@Override
 	public Integer collectResults(Space space) throws RemoteException {
-		
-		this.finalValue = (int) space.takeCompleted().getTaskReturnValue();
+		this.finalValue = (int) space.take().getTaskReturnValue();
 		System.out.println("Elapsed Time=" + (System.currentTimeMillis() - jobStartTime));
 		return finalValue;
 	}
