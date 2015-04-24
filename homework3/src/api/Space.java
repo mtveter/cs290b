@@ -18,7 +18,7 @@ public interface Space extends Remote
 
     Result<?> take() throws RemoteException;
     
-    Integer takeCompleted() throws RemoteException;
+    Result<?> takeCompleted() throws RemoteException;
 
     void exit() throws RemoteException;
     

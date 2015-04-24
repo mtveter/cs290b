@@ -11,7 +11,6 @@ public class Closure implements Runnable, Serializable{
 	private String parentId;
 	private Task<?> task;
 	private ResultAdder adder;
-	private boolean notCompleted;
 	
 	public Closure(int joinCounter, int n, String parentId, Task<?> task) {
 		this.joinCounter = joinCounter;
@@ -23,7 +22,6 @@ public class Closure implements Runnable, Serializable{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		
 		
 	}
 	
@@ -42,27 +40,22 @@ public class Closure implements Runnable, Serializable{
 	public int getN() {
 		return this.n;
 	}
-	public void recieveResult(Result<?> r){
-		int i= (int) r.getTaskReturnValue();
-		if(joinCounter>0){
+	public void receiveResult(Result<?> r){
+		System.out.println("closure recieve Result");
+		if(joinCounter > 0){
 			joinCounter--;
-			adder.addResult(i);
-			if(joinCounter==0){
-				//get final result from ResultAdder and return to parent
-				if(adder.getResult()!=0){
-					notCompleted=false;
-				}
-			}
-			
-		}
-		
-		
+			adder.addResult(r);
+		}	
 	}
-	@Override
-	public boolean equals(Object o){
-		Closure c = (Closure)o;
-		return this.getTask().getId().equals(c.getTask().getId());
-		
+	public ResultAdder getAdder(){
+		return this.adder;
+	}
+	
+	public boolean isCompleted() {
+		if(joinCounter == 0) {
+			return true;
+		}
+		return false;
 	}
 	
 }
