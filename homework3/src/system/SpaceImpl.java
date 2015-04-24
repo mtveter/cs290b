@@ -19,13 +19,15 @@ import system.Closure;
 
 public class SpaceImpl extends UnicastRemoteObject implements Space {
 
+	/** Generated serial identifier	 */
+	private static final long serialVersionUID = 1L;
+
 	private boolean isActive;
 
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
-	private BlockingQueue<Task> receivedTasks = new LinkedBlockingQueue<Task>();
-	private BlockingQueue<Result> receivedResults = new LinkedBlockingQueue<Result>();
+	private BlockingQueue<Task<?>> receivedTasks = new LinkedBlockingQueue<Task<?>>();
 	private List<Closure> receivedClosures = new ArrayList<Closure>();
-	private BlockingQueue<Result> completedResult = new LinkedBlockingQueue<Result>();
+	private BlockingQueue<Result<?>> completedResult = new LinkedBlockingQueue<Result<?>>();
 
 
 
@@ -38,7 +40,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 */
 	@Override
 	public void putAll(List<Task<?>> taskList) throws RemoteException {
-		// TODO Need to be fixed to work with HW3?
 		System.out.println("SPACE: List of tasks received from Job");
 		for(Task<?> task :  taskList) {
 			try {
@@ -56,17 +57,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Result<?> takeCompleted() throws RemoteException {
-		try {
-			return completedResult.take();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 	public Result<?> take() throws RemoteException {
 		try {
-			return receivedResults.take();
+			return completedResult.take();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

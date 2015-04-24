@@ -41,7 +41,7 @@ public class FibonacciJob implements Job {
 	@Override
 	public Integer collectResults(Space space) throws RemoteException {
 		
-		this.finalValue = (int) space.takeCompleted().getTaskReturnValue();
+		this.finalValue = (int) space.take().getTaskReturnValue();
 		System.out.println("Elapsed Time=" + (System.currentTimeMillis() - jobStartTime));
 		return finalValue;
 	}
