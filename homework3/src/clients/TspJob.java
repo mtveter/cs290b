@@ -14,7 +14,7 @@ public class TspJob implements Job {
 		// TODO Auto-generated constructor stub
 	}
 	/**
-	 * {@inheritDoc}
+	 * @see clients.Job Job
 	 */
 	@Override
 	public void generateTasks(Space space) throws RemoteException {
@@ -22,7 +22,7 @@ public class TspJob implements Job {
 		
 	}
 	/**
-	 * {@inheritDoc}
+	 * @see clients.Job Job
 	 */
 	@Override
 	public Object collectResults(Space space) throws RemoteException {
