@@ -6,6 +6,8 @@ import api.Result;
 import api.Task;
 
 public class Closure implements Runnable, Serializable{
+	/** Generated serial identifier */
+	private static final long serialVersionUID = 1L;
 	private int joinCounter;
 	private int n;
 	private String parentId;

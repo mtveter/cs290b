@@ -14,7 +14,6 @@ public interface Task<T> extends Serializable{
 	public <V> V call() throws RemoteException;
 	/**
 	 * @return 					Identifier of Task
-	 * @throws RemoteException 	Communication-related exception that may occur during the execution of a remote method call
 	 */
-	public String getId() throws RemoteException ; 
+	public String getId(); 
 }
