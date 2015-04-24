@@ -36,7 +36,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		this.isActive = false;
 	}
 	/**
-	 * {@inheritDoc}
+	 * @see api.Space Space
 	 */
 	@Override
 	public void putAll(List<Task<?>> taskList) throws RemoteException {
@@ -54,7 +54,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		//		System.out.println("SPACE: List of tasks is now put");
 	}
 	/**
-	 * {@inheritDoc}
+	 * @see api.Space Space
 	 */
 	@Override
 	public Result<?> take() throws RemoteException {
@@ -66,7 +66,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		return null;
 	}
 	/**
-	 * {@inheritDoc}
+	 * @see api.Space Space
 	 */
 	@Override
 	public void exit() throws RemoteException {
@@ -83,15 +83,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		// Exit space server
 		System.exit(0);
 	}
-
 	/**
-	 * {@inheritDoc}
+	 * @see api.Space Space
 	 */
 	@Override
 	public void register(Computer computer) throws RemoteException {
 		registeredComputers.add(computer);
 	}
-
 	/**
 	 * Checks if space is running
 	 * @return True if space is running, false if not
@@ -106,60 +104,26 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
-			
-			System.out.println("----RUNING COMPOSER---");
+			// Check if there are any Closure objects to process
 			if(!receivedClosures.isEmpty()) {
-				boolean removeListIsEmpty = false;
-				while(!removeListIsEmpty) {
-					Iterator<Closure> iter = receivedClosures.iterator();
-					List<Closure> removeList = new ArrayList<Closure>();
-					while(iter.hasNext()){
-		//					System.out.println("Taking a closure");
-						Closure c = iter.next();
-		
-						if(c.isCompleted()){
-							System.out.println(c.getTask().getId() + ": is completed and ready to be merged");
-							String parent = c.getParentId();
-							for (Closure c2 : receivedClosures){
-								
-								if(!c.getTask().equals(c2.getTask().getId())){
-									if(parent.equals(c2.getTask().getId())){
-										c2.receiveResult(c.getAdder().getResult());
-										System.out.println("ID: " + c2.getTask().getId() + " Received result from ID: " + c2.getTask().getId());
-										removeList.add(c);
-									}
-								}
-							}
-						}
-					}
-					for(Closure c : removeList){
-						receivedClosures.remove(c);
-					}
-					if(removeList.size() == 0){
-						removeListIsEmpty = true;
-					}
-				}
 				
+				// If there exits a Closure it tries to merge completed Closure with parent Closure
+				mergeCompletedClosures();
 				
-				if(receivedClosures.size() > 0 && receivedClosures.get(0).getParentId().equals("TOP")){
-					System.out.println("First closure is top");
-					if(receivedClosures.get(0).isCompleted()){
-						try {
-							System.out.println("Added final result to results ");
-							completedResult.put(receivedClosures.get(0).getAdder().getResult());
-							receivedClosures.remove(0);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+				// If the Top Closure is completed the final result can be put in the blocking queue to be collected by Client
+				if(isTopClosureCompleted()) {
+					try {
+						System.out.println("Added final result to results ");
+						completedResult.put(receivedClosures.get(0).getAdder().getResult());
+						receivedClosures.remove(0);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-					
 				}
 			}
-			
-			
+			// For Debug purpose
 			printClosures();
-			
 			
 			Task<?> task = null;
 			try {
@@ -171,13 +135,65 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-//			System.out.println("closure list size"+receivedClosures.size());
-//			if(receivedClosures.size()==14){
-//				printClosures();
-//			}
-
 		}
+	}
+	/**
+	 * Takes completed Closure objects and merges them upward in hierarchy
+	 */
+	private void mergeCompletedClosures() {
+		System.out.println("----RUNING COMPOSER---");
+
+		boolean removeListIsEmpty = false;
+		while(!removeListIsEmpty) {
+			Iterator<Closure> iter = receivedClosures.iterator();
+			List<Closure> removeList = new ArrayList<Closure>();
+			// Iterates over all Closure objects
+			while(iter.hasNext()){
+//				System.out.println("Taking a closure");
+				Closure c = iter.next();
+				
+				// Check if current Closure is completed
+				if(c.isCompleted()){
+					System.out.println(c.getTask().getId() + ": is completed and ready to be merged");
+					String parent = c.getParentId();
+					// Compares the current Closure with other Closure to find parent
+					for (Closure c2 : receivedClosures){
+						// Closure cannot pass its result to itself
+						if(!c.getTask().equals(c2.getTask().getId())){
+							// Check if current Closure's parent is the Closure in current comparison iteration
+							if(parent.equals(c2.getTask().getId())){
+								// Passes result of completed Closure to parent Closure
+								c2.receiveResult(c.getAdder().getResult());
+								System.out.println("ID: " + c2.getTask().getId() + " Received result from ID: " + c2.getTask().getId());
+			
+								removeList.add(c);
+							}
+						}
+					}
+				}
+			}
+			// Removes all Closure objects that are passed to parent, from Space's list 
+			for(Closure c : removeList){
+				receivedClosures.remove(c);
+			}
+			// If there are no more completed Closure objects to process --> break the while loop
+			if(removeList.size() == 0){
+				removeListIsEmpty = true;
+			}
+		}
+	}
+	/**
+	 * Indicates whether the Top Closure is completed or not
+	 * @return Returns true if the top Closure of the hierarchy is completed
+	 */
+	private boolean isTopClosureCompleted() {
+		if(receivedClosures.get(0).getParentId().equals("TOP")){
+			System.out.println("First closure is top");
+			if(receivedClosures.get(0).isCompleted()){
+				return true;
+			}
+		}
+		return false;
 	}
 	/**
 	 * Thread that allocate tasks to computers and execute computation
@@ -194,7 +210,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		@Override
 		public void run() {
 			System.out.println("SPACE: Proxy is running");
-			// Takes task in the head of queue, allocates it to a computer, and executes the operation on the task
+			// Takes Task in the head of queue, allocates it to a computer, and executes the operation on the task
 			try {
 
 				Computer computer = registeredComputers.take();
@@ -221,16 +237,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						if(c.getTask().equals(result.getId())){
 							c.receiveResult(result);
 						}
-					}
-					// Delete the closure for cases where n=0 and n=1 which are completed
-//					Iterator<Closure> iter = receivedClosures.iterator();
-//					while(iter.hasNext()){
-//						Closure c = iter.next();
-//						if(c.isCompleted() && (c.getTask().getId().equals(result.getId()))) {
-//							iter.remove();
-//						}
-//					}
-					
+					}					
 				}
 				else {
 					System.out.println("Result received did not have a valid Status");
@@ -274,8 +281,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		space.runComputerProxy();
 	}
 
+	/**
+	 * Print method to print all Closure object with their current join counter
+	 */
 	public void printClosures(){
-
 		System.out.println();
 		for(Closure c: receivedClosures){
 			
@@ -284,5 +293,4 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		}
 		System.out.println();
 	}
-
 }

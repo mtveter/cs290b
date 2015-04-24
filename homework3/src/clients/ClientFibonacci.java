@@ -10,7 +10,7 @@ public class ClientFibonacci extends Client<Integer> {
 	private static final long serialVersionUID = 1L;
 	/** The N'th fibonacci number*/
 //	public static final int N = 16;
-	public static final int N = 10;
+	public static final int N = 8;
 	/** Join Counter of the Closure used for FibonacciJob */
 	public static final int joinCounter = 2;
 

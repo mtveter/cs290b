@@ -20,7 +20,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 		// TODO Auto-generated constructor stub
 	}
 	/**
-	 * {@inheritDoc}
+	 * @see system.Computer Computer
 	 */
 	@Override
 	public Result<?> execute(Task<?> task) throws RemoteException {
@@ -32,12 +32,11 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 		return result;
 	}
 	/**
-	 * {@inheritDoc}
+	 * @see system.Computer Computer
 	 */
 	@Override
 	public void exit() throws RemoteException {
-		// TODO Auto-generated method stub
-		
+		System.exit(0);
 	}
 	/**
 	 * Main method for creating a Computer

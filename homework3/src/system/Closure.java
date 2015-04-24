@@ -5,13 +5,18 @@ import java.io.Serializable;
 import api.Result;
 import api.Task;
 
-public class Closure implements Runnable, Serializable{
+public class Closure implements Serializable{
 	/** Generated serial identifier */
 	private static final long serialVersionUID = 1L;
+	/**  */
 	private int joinCounter;
+	/** The N'th fibonacci number*/
 	private int n;
+	/** Identifier of Closure that is parent in recursion tree */
 	private String parentId;
+	/** Task with 1-to-1 relationship with Closure*/
 	private Task<?> task;
+	/** ResultAdder with 1-to-1 relationship with Closure*/
 	private ResultAdder adder;
 	
 	public Closure(int joinCounter, int n, String parentId, Task<?> task) {
@@ -19,12 +24,6 @@ public class Closure implements Runnable, Serializable{
 		this.parentId = parentId;
 		this.task = task;
 		this.adder= new ResultAdder(joinCounter);
-	}
-	
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	public Task<?> getTask() {
@@ -42,9 +41,15 @@ public class Closure implements Runnable, Serializable{
 	public int getN() {
 		return this.n;
 	}
+	/**
+	 * Receives a Result and passes it to its ResultAdder
+	 * @param r	Result to be processed by Closure
+	 */
 	public void receiveResult(Result<?> r){
 		System.out.println(this.getTask().getId() + ": Closure recieved Result");
+		// JoinCounter cannot be less than 0
 		if(joinCounter > 0){
+			// Passes result to ResultAdder and decrements joinCounter
 			System.out.println(this.getTask().getId() + ": Result is being added to adder and joinCounter decremented");
 			adder.addResult(r);
 			joinCounter--;
@@ -53,12 +58,14 @@ public class Closure implements Runnable, Serializable{
 	public ResultAdder getAdder(){
 		return this.adder;
 	}
-	
+	/**
+	 * Indicates if Closure has received all arguments from children
+	 * @return True it is completed, false if not
+	 */
 	public boolean isCompleted() {
 		if(joinCounter == 0) {
 			return true;
 		}
 		return false;
 	}
-	
 }
