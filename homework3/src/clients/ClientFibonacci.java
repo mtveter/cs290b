@@ -9,7 +9,9 @@ public class ClientFibonacci extends Client<Integer> {
 	/** Generated Serial ID */
 	private static final long serialVersionUID = 1L;
 	
-	private static final int N = 16;
+//	public static final int N = 16;
+	public static final int N = 10;
+	public static final int joinCounter = 2;
 
 	public ClientFibonacci(String domainName)
 			throws RemoteException, NotBoundException, MalformedURLException {
