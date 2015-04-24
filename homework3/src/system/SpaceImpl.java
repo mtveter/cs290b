@@ -44,6 +44,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			try {
 				// Generate closure for initial task
 				Closure initialClosure = new Closure(ClientFibonacci.joinCounter, ClientFibonacci.N, "TOP", task);
+				receivedClosures.add(initialClosure);
 				receivedTasks.put(task);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -113,40 +114,53 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		// Thread runs as long as Space is active
 		while(isActive) {
 			
-			//List<Closure> remove
-			Iterator<Closure> i=receivedClosures.iterator();
-			while(i.hasNext()){
-			Closure c= i.next();
-
-				if(c.isCompleted()){
-					
-					String parent = c.getParentId();
-					for (Closure c2 : receivedClosures){
-						
-						if(!c.getTask().equals(c2.getTask().getId())){
-							if(parent == c2.getParentId()){
-								c2.receiveResult(c.getAdder().getResult());
-								i.remove();							
+			System.out.println("----RUNING COMPOSER---");
+			if(!receivedClosures.isEmpty()) {
+				Iterator<Closure> iter = receivedClosures.iterator();
+				List<Closure> removeList = new ArrayList<Closure>();
+				while(iter.hasNext()){
+//					System.out.println("Taking a closure");
+					Closure c = iter.next();
+	
+					if(c.isCompleted()){
+						System.out.println(c.getTask().getId() + ": is completed and ready to be merged");
+						String parent = c.getParentId();
+						for (Closure c2 : receivedClosures){
+							
+							if(!c.getTask().equals(c2.getTask().getId())){
+								if(parent.equals(c2.getTask().getId())){
+									c2.receiveResult(c.getAdder().getResult());
+									System.out.println("ID: " + c2.getTask().getId() + " Received result from ID: " + c2.getTask().getId());
+									removeList.add(c);
+								}
 							}
 						}
 					}
 				}
-			}
-			
-			if(receivedClosures.size()>0 && receivedClosures.get(0).getParentId().equals("TOP")){
-				System.out.println("First closure is top");
-				if(receivedClosures.get(0).isCompleted()){
-					try {
-						System.out.println("Added to results ");
-						completedResult.put(receivedClosures.get(0).getAdder().getResult());
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				
+				for(Closure c : removeList){
+					receivedClosures.remove(c);
 				}
 				
+				if(receivedClosures.size() > 0 && receivedClosures.get(0).getParentId().equals("TOP")){
+					System.out.println("First closure is top");
+					if(receivedClosures.get(0).isCompleted()){
+						try {
+							System.out.println("Added final result to results ");
+							completedResult.put(receivedClosures.get(0).getAdder().getResult());
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					
+				}
 			}
-
+			
+			
+			printClosures();
+			
+			
 			Task<?> task = null;
 			try {
 				task = receivedTasks.take();
@@ -158,10 +172,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				e.printStackTrace();
 			}
 
-			System.out.println("closure list size"+receivedClosures.size());
-			if(receivedClosures.size()==14){
-				printClosures();
-			}
+//			System.out.println("closure list size"+receivedClosures.size());
+//			if(receivedClosures.size()==14){
+//				printClosures();
+//			}
 
 		}
 	}
@@ -180,7 +194,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		@Override
 		public void run() {
 			System.out.println("SPACE: Proxy is running");
-			// Takes task in head of queue, allocates it to a computer, and execute operation
+			// Takes task in the head of queue, allocates it to a computer, and executes the operation on the task
 			try {
 
 				Computer computer = registeredComputers.take();
@@ -200,18 +214,26 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					}
 				}
 				else if(result.getStatus().equals(Status.COMPLETED)) {
-					System.out.println("Result is of type n=0 og n = 1");
-					//return to parent closure
-					for(Closure c: receivedClosures){
-						System.out.println("task id "+c.getTask().getId()+"  restult id  "+result.getId());
+					System.out.println("Result is of type n=0 og n=1");
+					// return to parent closure
+					for(Closure c : receivedClosures){
+//						System.out.println("task id "+c.getTask().getId()+"  result id  "+result.getId());
 						if(c.getTask().equals(result.getId())){
-
 							c.receiveResult(result);
 						}
 					}
+					// Delete the closure for cases where n=0 and n=1 which are completed
+//					Iterator<Closure> iter = receivedClosures.iterator();
+//					while(iter.hasNext()){
+//						Closure c = iter.next();
+//						if(c.isCompleted() && (c.getTask().getId().equals(result.getId()))) {
+//							iter.remove();
+//						}
+//					}
+					
 				}
 				else {
-					System.out.println("Result received dit not have a valid Status");
+					System.out.println("Result received did not have a valid Status");
 				}
 				registeredComputers.put(computer);
 
@@ -248,7 +270,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 		// Print acknowledgement
 		System.out.println("Computer Space: Ready. on port " + Space.PORT);
-
+		
 		space.runComputerProxy();
 	}
 
@@ -256,9 +278,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 		System.out.println();
 		for(Closure c: receivedClosures){
-			System.out.print(c.getTask().getId()+"   ");
+			
+			System.out.print(c.getTask().getId()+ ": " + c.getJoinCounter() + " // ");
 			//System.out.println("Closure "+c.getParentId());
 		}
+		System.out.println();
 	}
 
 }

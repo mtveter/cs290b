@@ -41,10 +41,11 @@ public class Closure implements Runnable, Serializable{
 		return this.n;
 	}
 	public void receiveResult(Result<?> r){
-		System.out.println("closure recieve Result");
+		System.out.println(this.getTask().getId() + ": Closure recieved Result");
 		if(joinCounter > 0){
-			joinCounter--;
+			System.out.println(this.getTask().getId() + ": Result is being added to adder and joinCounter decremented");
 			adder.addResult(r);
+			joinCounter--;
 		}	
 	}
 	public ResultAdder getAdder(){

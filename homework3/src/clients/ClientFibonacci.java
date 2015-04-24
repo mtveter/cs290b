@@ -10,7 +10,7 @@ public class ClientFibonacci extends Client<Integer> {
 	private static final long serialVersionUID = 1L;
 	
 	//private static final int N =16;
-	public static final int N = 5;
+	public static final int N = 4;
 	public static final int joinCounter = 2;
 
 	public ClientFibonacci(String domainName)

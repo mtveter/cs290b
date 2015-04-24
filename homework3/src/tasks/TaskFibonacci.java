@@ -30,20 +30,33 @@ public class TaskFibonacci implements Task<Integer>, Serializable{
 		Result<?> result = null;
 		System.out.println("running call");
 		if (n < 2 && n >=0 ) {
-			System.out.println("less than 2");
+			System.out.println("N = " + n);
 			int taskReturnValue = n;
 			long taskEndTime = System.currentTimeMillis();
 			long taskRunTime = taskEndTime - taskStartTime;
 			result = new Result(taskReturnValue, taskRunTime, this.getId());
 			return result;
 		}
-		else if(n >= 2){
+		else if(n >=2 ){
+			System.out.println("N = " + n);
 			List<Closure> childClosures = new ArrayList<Closure>();
 			TaskFibonacci subTask1 = new TaskFibonacci(n-1,this.id+(n-1));
 			TaskFibonacci subTask2 = new TaskFibonacci(n-2,this.id+(n-2));
+			Closure closure1 = null;
+			Closure closure2 = null;
 			
-			Closure closure1 = new Closure(2, this.n-1, this.id, subTask1);
-			Closure closure2 = new Closure(2, this.n-2, this.id, subTask2);
+			if( n > 3) {
+				closure1 = new Closure(2, this.n-1, this.id, subTask1);
+				closure2 = new Closure(2, this.n-2, this.id, subTask2);
+			}
+			else if(n == 3) {
+				closure1 = new Closure(2, this.n-1, this.id, subTask1);
+				closure2 = new Closure(1, this.n-2, this.id, subTask2);
+			}
+			else if(n == 2) {
+				closure1 = new Closure(1, this.n-1, this.id, subTask1);
+				closure2 = new Closure(1, this.n-2, this.id, subTask2);
+			}
 			
 			childClosures.add(closure1);
 			childClosures.add(closure2);
