@@ -116,31 +116,37 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			
 			System.out.println("----RUNING COMPOSER---");
 			if(!receivedClosures.isEmpty()) {
-				Iterator<Closure> iter = receivedClosures.iterator();
-				List<Closure> removeList = new ArrayList<Closure>();
-				while(iter.hasNext()){
-//					System.out.println("Taking a closure");
-					Closure c = iter.next();
-	
-					if(c.isCompleted()){
-						System.out.println(c.getTask().getId() + ": is completed and ready to be merged");
-						String parent = c.getParentId();
-						for (Closure c2 : receivedClosures){
-							
-							if(!c.getTask().equals(c2.getTask().getId())){
-								if(parent.equals(c2.getTask().getId())){
-									c2.receiveResult(c.getAdder().getResult());
-									System.out.println("ID: " + c2.getTask().getId() + " Received result from ID: " + c2.getTask().getId());
-									removeList.add(c);
+				boolean removeListIsEmpty = false;
+				while(!removeListIsEmpty) {
+					Iterator<Closure> iter = receivedClosures.iterator();
+					List<Closure> removeList = new ArrayList<Closure>();
+					while(iter.hasNext()){
+		//					System.out.println("Taking a closure");
+						Closure c = iter.next();
+		
+						if(c.isCompleted()){
+							System.out.println(c.getTask().getId() + ": is completed and ready to be merged");
+							String parent = c.getParentId();
+							for (Closure c2 : receivedClosures){
+								
+								if(!c.getTask().equals(c2.getTask().getId())){
+									if(parent.equals(c2.getTask().getId())){
+										c2.receiveResult(c.getAdder().getResult());
+										System.out.println("ID: " + c2.getTask().getId() + " Received result from ID: " + c2.getTask().getId());
+										removeList.add(c);
+									}
 								}
 							}
 						}
 					}
+					for(Closure c : removeList){
+						receivedClosures.remove(c);
+					}
+					if(removeList.size() == 0){
+						removeListIsEmpty = true;
+					}
 				}
 				
-				for(Closure c : removeList){
-					receivedClosures.remove(c);
-				}
 				
 				if(receivedClosures.size() > 0 && receivedClosures.get(0).getParentId().equals("TOP")){
 					System.out.println("First closure is top");
@@ -148,6 +154,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						try {
 							System.out.println("Added final result to results ");
 							completedResult.put(receivedClosures.get(0).getAdder().getResult());
+							receivedClosures.remove(0);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
