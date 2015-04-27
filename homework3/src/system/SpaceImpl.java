@@ -113,7 +113,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				// If the Top Closure is completed the final result can be put in the blocking queue to be collected by Client
 				if(isTopClosureCompleted()) {
 					try {
-						System.out.println("Added final result to results ");
+//						System.out.println("Added final result to results ");
 						completedResult.put(receivedClosures.get(0).getAdder().getResult());
 						receivedClosures.remove(0);
 					} catch (InterruptedException e) {
@@ -123,12 +123,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				}
 			}
 			// For Debug purpose
-			printClosures();
+//			printClosures();
 			
 			Task<?> task = null;
 			try {
 				task = receivedTasks.take();
-				System.out.println("SPACE: Task is taken");
+//				System.out.println("SPACE: Task is taken");
 				ComputerProxy proxy = new ComputerProxy(task);
 				proxy.run();
 			} catch (InterruptedException e) {
@@ -141,7 +141,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 * Takes completed Closure objects and merges them upward in hierarchy
 	 */
 	private void mergeCompletedClosures() {
-		System.out.println("----RUNING COMPOSER---");
+//		System.out.println("----RUNING COMPOSER---");
 
 		boolean removeListIsEmpty = false;
 		while(!removeListIsEmpty) {
@@ -154,7 +154,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				
 				// Check if current Closure is completed
 				if(c.isCompleted()){
-					System.out.println(c.getTask().getId() + ": is completed and ready to be merged");
+//					System.out.println(c.getTask().getId() + ": is completed and ready to be merged");
 					String parent = c.getParentId();
 					// Compares the current Closure with other Closure to find parent
 					for (Closure c2 : receivedClosures){
@@ -164,7 +164,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 							if(parent.equals(c2.getTask().getId())){
 								// Passes result of completed Closure to parent Closure
 								c2.receiveResult(c.getAdder().getResult());
-								System.out.println("ID: " + c2.getTask().getId() + " Received result from ID: " + c2.getTask().getId());
+//								System.out.println("ID: " + c2.getTask().getId() + " Received result from ID: " + c2.getTask().getId());
 			
 								removeList.add(c);
 							}
@@ -188,7 +188,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 */
 	private boolean isTopClosureCompleted() {
 		if(receivedClosures.get(0).getParentId().equals("TOP")){
-			System.out.println("First closure is top");
+//			System.out.println("First closure is top");
 			if(receivedClosures.get(0).isCompleted()){
 				return true;
 			}
@@ -209,17 +209,23 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		 */
 		@Override
 		public void run() {
-			System.out.println("SPACE: Proxy is running");
+//			System.out.println("SPACE: Proxy is running");
 			// Takes Task in the head of queue, allocates it to a computer, and executes the operation on the task
+			
+
+//			System.out.println("SPACE: Computer is taken");
+			Computer computer = null;
 			try {
-
-				Computer computer = registeredComputers.take();
-				System.out.println("SPACE: Computer is taken");
-
+				computer = registeredComputers.take();
+			} catch (InterruptedException e2) {
+				e2.printStackTrace();
+			}
+			try {
+//				System.out.println("SPACE: Computer is taken");
 				Result<?> result = (Result<?>) computer.execute(task);
-				System.out.println("SPACE: Result is received from Computer");
+//				System.out.println("SPACE: Result is received from Computer");
 
-				System.out.println("this is result: "+result.toString());
+//				System.out.println("this is result: "+result.toString());
 				//receivedResults.put(result);
 				if(result.getStatus().equals(Status.WAITING)) {
 					List<Closure> closures = result.getChildClosures();
@@ -230,7 +236,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					}
 				}
 				else if(result.getStatus().equals(Status.COMPLETED)) {
-					System.out.println("Result is of type n=0 og n=1");
+//					System.out.println("Result is of type n=0 og n=1");
 					// return to parent closure
 					for(Closure c : receivedClosures){
 //						System.out.println("task id "+c.getTask().getId()+"  result id  "+result.getId());
@@ -251,7 +257,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
-				e.printStackTrace();
+				System.out.println("There was a remote exception: A computer might have been terminated");
+				// Unregister the faulty computer from list of available computers in Space
+				if(!computer.equals(null)) {
+					registeredComputers.remove(computer);
+				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

@@ -46,11 +46,11 @@ public class Closure implements Serializable{
 	 * @param r	Result to be processed by Closure
 	 */
 	public void receiveResult(Result<?> r){
-		System.out.println(this.getTask().getId() + ": Closure recieved Result");
+//		System.out.println(this.getTask().getId() + ": Closure recieved Result");
 		// JoinCounter cannot be less than 0
 		if(joinCounter > 0){
 			// Passes result to ResultAdder and decrements joinCounter
-			System.out.println(this.getTask().getId() + ": Result is being added to adder and joinCounter decremented");
+//			System.out.println(this.getTask().getId() + ": Result is being added to adder and joinCounter decremented");
 			adder.addResult(r);
 			joinCounter--;
 		}	
