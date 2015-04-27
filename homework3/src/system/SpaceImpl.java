@@ -258,7 +258,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					e1.printStackTrace();
 				}
 				System.out.println("There was a remote exception: A computer might have been terminated");
-				registeredComputers.remove(computer);
+				// Unregister the faulty computer from list of available computers in Space
+				if(!computer.equals(null)) {
+					registeredComputers.remove(computer);
+				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
