@@ -29,6 +29,7 @@ public final class TaskTsp implements Task<List<Integer>>{
 	 * @param firstCity The first city for this partial task.
 	 * @param partialCityList The partial list of cities that are to be permuted (excluding the first city).
 	 * @param distances An array containing the computed values for the distances between all cities.
+	 * @param id Identifier of Task
 	 */
 	public TaskTsp(int firstCity, List<Integer> partialCityList, double[][] distances,String id){
 		this.firstCity = firstCity;
@@ -37,12 +38,12 @@ public final class TaskTsp implements Task<List<Integer>>{
 	}
 
 	/**
+	 * {@inheritDoc}
 	 * Finds the shortest tour by permuting the partial city list and comparing the tour distances. Slightly modified version of the code from HW1 by P. Cappello.
 	 * @return Returns the shortest tour for the partial list of cities starting from {@link #firstCity}.
-	 * @author Peter Cappello
 	 */
 	@Override
-	public Result<?> call() 
+	public Result<?> call() throws RemoteException 
 	{
 		Result<?> result = null;
 		List<Closure> childClosures = new ArrayList<Closure>();
@@ -100,27 +101,9 @@ public final class TaskTsp implements Task<List<Integer>>{
 		}
 		return cost;
 	}
-/*
-	@Override
-	public Integer divide() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
-	public Integer conquer() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getId() {
-		return this.id;
-	}	*/
-
-	@Override
-	public api.Task.Type getType() {
-		// TODO Auto-generated method stub
+	public Type getType() {
 		return Type.TSP;
 	}
 	
