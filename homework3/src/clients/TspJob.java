@@ -2,6 +2,7 @@ package clients;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class TspJob implements Job {
 		Result<List<Integer>> r = (Result<List<Integer>>) space.take();
 		//get the result list 
 		
-		List<List<Integer>> partialResults = new ArrayList<List<Integer>>(Collections.nCopies(cities.length, null));
+		List<List<Integer>> partialResults = new ArrayList<List<Integer>>((Collection<? extends List<Integer>>) Collections.nCopies(cities.length, null));
 		
 		numOfTasks = partialTasks.size();
 		for (int i=0; i<numOfTasks; i++){
