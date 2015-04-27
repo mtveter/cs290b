@@ -17,6 +17,9 @@ import api.Task;
  */
 public class TspJob implements Job {
 
+	/** Result of computed job */
+	private List<Integer> finalValue;
+	
 	final private double[][] cities;
 	static private double[][] distances;
 
@@ -46,7 +49,9 @@ public class TspJob implements Job {
 		
 		jobStartTime = System.currentTimeMillis();
 		partialCityList = initialTour();
-		TaskTsp task = new TaskTsp(0, partialCityList, distances,""+0);
+		List<Integer> lockedCities = new ArrayList<Integer>();
+		lockedCities.add(0);
+		TaskTsp task = new TaskTsp(lockedCities, partialCityList, distances, ""+0);
 		List<Task<?>> tasklist = new ArrayList<Task<?>>();
 		tasklist.add(task);
 		space.putAll(tasklist);
@@ -57,53 +62,54 @@ public class TspJob implements Job {
 	 */
 	@Override
 	public List<Integer> collectResults(Space space) throws RemoteException {
-		
-		Result<List<Integer>> r = (Result<List<Integer>>) space.take();
-		//get the result list 
-		
-		List<List<Integer>> partialResults = new ArrayList<List<Integer>>((Collection<? extends List<Integer>>) Collections.nCopies(cities.length, null));
-		
-		numOfTasks = partialTasks.size();
-		for (int i=0; i<numOfTasks; i++){
-			Result<List<Integer>> r = (Result<List<Integer>>) space.take();
-			int id = Integer.parseInt(r.getId());
-			List<Integer> partialCityList = r.getTaskReturnValue();
-			System.out.println("Partial Result (ID: "+id+"): "+partialCityList);
-			System.out.println("Task Run Time: "+r.getTaskRunTime());
-			totalTaskTime += r.getTaskRunTime();
-			partialResults.set(id, partialCityList);
-		}
 
-		// Default shortest tour
-		shortestTour = new ArrayList<>( partialCityList );
-		shortestTour.add( 0, 0 );
-		shortestTourDistance = TspJob.tourDistance( shortestTour );
-
-		// Iterate through results and calculate the shortest tour
-		for (int i=1; i<partialResults.size(); i++){
-			List<Integer> tour = partialResults.get(i); 
-			tour.add(0, 0);
-			//tour.add(1, i);
-			double tourDistance = TspJob.tourDistance( tour );
-			if ( tourDistance < shortestTourDistance )
-			{
-				shortestTour = tour;
-				shortestTourDistance = tourDistance;
-			}
-		}
-
-		totalJobTime = System.currentTimeMillis() - jobStartTime;
+		this.finalValue = (List<Integer>) space.take().getTaskReturnValue();
+		System.out.println("Elapsed Time=" + (System.currentTimeMillis() - jobStartTime));
+		return finalValue; 
 		
-		System.out.println("\nTimes:");
-		System.out.println("Total Task Time:\t\t" + totalTaskTime + " ms");
-		System.out.println("Avg. Task Time:\t\t\t" + totalTaskTime / numOfTasks + " ms");
-		System.out.println("Total Job Time:\t\t\t" + totalJobTime + " ms");
-		System.out.println("Avg. Job Time (per Task):\t" + totalJobTime / numOfTasks + " ms");
-		System.out.println();
-
-		System.out.println("Shortest tour: "+shortestTour);
-		System.out.println("Distance: "+shortestTourDistance);
-		return shortestTour;
+//		List<List<Integer>> partialResults = new ArrayList<List<Integer>>((Collection<? extends List<Integer>>) Collections.nCopies(cities.length, null));
+//		
+//		numOfTasks = partialTasks.size();
+//		for (int i=0; i<numOfTasks; i++){
+//			Result<List<Integer>> r = (Result<List<Integer>>) space.take();
+//			int id = Integer.parseInt(r.getId());
+//			List<Integer> partialCityList = r.getTaskReturnValue();
+//			System.out.println("Partial Result (ID: "+id+"): "+partialCityList);
+//			System.out.println("Task Run Time: "+r.getTaskRunTime());
+//			totalTaskTime += r.getTaskRunTime();
+//			partialResults.set(id, partialCityList);
+//		}
+//
+//		// Default shortest tour
+//		shortestTour = new ArrayList<>( partialCityList );
+//		shortestTour.add( 0, 0 );
+//		shortestTourDistance = TspJob.tourDistance( shortestTour );
+//
+//		// Iterate through results and calculate the shortest tour
+//		for (int i=1; i<partialResults.size(); i++){
+//			List<Integer> tour = partialResults.get(i); 
+//			tour.add(0, 0);
+//			//tour.add(1, i);
+//			double tourDistance = TspJob.tourDistance( tour );
+//			if ( tourDistance < shortestTourDistance )
+//			{
+//				shortestTour = tour;
+//				shortestTourDistance = tourDistance;
+//			}
+//		}
+//
+//		totalJobTime = System.currentTimeMillis() - jobStartTime;
+//		
+//		System.out.println("\nTimes:");
+//		System.out.println("Total Task Time:\t\t" + totalTaskTime + " ms");
+//		System.out.println("Avg. Task Time:\t\t\t" + totalTaskTime / numOfTasks + " ms");
+//		System.out.println("Total Job Time:\t\t\t" + totalJobTime + " ms");
+//		System.out.println("Avg. Job Time (per Task):\t" + totalJobTime / numOfTasks + " ms");
+//		System.out.println();
+//
+//		System.out.println("Shortest tour: "+shortestTour);
+//		System.out.println("Distance: "+shortestTourDistance);
+//		return shortestTour;
 	}
 
 	/**

@@ -16,32 +16,32 @@ public final class TaskTsp implements Task<List<Integer>>{
 	/** Identifier of task */
 	private String id;
 	
-	/** The first city for this partial task. */
-	private int firstCity;
-	
 	/** The partial list of cities that are to be permuted (excluding the first city). */
 	private List<Integer> partialCityList;
 	
-	List<Integer> lockedCities;
+	private List<Integer> lockedCities;
 	
 	/** An array containing the computed values for the distances between all cities. */
 	private static double[][] distances;
+	/** The limit to size of partial cities to by subivided and executed by Computer*/
+	private static final int RECURSIONLIMIT = 8; 
 
-	/*
-	 * @param firstCity The first city for this partial task.
+	/**
+	 * @param lockedCity The first city for this partial task.
 	 * @param partialCityList The partial list of cities that are to be permuted (excluding the first city).
 	 * @param distances An array containing the computed values for the distances between all cities.
 	 * @param id Identifier of Task
 	 * @param lockedCities are the cities that have
 	 */
-	
-	
+
 	public TaskTsp(List<Integer>lockedCities, List<Integer> partialCityList, double[][] distances,String id){
-		//this.firstCity = firstCity;
+		this.lockedCities = lockedCities;
 		this.partialCityList = partialCityList;
 		this.distances = distances;
-		this.lockedCities= this.lockedCities;
+		this.lockedCities = lockedCities;
+		this.id = id;
 	}
+
 
 	/**
 	 * {@inheritDoc}
@@ -55,53 +55,72 @@ public final class TaskTsp implements Task<List<Integer>>{
 		List<Closure> childClosures = new ArrayList<Closure>();
 		long taskStartTime = System.currentTimeMillis();
 		
-		
-		//divide into subtasks
-		if(partialCityList.size()>8){
+		int n = partialCityList.size();
+		if(n == TaskTsp.RECURSIONLIMIT) {
+			//int firstCity  = partialCityList.remove(0);
+			int firstCity = lockedCities.get(lockedCities.size()-1);
+			List<Integer> shortestTour = new ArrayList<>( partialCityList );
+			shortestTour.add(0, firstCity);
+			double shortestTourDistance = tourDistance( shortestTour );
+
+			PermutationEnumerator<Integer> permutationEnumerator = new PermutationEnumerator<>( partialCityList );
+			for ( List<Integer> subtour = permutationEnumerator.next(); subtour != null; subtour = permutationEnumerator.next() ) 
+			{
+				List<Integer> tour = new ArrayList<>( subtour );
+				tour.add( 0, firstCity );
+				if ( tour.indexOf( 1 ) >  tour.indexOf( 2 ) )
+				{
+					continue; // skip tour; it is the reverse of another.
+				}
+				double tourDistance = tourDistance( tour );
+				if ( tourDistance < shortestTourDistance )
+				{
+					shortestTour = tour;
+					shortestTourDistance = tourDistance;
+				}
+			}
+			return new Result<>(shortestTour, shortestTourDistance, 0l, getId());
+		}
+		else if(n > TaskTsp.RECURSIONLIMIT) {
 			
-			
-			for (int city : partialCityList){
+			if(n > TaskTsp.RECURSIONLIMIT + 1) {
+				for (int city : partialCityList) {
+					
+					List<Integer> newLockedList = new ArrayList<>(lockedCities);					
+					List<Integer> subPartialCityList = new ArrayList<>(partialCityList);
+					
+					subPartialCityList.remove((Integer) city);
+					newLockedList.add((Integer)city);
+					
+					TaskTsp task = new TaskTsp(newLockedList, subPartialCityList, distances, this.id+city);
+					//partialTasks.add(task);
+					
+					Closure c = new Closure(subPartialCityList.size(), this.id, task);
+					childClosures.add(c);	
+				}
+			}
+			else if(n == TaskTsp.RECURSIONLIMIT + 1) {
+				int city = partialCityList.get(0);
+
+				List<Integer> newLockedList = new ArrayList<>(lockedCities);					
+				List<Integer> subPartialCityList = new ArrayList<>(partialCityList);
 				
-				List<Integer> subPartialCityList = new ArrayList<>();
-				subPartialCityList.addAll(partialCityList);
-				List<Integer> newLockedList=new ArrayList<>();
 				
-				newLockedList.addAll(lockedCities);
 				subPartialCityList.remove((Integer) city);
 				newLockedList.add((Integer)city);
 				
-				TaskTsp task = new TaskTsp(newLockedList, subPartialCityList, distances,this.id+firstCity);
-				//partialTasks.add(task);
+				TaskTsp task = new TaskTsp(newLockedList, subPartialCityList, distances, this.id+city);
 				
-				Closure c = new Closure(partialCityList.size()-1, task.id, task);
+				Closure c = new Closure(1, this.id, task);
 				childClosures.add(c);
-				
 			}
-			
-			result = new Result(childClosures,taskStartTime,this.id);
-			return result;
-			
+			else {}
+			long taskEndTime = System.currentTimeMillis();
+			long taskRunTime = taskEndTime - taskStartTime;
+			result = new Result(childClosures, taskRunTime, this.getId());
 		}
-		else{
-			
-			//Calculate the result
-			
-			List<Integer> tour = new ArrayList<>();
-			tour.addAll(lockedCities);
-						
-			
-			PermutationEnumerator<Integer> p = new PermutationEnumerator<Integer>(partialCityList);
-			
-			p.next();
-			
-			
-			result= new Result(tour, taskStartTime, this.id);			
-		
-			return result;
-		}
-			
-			
-		
+		else {}
+		return result;
 	}
 	
 	/**
@@ -138,7 +157,7 @@ public final class TaskTsp implements Task<List<Integer>>{
 
 	@Override
 	public String getId() {
-		return firstCity+"";
+		return this.id;
 	}
 	
   
