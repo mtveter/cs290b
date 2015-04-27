@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tasks.TaskFibonacci;
-import api.Result;
 import api.Space;
 import api.Task;
 
 
 /**
  * Implementation of {@link Job} interface for the Fibonacci recursion calculation
+ * @param <T> Generic type of Job
  */
-public class FibonacciJob implements Job {
+public class FibonacciJob<T> implements Job<T> {
 	
 	/** The N'th fibonacci number*/
 	private int n;

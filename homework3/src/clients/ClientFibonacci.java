@@ -16,7 +16,7 @@ public class ClientFibonacci extends Client<Integer> {
 
 	public ClientFibonacci(String domainName)
 			throws RemoteException, NotBoundException, MalformedURLException {
-		super("Fibonacci", domainName, new FibonacciJob(N));
+		super("Fibonacci", domainName, new FibonacciJob<Object>(N));
 		// TODO Auto-generated constructor stub
 	}
 	

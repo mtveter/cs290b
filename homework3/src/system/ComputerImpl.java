@@ -12,6 +12,8 @@ import api.Task;
 
 public class ComputerImpl extends UnicastRemoteObject implements Computer {
 
+	/** Generated serial ID	 */
+	private static final long serialVersionUID = -3092303569928556422L;
 	/**
 	 * @throws RemoteException If there is a connection error
 	 */
