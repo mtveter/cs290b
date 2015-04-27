@@ -109,8 +109,7 @@ public final class TaskFibonacci implements Task<Integer>, Serializable{
 		return false;
 	}
 	@Override
-	public api.Task.Type getType() {
-		// TODO Auto-generated method stub
+	public Type getType() {
 		return Type.FIB;
 	}
 }
