@@ -10,12 +10,15 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import clients.ClientEuclideanTsp;
 import clients.ClientFibonacci;
 import api.Result;
 import api.Result.Status;
 import api.Space;
 import api.Task;
+import api.Task.Type;
 import system.Closure;
+import tasks.TaskTsp;
 
 public class SpaceImpl extends UnicastRemoteObject implements Space {
 
@@ -43,10 +46,21 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		System.out.println("SPACE: List of tasks received from Job");
 		for(Task<?> task :  taskList) {
 			try {
+				
+				if(task.getType()==Type.FIB){
 				// Generate closure for initial task
 				Closure initialClosure = new Closure(ClientFibonacci.joinCounter, ClientFibonacci.N, "TOP", task);
 				receivedClosures.add(initialClosure);
-				receivedTasks.put(task);
+				receivedTasks.put(task);}
+				else if(task.getType()==Type.TSP){
+					//Joincounter, 
+					TaskTsp t= (TaskTsp) task;
+					Closure initialClosure = new Closure(t.getPartialCityList().size()-1,0,"TOP",task);
+					receivedClosures.add(initialClosure);
+					receivedTasks.put(task);}
+					
+					
+				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

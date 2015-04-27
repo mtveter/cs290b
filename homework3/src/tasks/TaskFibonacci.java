@@ -9,7 +9,7 @@ import system.Closure;
 import api.Result;
 import api.Task;
 
-public class TaskFibonacci implements Task<Integer>, Serializable{
+public final class TaskFibonacci implements Task<Integer>, Serializable{
 	
 	/** Generated serial ID */
 	private static final long serialVersionUID = 1L;
@@ -107,5 +107,10 @@ public class TaskFibonacci implements Task<Integer>, Serializable{
 			return true;
 		}
 		return false;
+	}
+	@Override
+	public api.Task.Type getType() {
+		// TODO Auto-generated method stub
+		return Type.FIB;
 	}
 }
