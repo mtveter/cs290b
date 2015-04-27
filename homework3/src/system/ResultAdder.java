@@ -30,7 +30,7 @@ public class ResultAdder implements Serializable {
 		
 		// Checks if all arguments(results) have been received
 		if(position == numbers.length){
-			System.out.println("in addResult");
+//			System.out.println("in addResult");
 			int tempresult = 0;
 			// Adds the partial results into a final result value
 			for(int i : numbers){
