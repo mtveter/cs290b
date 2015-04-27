@@ -61,7 +61,7 @@ public final class TaskTsp implements Task<List<Integer>>{
 				
 				
 				
-				Closure c = new Closure(partialCityList.size()-1, 0, task.id, task);
+				Closure c = new Closure(partialCityList.size()-1, task.id, task);
 				childClosures.add(c);
 			}
 			
