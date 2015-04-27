@@ -9,14 +9,14 @@ public class ClientFibonacci extends Client<Integer> {
 	/** Generated Serial ID */
 	private static final long serialVersionUID = 1L;
 	/** The N'th fibonacci number*/
-//	public static final int N = 16;
-	public static final int N = 8;
+	public static final int N = 16;
+//	public static final int N = 8;
 	/** Join Counter of the Closure used for FibonacciJob */
 	public static final int joinCounter = 2;
 
 	public ClientFibonacci(String domainName)
 			throws RemoteException, NotBoundException, MalformedURLException {
-		super("Fibonacci", domainName, new FibonacciJob<Object>(N));
+		super("Fibonacci", domainName, new FibonacciJob(N));
 		// TODO Auto-generated constructor stub
 	}
 	

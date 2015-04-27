@@ -53,7 +53,7 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
     
     public ClientEuclideanTsp(String args) throws RemoteException, NotBoundException, MalformedURLException
     { 
-        super( "Euclidean TSP", args, new TspJob<Object>( CITIES ) ); 
+        super( "Euclidean TSP", args, new TspJob( CITIES ) ); 
     }
     
     

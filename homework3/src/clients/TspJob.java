@@ -7,9 +7,8 @@ import api.Space;
 
 /**
  * Implementation of {@link Job} interface for the Euclidean TSP problem
- * @param <T> Generic type of Job
  */
-public class TspJob<T> implements Job<T> {
+public class TspJob implements Job {
 
 	public TspJob(double[][] cities) {
 		// TODO Auto-generated constructor stub

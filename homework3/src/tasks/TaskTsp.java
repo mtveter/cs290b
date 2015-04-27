@@ -12,21 +12,19 @@ public class TaskTsp implements Task<List<Integer>>{
 	/** Identifier of task */
 	private String id;
 
-	@Override
-	public Integer divide() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public Integer conquer() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public String getId() {
 		return this.id;
+	}
+
+
+
+	@Override
+	public <V> V call() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

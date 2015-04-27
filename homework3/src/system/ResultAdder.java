@@ -25,7 +25,7 @@ public class ResultAdder implements Serializable {
 	 * @param result Result of addition of arguments
 	 */
 	public void addResult(Result<?> result ){
-		numbers[position] = (int) result.getTaskReturnValue();
+		numbers[position] = (Integer) result.getTaskReturnValue();
 		position++;
 		
 		// Checks if all arguments(results) have been received

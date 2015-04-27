@@ -11,9 +11,8 @@ import api.Task;
 
 /**
  * Implementation of {@link Job} interface for the Fibonacci recursion calculation
- * @param <T> Generic type of Job
  */
-public class FibonacciJob<T> implements Job<T> {
+public class FibonacciJob implements Job {
 	
 	/** The N'th fibonacci number*/
 	private int n;
@@ -41,7 +40,7 @@ public class FibonacciJob<T> implements Job<T> {
 	 */
 	@Override
 	public Integer collectResults(Space space) throws RemoteException {
-		this.finalValue = (int) space.take().getTaskReturnValue();
+		this.finalValue = (Integer) space.take().getTaskReturnValue();
 		System.out.println("Elapsed Time=" + (System.currentTimeMillis() - jobStartTime));
 		return finalValue;
 	}
