@@ -1,29 +1,31 @@
 <html>
 <body>
 
-<h1> Readme </h1>
-<i> Instructions to compile and run your client and compute server </i><br><br>
+<h1> Readme - homework 3</h1>
+<i> Instructions to compile and run divide and conquer fibonacci and tsp </i><br><br>
 <a href=http://ant.apache.org/> Ant</a> is used to both run and compile the application.<br>
 
-<p><b> 1. Compiling: <br></b>
-Run the command "ant" to compile program<br>
-The application has five packages: 
+<p><b> 1. Compiling: </b>
+<br>Run the command <b>ant</b> to compile program
+<br>The application has five packages: 
 <br> - api 
 <br> - clients 
 <br> - system
 <br> - tasks
 <br> - util
 
-<b><p> 2. Running the code: <br></b>
-<br>Server(Space Implementation):
-<br>2.1 Start computer server by running the command <b>ant runSpace</b>
-<br>Computer:
-<br>2.2 Start computer server by running the command <b>ant runComputer -Darg0="[ip of server machine]"</b>
+<b><p> 2. Running the code: </b>
+<p>Space/server:
+<br>2.1 Start the space server by running the command <b>ant runSpace</b>
+<p>Computer(s):
+<br>2.2 Start computer server(s) by running the command <b>ant runComputer -Darg0="[ip of server machine]"</b>
 <p> Clients:
-<br>2.3 Fibonacci: Start a client by running the command: <b>ant runFibonacciClient -Darg0="[ip of server machine]"</b>
-<br>2.4 EuclideanTsp: To run the EuclideanTSP task, run: <b>ant runTspClient -Darg0="[ip of server machine]"</b>
+<br>2.3 Fibonacci: To run the Fibonacci task: <b>ant runFibonacciClient -Darg0="[ip of server machine]"</b>
+<br>2.4 Euclidean TSP: To run the Euclidean TSP task: <b>ant runTspClient -Darg0="[ip of server machine]"</b>
 
-<p>If no argument is passed with ant command to Clients for Fibonacci, EuclideanTSP or Computer, the program will use default value for server domain which is "localhost"</p>
+<p>If no argument is passed with ant command to Clients for FibonacciClient, EuclideanTSP or Computer, the program will use default value for server domain which is "localhost"</p>
+
+
 
 </body>
 </html>

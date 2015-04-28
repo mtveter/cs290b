@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="hw3" default="dist" basedir=".">
-    <description>Build xml for homework 2 - CS290B.</description>
+    <description>Build xml for homework 3 - CS290B.</description>
 	
      <!-- set global properties for this build -->
   <property name="src"   location="src" />
