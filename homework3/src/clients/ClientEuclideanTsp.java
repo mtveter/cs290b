@@ -37,18 +37,6 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
     	{ 6, 3 },
     	{ 6, 6 },
     	{ 3, 6 }
-    	
-    	// 10 cities
-    	/*{ 6, 3 },
-        { 2, 2 },
-        { 5, 8 },
-        { 1, 5 },
-        { 1, 6 },
-        { 2, 7 },
-        { 2, 8 },
-        { 6, 5 },
-        { 1, 3 },
-        { 6, 6 }*/
     };
     
     public ClientEuclideanTsp(String args) throws RemoteException, NotBoundException, MalformedURLException

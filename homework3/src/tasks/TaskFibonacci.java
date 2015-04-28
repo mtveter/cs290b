@@ -9,7 +9,7 @@ import system.Closure;
 import api.Result;
 import api.Task;
 
-public class TaskFibonacci implements Task<Integer>, Serializable{
+public final class TaskFibonacci implements Task<Integer>, Serializable{
 	
 	/** Generated serial ID */
 	private static final long serialVersionUID = 1L;
@@ -60,22 +60,22 @@ public class TaskFibonacci implements Task<Integer>, Serializable{
 				/* If n > 3, both Closure children is set with joinCounter=2
 				 * Since both Closure children will wait for 2 arguments
 				 */
-				closure1 = new Closure(2, this.n-1, this.id, subTask1);
-				closure2 = new Closure(2, this.n-2, this.id, subTask2);
+				closure1 = new Closure(2, this.id, subTask1);
+				closure2 = new Closure(2, this.id, subTask2);
 			}
 			else if(n == 3) {
 				/* If n == 3, 1 Closure child is set with joinCounter=2, and the other with joinCounter=1 
 				 * Since one child will wait for 2 arguments, while the other for only 1 argument
 				 */
-				closure1 = new Closure(2, this.n-1, this.id, subTask1);
-				closure2 = new Closure(1, this.n-2, this.id, subTask2);
+				closure1 = new Closure(2, this.id, subTask1);
+				closure2 = new Closure(1, this.id, subTask2);
 			}
 			else if(n == 2) {
 				/* If n == 2, both Closure children is set with joinCounter=1
 				 * Since both Closure children will wait for only 1 argument
 				 */
-				closure1 = new Closure(1, this.n-1, this.id, subTask1);
-				closure2 = new Closure(1, this.n-2, this.id, subTask2);
+				closure1 = new Closure(1, this.id, subTask1);
+				closure2 = new Closure(1, this.id, subTask2);
 			}
 			// Add Closure children to list and passes it to a new Result object to be returned
 			childClosures.add(closure1);
@@ -107,5 +107,9 @@ public class TaskFibonacci implements Task<Integer>, Serializable{
 			return true;
 		}
 		return false;
+	}
+	@Override
+	public Type getType() {
+		return Type.FIB;
 	}
 }
