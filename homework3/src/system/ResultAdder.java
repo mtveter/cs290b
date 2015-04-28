@@ -41,7 +41,7 @@ public class ResultAdder implements Serializable {
 				for(double i : numbers){
 					tempresult += i;
 				}
-				finalresult = new Result(tempresult, result.getTaskRunTime(), result.getId());
+				finalresult = new Result<>(tempresult, result.getTaskRunTime(), result.getId());
 			}
 		}
 		else {
@@ -57,11 +57,11 @@ public class ResultAdder implements Serializable {
 				// Adds the partial results into a final result value
 				for(int  i = 0; i < numbers.length; i++){
 					if(numbers[i] < tempResult) {
-						tempResult = i;
+						tempResult = numbers[i];
 						tempTour = tours.get(i);
 					}
 				}
-				finalresult = new Result(tempTour ,tempResult, result.getTaskRunTime(), result.getId());
+				finalresult = new Result<>(tempTour ,tempResult, result.getTaskRunTime(), result.getId());
 			}
 		}
 	}
