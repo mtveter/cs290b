@@ -27,7 +27,7 @@ public final class TaskTsp implements Task<List<Integer>>{
 	private static final int RECURSIONLIMIT = 8; 
 
 	/**
-	 * @param lockedCity The first city for this partial task.
+	 * @param lockedCities 	List of cities with a locke position in tour for this partial task.
 	 * @param partialCityList The partial list of cities that are to be permuted (excluding the first city).
 	 * @param distances An array containing the computed values for the distances between all cities.
 	 * @param id Identifier of Task
@@ -46,7 +46,7 @@ public final class TaskTsp implements Task<List<Integer>>{
 	/**
 	 * {@inheritDoc}
 	 * Finds the shortest tour by permuting the partial city list and comparing the tour distances. Slightly modified version of the code from HW1 by P. Cappello.
-	 * @return Returns the shortest tour for the partial list of cities starting from {@link #firstCity}.
+	 * @return Returns the shortest tour for the partial list of cities starting from first city reference.
 	 */
 	@Override
 	public Result<?> call() throws RemoteException 

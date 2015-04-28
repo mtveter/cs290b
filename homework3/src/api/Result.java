@@ -29,8 +29,7 @@ public class Result<T> implements Serializable
     	WAITING, COMPLETED;
     }
     /**
-     * Constructor used for result with a task value
-     * Can be used to return result of base cases of fibonacci(n=1 && n=0)
+     * Constructor used for result with a task value.Can be used to return result of base cases of fibonacci(n=1 and n=0)
      * @param taskReturnValue 	Return value of Result
      * @param taskRunTime		Time to execute task
      * @param id 				Identifier of Result
@@ -47,8 +46,7 @@ public class Result<T> implements Serializable
         this.taskReturnDistance = null;
     }
     /**
-     * Constructor used for result with a Tsp task default value
-     * Can be used to return result of base cases of fibonacci(n=1 && n=0)
+     * Constructor used for result with a Tsp task default value. Can be used to return result of base cases of fibonacci(n=1 and n=0)
      * @param taskReturnValue 	Return value of Result
      * @param taskReturnDistance Return value of distance of TSP tour
      * @param taskRunTime		Time to execute task
@@ -67,7 +65,7 @@ public class Result<T> implements Serializable
     }
     /**
      * Constructor used for result with a task value
-     * Can be used to return result of partial node cases of fibonacci(n>=2)
+     * Can be used to return result of partial node cases of fibonacci(n greater than 1)
      * @param childClosures	List of Closure objects that are child object of parent Closure
      * @param taskRunTime	Time to execute task
      * @param id			Identifier of Result
