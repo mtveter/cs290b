@@ -243,11 +243,15 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					}
 				}
 				else if(result.getStatus().equals(Status.COMPLETED)) {
-					System.out.println("Result is of type n=0 og n=1");
 					// return to parent closure
+					System.out.println("In complete");
 					for(Closure c : receivedClosures){
-//						System.out.println("task id "+c.getTask().getId()+"  result id  "+result.getId());
-						if(c.getTask().equals(result.getId())){
+						System.out.println("Result is of type n=0 og n=1");
+						System.out.println("Closure id "+c.getTask().getId());
+						System.out.println("Result id "+result.getId());
+						if(c.getTask().getId().equals(result.getId())){
+						
+							System.out.println("Task received at: "+c.getTask().getId()+ " : result id  "+result.getId());
 							c.receiveResult(result);
 						}
 					}					

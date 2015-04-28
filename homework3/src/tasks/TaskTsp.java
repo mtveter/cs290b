@@ -22,9 +22,9 @@ public final class TaskTsp implements Task<List<Integer>>{
 	private List<Integer> lockedCities;
 	
 	/** An array containing the computed values for the distances between all cities. */
-	private static double[][] distances;
+	private double[][] distances;
 	/** The limit to size of partial cities to by subivided and executed by Computer*/
-	private static final int RECURSIONLIMIT = 9; 
+	private static final int RECURSIONLIMIT = 10; 
 
 	/**
 	 * @param lockedCity The first city for this partial task.
@@ -58,16 +58,16 @@ public final class TaskTsp implements Task<List<Integer>>{
 		int n = partialCityList.size();
 		if(n == TaskTsp.RECURSIONLIMIT) {
 			//int firstCity  = partialCityList.remove(0);
-			int firstCity = lockedCities.get(lockedCities.size()-1);
-			List<Integer> shortestTour = new ArrayList<>( partialCityList );
-			shortestTour.add(0, firstCity);
+			//int firstCity = lockedCities.get(lockedCities.size()-1);
+			List<Integer> shortestTour = new ArrayList<>( lockedCities );
+			shortestTour.addAll(partialCityList);
 			double shortestTourDistance = tourDistance( shortestTour );
 
 			PermutationEnumerator<Integer> permutationEnumerator = new PermutationEnumerator<>( partialCityList );
 			for ( List<Integer> subtour = permutationEnumerator.next(); subtour != null; subtour = permutationEnumerator.next() ) 
 			{
 				List<Integer> tour = new ArrayList<>( subtour );
-				tour.add( 0, firstCity );
+				tour.addAll( 0, lockedCities );
 				if ( tour.indexOf( 1 ) >  tour.indexOf( 2 ) )
 				{
 					continue; // skip tour; it is the reverse of another.
@@ -79,7 +79,7 @@ public final class TaskTsp implements Task<List<Integer>>{
 					shortestTourDistance = tourDistance;
 				}  
 			}
-			return new Result<>(shortestTour, shortestTourDistance, 0l, getId());
+			return new Result<>(shortestTour, shortestTourDistance, 0l, this.id);
 		}
 		else if(n > TaskTsp.RECURSIONLIMIT) {
 			
@@ -100,19 +100,20 @@ public final class TaskTsp implements Task<List<Integer>>{
 				}
 			}
 			else if(n == TaskTsp.RECURSIONLIMIT + 1) {
-				int city = partialCityList.get(0);
-
-				List<Integer> newLockedList = new ArrayList<>(lockedCities);					
-				List<Integer> subPartialCityList = new ArrayList<>(partialCityList);
-				
-				
-				subPartialCityList.remove((Integer) city);
-				newLockedList.add((Integer)city);
-				
-				TaskTsp task = new TaskTsp(newLockedList, subPartialCityList, distances, this.id+city);
-				
-				Closure c = new Closure(1, this.id, task);
-				childClosures.add(c);
+				for (int city : partialCityList) {
+		
+					List<Integer> newLockedList = new ArrayList<>(lockedCities);					
+					List<Integer> subPartialCityList = new ArrayList<>(partialCityList);
+					
+					
+					subPartialCityList.remove((Integer) city);
+					newLockedList.add((Integer)city);
+					
+					TaskTsp task = new TaskTsp(newLockedList, subPartialCityList, distances, this.id+city);
+					
+					Closure c = new Closure(1, this.id, task);
+					childClosures.add(c);
+				}
 			}
 			else {}
 			long taskEndTime = System.currentTimeMillis();
@@ -129,10 +130,8 @@ public final class TaskTsp implements Task<List<Integer>>{
 	 * @return Total distance of tour
 	 * @author Peter Cappello
 	 */
-	public static double tourDistance( final List<Integer> tour  )
+	private double tourDistance( final List<Integer> tour  )
 	{
-		System.out.println(tour.size());
-		System.out.println(distances);
 		double cost = distances[ tour.get( tour.size() - 1 ) ][ tour.get( 0 ) ];
 
 		for ( int city = 0; city < tour.size() - 1; city ++ )
