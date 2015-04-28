@@ -24,7 +24,7 @@ public final class TaskTsp implements Task<List<Integer>>{
 	/** An array containing the computed values for the distances between all cities. */
 	private static double[][] distances;
 	/** The limit to size of partial cities to by subivided and executed by Computer*/
-	private static final int RECURSIONLIMIT = 8; 
+	private static final int RECURSIONLIMIT = 9; 
 
 	/**
 	 * @param lockedCity The first city for this partial task.
@@ -77,7 +77,7 @@ public final class TaskTsp implements Task<List<Integer>>{
 				{
 					shortestTour = tour;
 					shortestTourDistance = tourDistance;
-				}
+				}  
 			}
 			return new Result<>(shortestTour, shortestTourDistance, 0l, getId());
 		}
@@ -131,6 +131,8 @@ public final class TaskTsp implements Task<List<Integer>>{
 	 */
 	public static double tourDistance( final List<Integer> tour  )
 	{
+		System.out.println(tour.size());
+		System.out.println(distances);
 		double cost = distances[ tour.get( tour.size() - 1 ) ][ tour.get( 0 ) ];
 
 		for ( int city = 0; city < tour.size() - 1; city ++ )
