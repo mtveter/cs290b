@@ -24,7 +24,7 @@ public final class TaskTsp implements Task<List<Integer>>{
 	/** An array containing the computed values for the distances between all cities. */
 	private double[][] distances;
 	/** The limit to size of partial cities to by subivided and executed by Computer*/
-	private static final int RECURSIONLIMIT = 10; 
+	private static final int RECURSIONLIMIT = 8; 
 
 	/**
 	 * @param lockedCity The first city for this partial task.
@@ -118,7 +118,7 @@ public final class TaskTsp implements Task<List<Integer>>{
 			else {System.out.println("SPACE: The length of the partial city list is not correct");}
 			long taskEndTime = System.currentTimeMillis();
 			long taskRunTime = taskEndTime - taskStartTime;
-			result = new Result(childClosures, taskRunTime, this.getId());
+			result = new Result<>(childClosures, taskRunTime, this.getId());
 		}
 		else {System.out.println("SPACE: The length of the partial city list is not correct");}
 		return result;

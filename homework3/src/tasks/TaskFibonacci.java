@@ -82,7 +82,7 @@ public final class TaskFibonacci implements Task<Integer>, Serializable{
 			childClosures.add(closure2);
 			long taskEndTime = System.currentTimeMillis();
 			long taskRunTime = taskEndTime - taskStartTime;
-			result = new Result(childClosures, taskRunTime, this.getId());
+			result = new Result<>(childClosures, taskRunTime, this.getId());
 
 		}
 		return result;
