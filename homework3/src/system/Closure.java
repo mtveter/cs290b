@@ -10,8 +10,6 @@ public class Closure implements Serializable{
 	private static final long serialVersionUID = 1L;
 	/**  */
 	private int joinCounter;
-	/** The N'th fibonacci number*/
-	private int n;
 	/** Identifier of Closure that is parent in recursion tree */
 	private String parentId;
 	/** Task with 1-to-1 relationship with Closure*/
@@ -19,7 +17,7 @@ public class Closure implements Serializable{
 	/** ResultAdder with 1-to-1 relationship with Closure*/
 	private ResultAdder adder;
 	
-	public Closure(int joinCounter, int n, String parentId, Task<?> task) {
+	public Closure(int joinCounter, String parentId, Task<?> task) {
 		this.joinCounter = joinCounter;
 		this.parentId = parentId;
 		this.task = task;
@@ -37,10 +35,6 @@ public class Closure implements Serializable{
 	public int getJoinCounter() {
 		return this.joinCounter;
 	}
-	
-	public int getN() {
-		return this.n;
-	}
 	/**
 	 * Receives a Result and passes it to its ResultAdder
 	 * @param r	Result to be processed by Closure
@@ -48,6 +42,7 @@ public class Closure implements Serializable{
 	public void receiveResult(Result<?> r){
 //		System.out.println(this.getTask().getId() + ": Closure recieved Result");
 		// JoinCounter cannot be less than 0
+		
 		if(joinCounter > 0){
 			// Passes result to ResultAdder and decrements joinCounter
 //			System.out.println(this.getTask().getId() + ": Result is being added to adder and joinCounter decremented");

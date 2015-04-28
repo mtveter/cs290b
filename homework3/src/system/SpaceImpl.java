@@ -10,12 +10,15 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import clients.ClientEuclideanTsp;
 import clients.ClientFibonacci;
 import api.Result;
 import api.Result.Status;
 import api.Space;
 import api.Task;
+import api.Task.Type;
 import system.Closure;
+import tasks.TaskTsp;
 
 public class SpaceImpl extends UnicastRemoteObject implements Space {
 
@@ -43,10 +46,20 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		System.out.println("SPACE: List of tasks received from Job");
 		for(Task<?> task :  taskList) {
 			try {
-				// Generate closure for initial task
-				Closure initialClosure = new Closure(ClientFibonacci.joinCounter, ClientFibonacci.N, "TOP", task);
-				receivedClosures.add(initialClosure);
-				receivedTasks.put(task);
+				Closure initialClosure;
+				if(task.getType()==Type.FIB){
+					// Generate closure for initial task
+					initialClosure = new Closure(ClientFibonacci.joinCounter, "TOP", task);
+					receivedClosures.add(initialClosure);
+					receivedTasks.put(task);
+				}
+				else if(task.getType()==Type.TSP){
+					// Joincounter
+					TaskTsp taskTsp = (TaskTsp) task;
+					initialClosure = new Closure(taskTsp.getPartialCityList().size(),"TOP",task);
+					receivedClosures.add(initialClosure);
+					receivedTasks.put(task);
+				}	
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -236,11 +249,16 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					}
 				}
 				else if(result.getStatus().equals(Status.COMPLETED)) {
-//					System.out.println("Result is of type n=0 og n=1");
+//					System.out.println("Result is of type n=0 or n=1");
+
 					// return to parent closure
 					for(Closure c : receivedClosures){
-//						System.out.println("task id "+c.getTask().getId()+"  result id  "+result.getId());
-						if(c.getTask().equals(result.getId())){
+//						System.out.println("Result is of type n=0 og n=1");
+//						System.out.println("Closure id "+c.getTask().getId());
+//						System.out.println("Result id "+result.getId());
+						if(c.getTask().getId().equals(result.getId())){
+						
+//							System.out.println("Task received at: "+c.getTask().getId()+ " : result id  "+result.getId());
 							c.receiveResult(result);
 						}
 					}					

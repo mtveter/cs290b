@@ -14,6 +14,8 @@ public class Result<T> implements Serializable
 	private static final long serialVersionUID = 1L;
 	/** Value to return from execution of task */
 	private final T taskReturnValue;
+	/** Value to return from execution of task with distance */
+	private final T taskReturnDistance;
 	/** Time to execute task */
     private final long taskRunTime;
     /** Identifier of Result */
@@ -42,6 +44,26 @@ public class Result<T> implements Serializable
         this.taskRunTime = taskRunTime;
         this.id = id;
         this.childClosures = null;
+        this.taskReturnDistance = null;
+    }
+    /**
+     * Constructor used for result with a Tsp task default value
+     * Can be used to return result of base cases of fibonacci(n=1 && n=0)
+     * @param taskReturnValue 	Return value of Result
+     * @param taskReturnDistance Return value of distance of TSP tour
+     * @param taskRunTime		Time to execute task
+     * @param id 				Identifier of Result
+     */
+    public Result( T taskReturnValue, T taskReturnDistance, long taskRunTime, String id)
+    {
+    	this.status = Status.COMPLETED;
+        assert taskReturnValue != null;
+        assert taskRunTime >= 0;
+        this.taskReturnValue = taskReturnValue;
+        this.taskRunTime = taskRunTime;
+        this.id = id;
+        this.childClosures = null;
+        this.taskReturnDistance = taskReturnDistance;
     }
     /**
      * Constructor used for result with a task value
@@ -58,7 +80,10 @@ public class Result<T> implements Serializable
         this.id = id;
         this.childClosures = childClosures;
         this.taskReturnValue = null;
+        this.taskReturnDistance = null;
     }
+    
+    public T getTaskReturnDistance() { return taskReturnDistance; }
     
     public T getTaskReturnValue() { return taskReturnValue; }
 
