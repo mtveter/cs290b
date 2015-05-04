@@ -153,13 +153,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					if(task.getType() == Type.FIB && task.getN() < 2) {
 						LocalWorker worker = new LocalWorker(task);
 						worker.run();
-						System.out.println("Task: " + task.getId() + " was computed locally on space");
 					}
 					// IF TSP task is a base case, then compute result locally on Space
 					else if(task.getType() == Type.TSP && task.getN() > TaskTsp.RECURSIONLIMIT) {
 						LocalWorker worker = new LocalWorker(task);
 						worker.run();
-						System.out.println("Task: " + task.getId() + " was computed locally on space");
 					}
 					// Otherwise send task to computer
 					else{
