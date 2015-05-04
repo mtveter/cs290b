@@ -112,4 +112,8 @@ public final class TaskFibonacci implements Task<Integer>, Serializable{
 	public Type getType() {
 		return Type.FIB;
 	}
+	@Override
+	public int getN() {
+		return this.n;
+	}
 }

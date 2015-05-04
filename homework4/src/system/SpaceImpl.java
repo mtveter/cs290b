@@ -19,6 +19,7 @@ import api.Task;
 import api.Task.Type;
 import system.Closure;
 import tasks.TaskTsp;
+import util.PermutationEnumerator;
 
 public class SpaceImpl extends UnicastRemoteObject implements Space {
 
@@ -130,7 +131,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						completedResult.put(receivedClosures.get(0).getAdder().getResult());
 						receivedClosures.remove(0);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -142,10 +142,24 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			try {
 				task = receivedTasks.take();
 //				System.out.println("SPACE: Task is taken");
-				ComputerProxy proxy = new ComputerProxy(task);
-				proxy.run();
+				
+				/* Implementation of Space-Runnable tasks*/
+				// IF Fibonacci task is a base case, then compute result locally on Space
+				if(task.getType() == Type.FIB && task.getN() < 2) {
+					computeTaskLocally(task);
+					System.out.println("Task: " + task.getId() + " was computed locally on space");
+				}
+				// IF TSP task is a base case, then compute result locally on Space
+				else if(task.getType() == Type.TSP && task.getN() == TaskTsp.RECURSIONLIMIT) {
+					computeTaskLocally(task);
+					System.out.println("Task: " + task.getId() + " was computed locally on space");
+				}
+				// Otherwise send task to computer
+				else{
+					ComputerProxy proxy = new ComputerProxy(task);
+					proxy.run();
+				}
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -283,6 +297,25 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	private void computeTaskLocally(Task<?> task) {
+		Result<?> result;
+		try {
+			result = task.call();
+			
+			if(result.getStatus().equals(Status.COMPLETED)) {
+				for(Closure c : receivedClosures){
+					if(c.getTask().getId().equals(result.getId())){
+						c.receiveResult(result);
+					}
+				}					
+			}
+			else {
+				System.out.println("Result received did not have a valid Status");
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
 	}
 	/**
