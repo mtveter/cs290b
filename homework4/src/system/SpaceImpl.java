@@ -25,8 +25,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 	/** Generated serial identifier	 */
 	private static final long serialVersionUID = 1L;
-
+	/** Variable describing state of Space */
 	private boolean isActive;
+	/** Describes if Space implementation has feature to run some specified Task objects in Space */
+	private boolean hasSpaceRunnableTasks; 
+	/** Describes if Space implementation has feature with Computer objects with multiple worker threads */
+	private boolean hasMultipleWorkerThreads;
 
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
 	private BlockingQueue<Task<?>> receivedTasks = new LinkedBlockingQueue<Task<?>>();
@@ -34,10 +38,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	private BlockingQueue<Result<?>> completedResult = new LinkedBlockingQueue<Result<?>>();
 
 
-
 	public SpaceImpl() throws RemoteException {
 		super();
 		this.isActive = false;
+		// TODO: Use these booleans for testing different combinations in homework 4
+		hasSpaceRunnableTasks = false;
+		hasMultipleWorkerThreads = false;
 	}
 	/**
 	 * @see api.Space Space
@@ -143,18 +149,24 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				task = receivedTasks.take();
 //				System.out.println("SPACE: Task is taken");
 				
-				/* Implementation of Space-Runnable tasks*/
-				// IF Fibonacci task is a base case, then compute result locally on Space
-				if(task.getType() == Type.FIB && task.getN() < 2) {
-					computeTaskLocally(task);
-					System.out.println("Task: " + task.getId() + " was computed locally on space");
+				if(hasSpaceRunnableTasks) {
+					/* Implementation of Space-Runnable tasks*/
+					// IF Fibonacci task is a base case, then compute result locally on Space
+					if(task.getType() == Type.FIB && task.getN() < 2) {
+						computeTaskLocally(task);
+						System.out.println("Task: " + task.getId() + " was computed locally on space");
+					}
+					// IF TSP task is a base case, then compute result locally on Space
+					else if(task.getType() == Type.TSP && task.getN() > TaskTsp.RECURSIONLIMIT) {
+						computeTaskLocally(task);
+						System.out.println("Task: " + task.getId() + " was computed locally on space");
+					}
+					// Otherwise send task to computer
+					else{
+						ComputerProxy proxy = new ComputerProxy(task);
+						proxy.run();
+					}
 				}
-				// IF TSP task is a base case, then compute result locally on Space
-				else if(task.getType() == Type.TSP && task.getN() == TaskTsp.RECURSIONLIMIT) {
-					computeTaskLocally(task);
-					System.out.println("Task: " + task.getId() + " was computed locally on space");
-				}
-				// Otherwise send task to computer
 				else{
 					ComputerProxy proxy = new ComputerProxy(task);
 					proxy.run();
@@ -254,32 +266,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 //				System.out.println("this is result: "+result.toString());
 				//receivedResults.put(result);
-				if(result.getStatus().equals(Status.WAITING)) {
-					List<Closure> closures = result.getChildClosures();
-					// Add Closures from
-					for (Closure closure : closures) {
-						receivedClosures.add(closure);
-						receivedTasks.put(closure.getTask());
-					}
-				}
-				else if(result.getStatus().equals(Status.COMPLETED)) {
-//					System.out.println("Result is of type n=0 or n=1");
-
-					// return to parent closure
-					for(Closure c : receivedClosures){
-//						System.out.println("Result is of type n=0 og n=1");
-//						System.out.println("Closure id "+c.getTask().getId());
-//						System.out.println("Result id "+result.getId());
-						if(c.getTask().getId().equals(result.getId())){
-						
-//							System.out.println("Task received at: "+c.getTask().getId()+ " : result id  "+result.getId());
-							c.receiveResult(result);
-						}
-					}					
-				}
-				else {
-					System.out.println("Result received did not have a valid Status");
-				}
+				handleResult(result);
 				registeredComputers.put(computer);
 
 			} catch (RemoteException e) {
@@ -299,23 +286,50 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			}
 		}
 	}
+	/**
+	 * Computes a task locally instead of in a Computer to reduce communication latency, and sends result to correct parent closure
+	 * @param task	Task to execute locally
+	 */
 	private void computeTaskLocally(Task<?> task) {
 		Result<?> result;
 		try {
 			result = task.call();
 			
-			if(result.getStatus().equals(Status.COMPLETED)) {
-				for(Closure c : receivedClosures){
-					if(c.getTask().getId().equals(result.getId())){
-						c.receiveResult(result);
-					}
-				}					
-			}
-			else {
-				System.out.println("Result received did not have a valid Status");
-			}
+			handleResult(result);
 		} catch (RemoteException e) {
 			e.printStackTrace();
+		}
+	}
+	private void handleResult(Result<?> result) {
+		if(result.getStatus().equals(Status.WAITING)) {
+			List<Closure> closures = result.getChildClosures();
+			// Add Closures from result
+			for (Closure closure : closures) {
+				receivedClosures.add(closure);
+				try {
+					receivedTasks.put(closure.getTask());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		else if(result.getStatus().equals(Status.COMPLETED)) {
+//			System.out.println("Result is of type n=0 or n=1");
+
+			// return to parent closure
+			for(Closure c : receivedClosures){
+//				System.out.println("Result is of type n=0 og n=1");
+//				System.out.println("Closure id "+c.getTask().getId());
+//				System.out.println("Result id "+result.getId());
+				if(c.getTask().getId().equals(result.getId())){
+				
+//					System.out.println("Task received at: "+c.getTask().getId()+ " : result id  "+result.getId());
+					c.receiveResult(result);
+				}
+			}					
+		}
+		else {
+			System.out.println("Result received did not have a valid Status");
 		}
 	}
 	/**
@@ -326,7 +340,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public static void main(String[] args) throws RemoteException {
 		// Construct and set a security manager
 		System.setSecurityManager( new SecurityManager() );
-
+		
 		// Instantiate a computer server object
 		SpaceImpl space = new SpaceImpl();
 
