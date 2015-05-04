@@ -46,6 +46,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 	 */
 	public static void main(String[] args) {
 		// If no argument is passed, then connect to local host, otherwise to IPv4 specified 
+		
 		String domainName;
 		if(args.length > 0){
 			domainName = args[0];
