@@ -24,7 +24,7 @@ public final class TaskTsp implements Task<List<Integer>>{
 	/** An array containing the computed values for the distances between all cities. */
 	private double[][] distances;
 	/** The limit to size of partial cities to by subivided and executed by Computer*/
-	private static final int RECURSIONLIMIT = 8; 
+	private static final int RECURSIONLIMIT = 10; 
 
 	/**
 	 * @param lockedCities 	List of cities with a locke position in tour for this partial task.
