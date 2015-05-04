@@ -52,13 +52,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		for(Task<?> task :  taskList) {
 			try {
 				Closure initialClosure;
-				if(task.getType()==Type.FIB){
+				if(task.getType() == Type.FIB){
 					// Generate closure for initial task
 					initialClosure = new Closure(ClientFibonacci.joinCounter, "TOP", task);
 					receivedClosures.add(initialClosure);
 					receivedTasks.put(task);
 				}
-				else if(task.getType()==Type.TSP){
+				else if(task.getType() == Type.TSP){
 					// Joincounter
 					TaskTsp taskTsp = (TaskTsp) task;
 					initialClosure = new Closure(taskTsp.getPartialCityList().size(),"TOP",task);
