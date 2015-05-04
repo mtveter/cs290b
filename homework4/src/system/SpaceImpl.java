@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import clients.ClientEuclideanTsp;
 import clients.ClientFibonacci;
 import api.Result;
 import api.Result.Status;
@@ -19,7 +18,6 @@ import api.Task;
 import api.Task.Type;
 import system.Closure;
 import tasks.TaskTsp;
-import util.PermutationEnumerator;
 
 public class SpaceImpl extends UnicastRemoteObject implements Space {
 
@@ -42,8 +40,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		super();
 		this.isActive = false;
 		// TODO: Use these booleans for testing different combinations in homework 4
-		hasSpaceRunnableTasks = false;
-		hasMultipleWorkerThreads = false;
+		this.hasSpaceRunnableTasks = true;
+		this.hasMultipleWorkerThreads = false;
 	}
 	/**
 	 * @see api.Space Space
@@ -153,12 +151,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					/* Implementation of Space-Runnable tasks*/
 					// IF Fibonacci task is a base case, then compute result locally on Space
 					if(task.getType() == Type.FIB && task.getN() < 2) {
-						computeTaskLocally(task);
+						LocalWorker worker = new LocalWorker(task);
+						worker.run();
 						System.out.println("Task: " + task.getId() + " was computed locally on space");
 					}
 					// IF TSP task is a base case, then compute result locally on Space
 					else if(task.getType() == Type.TSP && task.getN() > TaskTsp.RECURSIONLIMIT) {
-						computeTaskLocally(task);
+						LocalWorker worker = new LocalWorker(task);
+						worker.run();
 						System.out.println("Task: " + task.getId() + " was computed locally on space");
 					}
 					// Otherwise send task to computer
@@ -234,6 +234,25 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		}
 		return false;
 	}
+	private class LocalWorker implements Runnable{
+		Task<?> task;
+		
+		public LocalWorker(Task<?> task) {
+			this.task = task;
+		}
+		
+		@Override
+		public void run() {
+			Result<?> result;
+			try {
+				result = task.call();
+				
+				handleResult(result);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	/**
 	 * Thread that allocate tasks to computers and execute computation
 	 */
@@ -284,20 +303,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
-	}
-	/**
-	 * Computes a task locally instead of in a Computer to reduce communication latency, and sends result to correct parent closure
-	 * @param task	Task to execute locally
-	 */
-	private void computeTaskLocally(Task<?> task) {
-		Result<?> result;
-		try {
-			result = task.call();
-			
-			handleResult(result);
-		} catch (RemoteException e) {
-			e.printStackTrace();
 		}
 	}
 	private void handleResult(Result<?> result) {
