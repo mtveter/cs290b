@@ -16,6 +16,8 @@ public final class TaskTsp implements Task<List<Integer>>{
 	/** Identifier of task */
 	private String id;
 	
+	private final int n;
+	
 	/** The partial list of cities that are to be permuted (excluding the first city). */
 	private List<Integer> partialCityList;
 	
@@ -23,11 +25,11 @@ public final class TaskTsp implements Task<List<Integer>>{
 	
 	/** An array containing the computed values for the distances between all cities. */
 	private double[][] distances;
-	/** The limit to size of partial cities to by subivided and executed by Computer*/
-	private static final int RECURSIONLIMIT = 8; 
+	/** The limit to size of partial cities to by subdivided and executed by Computer*/
+	public static final int RECURSIONLIMIT = 10; 
 
 	/**
-	 * @param lockedCities 	List of cities with a locke position in tour for this partial task.
+	 * @param lockedCities 	List of cities with a locked position in tour for this partial task.
 	 * @param partialCityList The partial list of cities that are to be permuted (excluding the first city).
 	 * @param distances An array containing the computed values for the distances between all cities.
 	 * @param id Identifier of Task
@@ -40,6 +42,7 @@ public final class TaskTsp implements Task<List<Integer>>{
 		this.distances = distances;
 		this.lockedCities = lockedCities;
 		this.id = id;
+		this.n = partialCityList.size();
 	}
 
 
@@ -55,7 +58,7 @@ public final class TaskTsp implements Task<List<Integer>>{
 		List<Closure> childClosures = new ArrayList<Closure>();
 		long taskStartTime = System.currentTimeMillis();
 		
-		int n = partialCityList.size();
+		
 		if(n == TaskTsp.RECURSIONLIMIT) {
 			//int firstCity  = partialCityList.remove(0);
 			//int firstCity = lockedCities.get(lockedCities.size()-1);
@@ -170,5 +173,9 @@ public final class TaskTsp implements Task<List<Integer>>{
 	public List<Integer> getPartialCityList(){
 		return this.partialCityList;
 		
+	}
+	@Override
+	public int getN() {
+		return this.n;
 	}
 }
