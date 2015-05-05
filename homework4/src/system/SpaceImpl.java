@@ -26,9 +26,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	/** Variable describing state of Space */
 	private boolean isActive;
 	/** Describes if Space implementation has feature to run some specified Task objects in Space */
-	private boolean hasSpaceRunnableTasks; 
-	/** Describes if Space implementation has feature with Computer objects with multiple worker threads */
-	private boolean hasMultipleWorkerThreads;
+	private boolean hasSpaceRunnableTasks;
 
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
 	private BlockingQueue<Task<?>> receivedTasks = new LinkedBlockingQueue<Task<?>>();
@@ -39,9 +37,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public SpaceImpl() throws RemoteException {
 		super();
 		this.isActive = false;
-		// TODO: Use these booleans for testing different combinations in homework 4
-		this.hasSpaceRunnableTasks = true;
-		this.hasMultipleWorkerThreads = false;
 	}
 	/**
 	 * @see api.Space Space
@@ -117,8 +112,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	}
 	/**
 	 * Initiates the Space, sets it active and runs a new ComputerProxy thread
+	 * @param hasSpaceRunnableTasks2 
 	 */
-	private void runComputerProxy() {
+	private void runComputerProxy(boolean hasSpaceRunnableTasks) {
+		// TODO: Use these booleans for testing different combinations in homework 4
+		this.hasSpaceRunnableTasks = hasSpaceRunnableTasks;
+		
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
@@ -344,6 +343,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		// Construct and set a security manager
 		System.setSecurityManager( new SecurityManager() );
 		
+
 		// Instantiate a computer server object
 		SpaceImpl space = new SpaceImpl();
 
@@ -352,11 +352,16 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 		// Bind Compute Space server in RMI-registry
 		registry.rebind( Space.SERVICE_NAME, space);
+		
+		boolean hasSpaceRunnableTasks = false;
+		if(args.length > 0 && args[0].equals("true")) {
+			hasSpaceRunnableTasks = true;
+		}
 
 		// Print acknowledgement
 		System.out.println("Computer Space: Ready. on port " + Space.PORT);
 		
-		space.runComputerProxy();
+		space.runComputerProxy(hasSpaceRunnableTasks);
 	}
 
 	/**

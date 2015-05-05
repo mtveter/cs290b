@@ -34,7 +34,7 @@ public final class TaskFibonacci implements Task<Integer>, Serializable{
 		
 		// If Task is of base case where n=0 or n=1
 		if (n < 2 && n >=0 ) {
-			System.out.println("N = " + n);
+//			System.out.println("N = " + n);
 			int taskReturnValue = n;
 			long taskEndTime = System.currentTimeMillis();
 			long taskRunTime = taskEndTime - taskStartTime;
@@ -42,8 +42,8 @@ public final class TaskFibonacci implements Task<Integer>, Serializable{
 			return result;
 		}
 		// If Task is not of base case, and must create recursive Task objects
-		else if(n >=2 ){
-			System.out.println("N = " + n);
+		else if(n >= 2 ){
+//			System.out.println("N = " + n);
 			List<Closure> childClosures = new ArrayList<Closure>();
 			
 			/* Instantiates Task for n-1 and n-2 children of Closure
