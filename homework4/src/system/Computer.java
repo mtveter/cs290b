@@ -18,4 +18,15 @@ public interface Computer extends Remote {
 	 * @throws RemoteException If there is a communication error
 	 */
 	public void exit() throws RemoteException;
+	
+	//public int getId() throws RemoteException;
+	
+	public boolean runsCores() throws RemoteException;
+	
+	public void getTask(Task<?> task) throws RemoteException;
+	
+	public Result<?> sendResult() throws RemoteException, InterruptedException;
+	
+	public boolean bufferAvailable() throws RemoteException;
+	
 }
