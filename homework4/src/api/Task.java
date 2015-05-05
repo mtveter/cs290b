@@ -22,4 +22,6 @@ public interface Task<T> extends Serializable{
 	
 	public Type getType();
 	
+	public int getN();
+	
 }

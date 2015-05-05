@@ -11,7 +11,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import clients.ClientEuclideanTsp;
 import clients.ClientFibonacci;
 import api.Result;
 import api.Result.Status;
@@ -25,14 +24,15 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 	/** Generated serial identifier	 */
 	private static final long serialVersionUID = 1L;
-
+	/** Variable describing state of Space */
 	private boolean isActive;
+	/** Describes if Space implementation has feature to run some specified Task objects in Space */
+	private boolean hasSpaceRunnableTasks;
 
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
 	private BlockingQueue<Task<?>> receivedTasks = new LinkedBlockingQueue<Task<?>>();
 	private List<Closure> receivedClosures = new ArrayList<Closure>();
 	private BlockingQueue<Result<?>> completedResult = new LinkedBlockingQueue<Result<?>>();
-
 
 
 	public SpaceImpl() throws RemoteException {
@@ -48,13 +48,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		for(Task<?> task :  taskList) {
 			try {
 				Closure initialClosure;
-				if(task.getType()==Type.FIB){
+				if(task.getType() == Type.FIB){
 					// Generate closure for initial task
 					initialClosure = new Closure(ClientFibonacci.joinCounter, "TOP", task);
 					receivedClosures.add(initialClosure);
 					receivedTasks.put(task);
 				}
-				else if(task.getType()==Type.TSP){
+				else if(task.getType() == Type.TSP){
 					// Joincounter
 					TaskTsp taskTsp = (TaskTsp) task;
 					initialClosure = new Closure(taskTsp.getPartialCityList().size(),"TOP",task);
@@ -115,8 +115,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	}
 	/**
 	 * Initiates the Space, sets it active and runs a new ComputerProxy thread
+	 * @param hasSpaceRunnableTasks2 
 	 */
-	private void runComputerProxy() {
+	private void runComputerProxy(boolean hasSpaceRunnableTasks) {
+		// TODO: Use these booleans for testing different combinations in homework 4
+		this.hasSpaceRunnableTasks = hasSpaceRunnableTasks;
+		
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
@@ -133,7 +137,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						completedResult.put(receivedClosures.get(0).getAdder().getResult());
 						receivedClosures.remove(0);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -144,11 +147,30 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			Task<?> task = null;
 			try {
 				task = receivedTasks.take();
-				//				System.out.println("SPACE: Task is taken");
-				ComputerProxy proxy = new ComputerProxy(task);
-				proxy.run();
+				
+				if(hasSpaceRunnableTasks) {
+					/* Implementation of Space-Runnable tasks*/
+					// IF Fibonacci task is a base case, then compute result locally on Space
+					if(task.getType() == Type.FIB && task.getN() < 2) {
+						LocalWorker worker = new LocalWorker(task);
+						worker.run();
+					}
+					// IF TSP task is a base case, then compute result locally on Space
+					else if(task.getType() == Type.TSP && task.getN() > TaskTsp.RECURSIONLIMIT) {
+						LocalWorker worker = new LocalWorker(task);
+						worker.run();
+					}
+					// Otherwise send task to computer
+					else{
+						ComputerProxy proxy = new ComputerProxy(task);
+						proxy.run();
+					}
+				}
+				else{
+					ComputerProxy proxy = new ComputerProxy(task);
+					proxy.run();
+				}
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -210,6 +232,25 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			}
 		}
 		return false;
+	}
+	private class LocalWorker implements Runnable{
+		Task<?> task;
+		
+		public LocalWorker(Task<?> task) {
+			this.task = task;
+		}
+		
+		@Override
+		public void run() {
+			Result<?> result;
+			try {
+				result = task.call();
+				
+				handleResult(result);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	/**
 	 * Thread that allocate tasks to computers and execute computation
@@ -353,6 +394,38 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 		}
 	}
+	private void handleResult(Result<?> result) {
+		if(result.getStatus().equals(Status.WAITING)) {
+			List<Closure> closures = result.getChildClosures();
+			// Add Closures from result
+			for (Closure closure : closures) {
+				receivedClosures.add(closure);
+				try {
+					receivedTasks.put(closure.getTask());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		else if(result.getStatus().equals(Status.COMPLETED)) {
+//			System.out.println("Result is of type n=0 or n=1");
+
+			// return to parent closure
+			for(Closure c : receivedClosures){
+//				System.out.println("Result is of type n=0 og n=1");
+//				System.out.println("Closure id "+c.getTask().getId());
+//				System.out.println("Result id "+result.getId());
+				if(c.getTask().getId().equals(result.getId())){
+				
+//					System.out.println("Task received at: "+c.getTask().getId()+ " : result id  "+result.getId());
+					c.receiveResult(result);
+				}
+			}					
+		}
+		else {
+			System.out.println("Result received did not have a valid Status");
+		}
+	}
 	/**
 	 * Main method for creating Space
 	 * @param args Not needed
@@ -361,6 +434,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public static void main(String[] args) throws RemoteException {
 		// Construct and set a security manager
 		System.setSecurityManager( new SecurityManager() );
+		
 
 		// Instantiate a computer server object
 		SpaceImpl space = new SpaceImpl();
@@ -370,11 +444,16 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 		// Bind Compute Space server in RMI-registry
 		registry.rebind( Space.SERVICE_NAME, space);
+		
+		boolean hasSpaceRunnableTasks = false;
+		if(args.length > 0 && args[0].equals("true")) {
+			hasSpaceRunnableTasks = true;
+		}
 
 		// Print acknowledgement
 		System.out.println("Computer Space: Ready. on port " + Space.PORT);
-
-		space.runComputerProxy();
+		
+		space.runComputerProxy(hasSpaceRunnableTasks);
 	}
 
 	/**
