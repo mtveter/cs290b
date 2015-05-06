@@ -268,6 +268,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		 */
 		@Override
 		public void run() {
+			System.out.println("Computer running");
 
 
 			//			System.out.println("SPACE: Proxy is running");
@@ -280,11 +281,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			Computer computer = null;
 			try {
 				computer = registeredComputers.take();
+				System.out.println("took a computer");
 
 			} catch (InterruptedException e2) {
 				e2.printStackTrace();
 			}
-
 
 
 			try {
@@ -293,11 +294,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 						if(computer.bufferAvailable() && receivedTasks.size()>(computer.bufferSize())){
 							computer.getTask(task);
+							//System.out.println("SPACE: Task sent to computer");
 							int available =computer.bufferSize()+computer.coreCount();
 							//System.out.println("Cant take "+available);
 							for (int i = 0; i < available; i++) {
 								//System.out.println("SPACE: Task sent to computer");
 								computer.getTask(receivedTasks.take());
+								
 
 							}
 							for (int i = 0; i < available+1; i++) {
@@ -307,7 +310,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 								processResult(r);
 
 							}	
-							System.out.println("SPACE: all results recieved");
+							//System.out.println("SPACE: all results recieved");
 							registeredComputers.put(computer);
 
 						}else{
@@ -366,7 +369,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 							processResult(r);
 
 						}	
-						System.out.println("SPACE: all results recieved");
+						//System.out.println("SPACE: all results recieved");
 						registeredComputers.put(computer);
 						printClosures();
 
@@ -377,8 +380,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 
 						Result<?> r = computer.sendResult();
-						System.out.println("collected result");
-						System.out.println("it was "+r.getId());
+						//System.out.println("collected result");
+						//System.out.println("it was "+r.getId());
 						processResult(r);
 
 						registeredComputers.put(computer);

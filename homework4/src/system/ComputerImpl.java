@@ -18,7 +18,7 @@ import api.Result;
 import api.Space;
 import api.Task;
 
-public class ComputerImpl extends UnicastRemoteObject implements Computer {
+public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnable {
 
 
 
@@ -112,8 +112,15 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 		
 		
 		Computer computer = new ComputerImpl(1,multicore,prefetch);
+		if(computer.runsCores()){
 		((ComputerImpl) computer).createThreads();
 		space.register(computer);
+		}else{
+			
+			space.register(computer);
+			((ComputerImpl) computer).run();
+			
+		}
 
 		// Print acknowledgement
 		System.out.println("Computer started and registered at space " + domainName);
@@ -202,8 +209,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 			}catch(InterruptedException e){	}
 			
 			
-			
-			
 		}
 		
 	}
@@ -214,6 +219,38 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 		// TODO Auto-generated method stub
 		return this.cores;
 	}
+	@Override
+	public void run() {
+		
+		
+		while(true) try {
+			//System.out.println("Task queue is "+tasks.size());
+			//System.out.println("thread "+getId()+" running");
+			Task<?> task = tasks.take();
+			//System.out.println("Took "+task.getId()+" tasks");
+			
+			//Thread.sleep(1000);
+			Result<?> result;
+			try {
+				
+				result = task.call();
+				results.put(result);
+				//System.out.println("Result put to queue");
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//Log.debug("-"+id+"- "+task+" = "+result);
+
+
+
+		}catch(InterruptedException e){	}
+		
+		
+	}
+		// TODO Auto-generated method stub
+		
+	
 
 
 	
