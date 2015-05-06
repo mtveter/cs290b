@@ -29,4 +29,10 @@ public interface Computer extends Remote {
 	
 	public boolean bufferAvailable() throws RemoteException;
 	
+	public int bufferSize() throws RemoteException;
+	
+	public int coreCount() throws RemoteException;
+	
+	
+	
 }

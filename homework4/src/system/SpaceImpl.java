@@ -120,7 +120,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	private void runComputerProxy(boolean hasSpaceRunnableTasks) {
 		// TODO: Use these booleans for testing different combinations in homework 4
 		this.hasSpaceRunnableTasks = hasSpaceRunnableTasks;
-		
+
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
@@ -147,7 +147,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			Task<?> task = null;
 			try {
 				task = receivedTasks.take();
-				
 				if(hasSpaceRunnableTasks) {
 					/* Implementation of Space-Runnable tasks*/
 					// IF Fibonacci task is a base case, then compute result locally on Space
@@ -167,8 +166,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					}
 				}
 				else{
+					//System.out.println("SPACE: space took task");
 					ComputerProxy proxy = new ComputerProxy(task);
+					//System.out.println("SPACE: made a proxy");
 					proxy.run();
+
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -235,17 +237,17 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	}
 	private class LocalWorker implements Runnable{
 		Task<?> task;
-		
+
 		public LocalWorker(Task<?> task) {
 			this.task = task;
 		}
-		
+
 		@Override
 		public void run() {
 			Result<?> result;
 			try {
 				result = task.call();
-				
+
 				handleResult(result);
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -288,43 +290,90 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			try {
 				if(!computer.runsCores()){
 
-					//System.out.println("SPACE: Computer is taken");
-					//System.out.println("With id "+computer.getId());
-					if(!computer.bufferAvailable()){
-						Result<?> result = (Result<?>) computer.execute(task);
-						//				System.out.println("SPACE: Result is received from Computer");
 
-						processResult(result);
-						registeredComputers.put(computer);}
-					else{
-						registeredComputers.put(computer);
+						if(computer.bufferAvailable() && receivedTasks.size()>(computer.bufferSize())){
+							computer.getTask(task);
+							int available =computer.bufferSize()+computer.coreCount();
+							//System.out.println("Cant take "+available);
+							for (int i = 0; i < available; i++) {
+								//System.out.println("SPACE: Task sent to computer");
+								computer.getTask(receivedTasks.take());
 
-						Result<?> result = (Result<?>) computer.execute(task);
-						//						System.out.println("SPACE: Result is received from Computer");
+							}
+							for (int i = 0; i < available+1; i++) {
+								//System.out.println("SPACE: Recieved result");
+								Result<?> r = computer.sendResult();
 
-						processResult(result);
+								processResult(r);
 
-					}
+							}	
+							System.out.println("SPACE: all results recieved");
+							registeredComputers.put(computer);
+
+						}else{
+							Result<?> result = (Result<?>) computer.execute(task);
+
+							processResult(result);
+							registeredComputers.put(computer);
+						}
+
+					
 				}
 				/* this is if the computer runs multiple cores */
 				else{
-					System.out.println("This computer runs cores");
+					//System.out.println("This computer runs cores");
+
+
+					//computer.getTask(task);
+
+
 
 					computer.getTask(task);
 
+					if(computer.bufferAvailable() && receivedTasks.size()>(computer.bufferSize()+computer.coreCount())){
+						int available =computer.bufferSize()+computer.coreCount();
+					//	System.out.println("Cant take "+available);
+						for (int i = 0; i < available; i++) {
+							//System.out.println("SPACE: Task sent to computer");
+							computer.getTask(receivedTasks.take());
 
-					if(computer.bufferAvailable()){
+						}
+						for (int i = 0; i < available+1; i++) {
+							//System.out.println("SPACE: Recieved result");
+							Result<?> r = computer.sendResult();
 
-						System.out.println("This computer runs buffer");
+							processResult(r);
+
+						}	
+						//System.out.println("SPACE: all results recieved");
 						registeredComputers.put(computer);
 
-						Result<?> r = computer.sendResult();
-						System.out.println("collected result");
-						System.out.println("it was "+r.getId());
-						processResult(r);
+					}else if (receivedTasks.size()>(computer.coreCount())){
 
 
-					}else{
+
+						int available =computer.coreCount();
+						//System.out.println("Cant take "+available);
+						for (int i = 0; i < available; i++) {
+							//System.out.println("SPACE: Task sent to computer");
+							computer.getTask(receivedTasks.take());
+
+						}
+						for (int i = 0; i < available+1; i++) {
+							//System.out.println("SPACE: Recieved result");
+							Result<?> r = computer.sendResult();
+
+							processResult(r);
+
+						}	
+						System.out.println("SPACE: all results recieved");
+						registeredComputers.put(computer);
+						printClosures();
+
+					}
+
+
+					else{
 
 
 						Result<?> r = computer.sendResult();
@@ -408,16 +457,16 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			}
 		}
 		else if(result.getStatus().equals(Status.COMPLETED)) {
-//			System.out.println("Result is of type n=0 or n=1");
+			//			System.out.println("Result is of type n=0 or n=1");
 
 			// return to parent closure
 			for(Closure c : receivedClosures){
-//				System.out.println("Result is of type n=0 og n=1");
-//				System.out.println("Closure id "+c.getTask().getId());
-//				System.out.println("Result id "+result.getId());
+				//				System.out.println("Result is of type n=0 og n=1");
+				//				System.out.println("Closure id "+c.getTask().getId());
+				//				System.out.println("Result id "+result.getId());
 				if(c.getTask().getId().equals(result.getId())){
-				
-//					System.out.println("Task received at: "+c.getTask().getId()+ " : result id  "+result.getId());
+
+					//					System.out.println("Task received at: "+c.getTask().getId()+ " : result id  "+result.getId());
 					c.receiveResult(result);
 				}
 			}					
@@ -434,7 +483,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public static void main(String[] args) throws RemoteException {
 		// Construct and set a security manager
 		System.setSecurityManager( new SecurityManager() );
-		
+
 
 		// Instantiate a computer server object
 		SpaceImpl space = new SpaceImpl();
@@ -444,7 +493,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 		// Bind Compute Space server in RMI-registry
 		registry.rebind( Space.SERVICE_NAME, space);
-		
+
 		boolean hasSpaceRunnableTasks = false;
 		if(args.length > 0 && args[0].equals("true")) {
 			hasSpaceRunnableTasks = true;
@@ -452,7 +501,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 		// Print acknowledgement
 		System.out.println("Computer Space: Ready. on port " + Space.PORT);
-		
+
 		space.runComputerProxy(hasSpaceRunnableTasks);
 	}
 
