@@ -95,7 +95,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 		else{
 		domainName = "localhost";
 		multicore=true;
-		prefetch= false;
+		prefetch= true;
 		}
 
 		// Construct and set a security manager
@@ -130,12 +130,16 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 		
 	}
 	public boolean bufferAvailable(){
-		if(tasks.size()<=4 && useAmerlioration() ){
+		if(tasks.size()<=buffer && useAmerlioration() ){
 			return true;
 		}else{
 			return false;
 		}
 		
+	}
+	public int bufferSize(){
+		
+		return buffer-tasks.size();
 	}
 	public void createThreads(){
 		//create threads running f
@@ -151,7 +155,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 	@Override
 	public Result<?> sendResult() throws RemoteException, InterruptedException {
 		// TODO Auto-generated method stub
-		System.out.println("Sendt result back");
+		//System.out.println("Sendt result back");
 		Result<?> r = results.take();
 		return r;
 	}
@@ -162,7 +166,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 	}
 	
 	
-	private class ComputeThread extends Thread implements Computer {
+	private class ComputeThread extends Thread  {
 
 		private  int id;
 		
@@ -175,15 +179,18 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 		public void run() {
 			
 			while(true) try {
-				System.out.println("thread "+getId()+" running");
+				//System.out.println("Task queue is "+tasks.size());
+				//System.out.println("thread "+getId()+" running");
 				Task<?> task = tasks.take();
-				System.out.println("Took "+task.getId()+" tasks");
+				//System.out.println("Took "+task.getId()+" tasks");
+				
+				//Thread.sleep(1000);
 				Result<?> result;
 				try {
 					
 					result = task.call();
 					results.put(result);
-					System.out.println("Result put to queue");
+					//System.out.println("Result put to queue");
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -198,50 +205,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer {
 			
 			
 		}
-		@Override
-		public Result<?> execute(Task<?> task) throws RemoteException {
-			// TODO Auto-generated method stub
-			Result<?> result = task.call();
-
-			return result;
-			
-		}
-		@Override
-		public void exit() throws RemoteException {
-			// TODO Auto-generated method stub
-			
-		}
 		
-		
-		@Override
-		public void getTask(Task<?> task) throws RemoteException {
-			// TODO Auto-generated method stub
-			
-		}
+	}
 
 
-		@Override
-		public Result<?> sendResult() throws RemoteException, InterruptedException {
-			// TODO Auto-generated method stub
-			System.out.println("Sendt result back");
-			Result<?> r = results.take();
-			return r;
-		}
-
-		
-		//TODO: needs to be set as argument
-		@Override
-		public boolean runsCores() throws RemoteException {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-
-		@Override
-		public boolean bufferAvailable() throws RemoteException {
-			// TODO Auto-generated method stub
-			return false;
-		}
+	@Override
+	public int coreCount() throws RemoteException {
+		// TODO Auto-generated method stub
+		return this.cores;
 	}
 
 
