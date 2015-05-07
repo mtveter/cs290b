@@ -104,7 +104,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public void register(Computer computer) throws RemoteException {
 		System.out.println("New computer registerd");
 		registeredComputers.add(computer);
-		//System.out.println("with id "+computer.getId());
 	}
 	/**
 	 * Checks if space is running
@@ -118,7 +117,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 * @param hasSpaceRunnableTasks2 
 	 */
 	private void runComputerProxy(boolean hasSpaceRunnableTasks) {
-		// TODO: Use these booleans for testing different combinations in homework 4
 		this.hasSpaceRunnableTasks = hasSpaceRunnableTasks;
 
 		this.isActive = true; 
@@ -133,7 +131,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				// If the Top Closure is completed the final result can be put in the blocking queue to be collected by Client
 				if(isTopClosureCompleted()) {
 					try {
-						//						System.out.println("Added final result to results ");
 						completedResult.put(receivedClosures.get(0).getAdder().getResult());
 						receivedClosures.remove(0);
 					} catch (InterruptedException e) {
@@ -141,14 +138,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					}
 				}
 			}
-			// For Debug purpose
-			//			printClosures();
-
+			
 			Task<?> task = null;
 			try {
 				task = receivedTasks.take();
 				if(hasSpaceRunnableTasks) {
 					/* Implementation of Space-Runnable tasks*/
+					
 					// IF Fibonacci task is a base case, then compute result locally on Space
 					if(task.getType() == Type.FIB && task.getN() < 2) {
 						LocalWorker worker = new LocalWorker(task);
@@ -166,9 +162,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					}
 				}
 				else{
-					//System.out.println("SPACE: space took task");
 					ComputerProxy proxy = new ComputerProxy(task);
-					//System.out.println("SPACE: made a proxy");
 					proxy.run();
 
 				}
@@ -181,7 +175,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 * Takes completed Closure objects and merges them upward in hierarchy
 	 */
 	private void mergeCompletedClosures() {
-		//		System.out.println("----RUNING COMPOSER---");
 
 		boolean removeListIsEmpty = false;
 		while(!removeListIsEmpty) {
@@ -189,12 +182,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			List<Closure> removeList = new ArrayList<Closure>();
 			// Iterates over all Closure objects
 			while(iter.hasNext()){
-				//				System.out.println("Taking a closure");
+				
 				Closure c = iter.next();
 
 				// Check if current Closure is completed
 				if(c.isCompleted()){
-					//					System.out.println(c.getTask().getId() + ": is completed and ready to be merged");
 					String parent = c.getParentId();
 					// Compares the current Closure with other Closure to find parent
 					for (Closure c2 : receivedClosures){
@@ -204,8 +196,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 							if(parent.equals(c2.getTask().getId())){
 								// Passes result of completed Closure to parent Closure
 								c2.receiveResult(c.getAdder().getResult());
-								//								System.out.println("ID: " + c2.getTask().getId() + " Received result from ID: " + c2.getTask().getId());
-
 								removeList.add(c);
 							}
 						}
@@ -228,7 +218,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 */
 	private boolean isTopClosureCompleted() {
 		if(receivedClosures.get(0).getParentId().equals("TOP")){
-			//			System.out.println("First closure is top");
+			
 			if(receivedClosures.get(0).isCompleted()){
 				return true;
 			}
@@ -273,7 +263,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			Computer computer = null;
 			try {
 				computer = registeredComputers.take();
-				System.out.println("took a computer");
 
 			} catch (InterruptedException e2) {
 				e2.printStackTrace();
@@ -301,16 +290,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 						}
 
-						/* Recieves all the tasks from space, but they are processed as fast as they come in */
-						// to prevent unnecessary delay
+						/* Receives all the tasks from space, but they are processed as fast as they come in 
+						 * to prevent unnecessary delay */
 						for (int i = 0; i < available+1; i++) {
-							//System.out.println("SPACE: Recieved result");
 							Result<?> r = computer.sendResult();
 
 							processResult(r);
 
-						}	
-						//System.out.println("SPACE: all results recieved");
+						}
 						registeredComputers.put(computer);
 
 					}else{
@@ -337,7 +324,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						int available =computer.bufferSize()+computer.coreCount();
 						
 						for (int i = 0; i < available; i++) {
-							//System.out.println("SPACE: Task sent to computer");
 							computer.getTask(receivedTasks.take());
 
 						}
@@ -353,12 +339,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						int available =computer.coreCount();
 						
 						for (int i = 0; i < available; i++) {
-							//System.out.println("SPACE: Task sent to computer");
 							computer.getTask(receivedTasks.take());
 
 						}
 						for (int i = 0; i < available+1; i++) {
-							//System.out.println("SPACE: Recieved result");
 							Result<?> r = computer.sendResult();
 
 							processResult(r);
@@ -452,16 +436,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			}
 		}
 		else if(result.getStatus().equals(Status.COMPLETED)) {
-			//			System.out.println("Result is of type n=0 or n=1");
-
 			// return to parent closure
 			for(Closure c : receivedClosures){
-				//				System.out.println("Result is of type n=0 og n=1");
-				//				System.out.println("Closure id "+c.getTask().getId());
-				//				System.out.println("Result id "+result.getId());
 				if(c.getTask().getId().equals(result.getId())){
-
-					//					System.out.println("Task received at: "+c.getTask().getId()+ " : result id  "+result.getId());
 					c.receiveResult(result);
 				}
 			}					

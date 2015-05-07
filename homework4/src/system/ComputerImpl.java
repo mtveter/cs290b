@@ -64,8 +64,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		return this.amerlioration;
 	}
 	
-	
-	
 	/**
 	 * @see system.Computer Computer
 	 */
@@ -86,22 +84,20 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		String domainName;
 		boolean multicore;
 		boolean prefetch;
-		if(args.length > 0){
+		if(args.length > 0) {
 			domainName = args[0];
-			multicore=(args.length > 1)? Boolean.parseBoolean(args[1]): true;
-			prefetch= (args.length > 2)? Boolean.parseBoolean(args[2]): true;
+			multicore =(args.length > 1)? Boolean.parseBoolean(args[1]): true;
+			prefetch = (args.length > 2)? Boolean.parseBoolean(args[2]): true;
 			
 		}
-		else{
-		domainName = "localhost";
-		multicore=true;
-		prefetch= true;
+		else {
+			domainName = "localhost";
+			multicore=true;
+			prefetch= true;
 		}
 
 		// Construct and set a security manager
 		System.setSecurityManager( new SecurityManager() );
-
-		
 
 		// Get url of remote space
 		String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;
@@ -114,8 +110,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		Computer computer = new ComputerImpl(1,multicore,prefetch);
 		// create threads if the computer runs multiple cores
 		if(computer.runsCores()){	
-		((ComputerImpl) computer).createThreads();
-		space.register(computer);
+			((ComputerImpl) computer).createThreads();
+			space.register(computer);
 		}
 		else{
 			
@@ -123,7 +119,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 			((ComputerImpl) computer).run();
 			
 		}
-
 		// Print acknowledgement
 		System.out.println("Computer started and registered at space " + domainName);
 	}
@@ -148,12 +143,10 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		
 	}
 	public int bufferSize(){
-		
 		return buffer-tasks.size();
 	}
-	
 	/**
-	 * creates the threads according to how many processors the computer has availale
+	 * Creates the threads according to how many processors the computer has availale
 	 */
 	public void createThreads(){
 		//create threads running f
@@ -164,21 +157,16 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 					thread.start();
 				}
 	}
-	
-	
 	@Override
 	public Result<?> sendResult() throws RemoteException, InterruptedException {
-		// TODO Auto-generated method stub
 		Result<?> r = results.take();
 		return r;
 	}
 	
 	@Override
 	public boolean runsCores() throws RemoteException {
-		// TODO Auto-generated method stub
 		return this.multicore;
 	}
-	
 	/**
 	 * Thread that only does work on tasks
 	 * @author steffenfb
@@ -192,7 +180,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 			this.id = id;
 		}
 		
-
 		@Override
 		public void run() {
 			
@@ -224,10 +211,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 
 	@Override
 	public int coreCount() throws RemoteException {
-		// TODO Auto-generated method stub
 		return this.cores;
 	}
-	
 	
 	/**
 	 * for when the computer runs on single core, but use a queue to prefetch
@@ -245,25 +230,11 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				
 				result = task.call();
 				results.put(result);
-				//System.out.println("Result put to queue");
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//Log.debug("-"+id+"- "+task+" = "+result);
 
 
-
-		}catch(InterruptedException e){	}
-		
-		
+		}catch(InterruptedException e){	}	
 	}
-		// TODO Auto-generated method stub
-		
-	
-
-
-	
-	
-
 }
