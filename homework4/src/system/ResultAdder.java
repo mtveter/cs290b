@@ -30,7 +30,7 @@ public class ResultAdder implements Serializable {
 	 */
 	public void addResult(Result<?> result ){
 		if (result.getTaskReturnDistance() == null) {
-			numbers[position] = (int) result.getTaskReturnValue();
+			numbers[position] = (Integer) result.getTaskReturnValue();
 			position++;
 			
 			// Checks if all arguments(results) have been received
@@ -45,7 +45,7 @@ public class ResultAdder implements Serializable {
 			}
 		}
 		else {
-			numbers[position] = (double) result.getTaskReturnDistance();
+			numbers[position] = (Double) result.getTaskReturnDistance();
 			tours.add((List<Integer>) result.getTaskReturnValue()); 
 			position++;
 			
