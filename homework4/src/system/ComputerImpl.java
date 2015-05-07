@@ -45,21 +45,21 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		
 
 		
-		// TODO Auto-generated constructor stub
+	
 	}
 	/**
 	 * @see system.Computer Computer
 	 */
 	@Override
 	public Result<?> execute(Task<?> task) throws RemoteException {
-		//		System.out.println("Executing task");
-		//		System.out.println(task.toString());
-
 		Result<?> result = task.call();
-
 		return result;
 	}
 	
+	/**
+	 * checks if the computer uses buffer.
+	 * @return
+	 */
 	public boolean useAmerlioration(){
 		return this.amerlioration;
 	}
@@ -101,7 +101,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		// Construct and set a security manager
 		System.setSecurityManager( new SecurityManager() );
 
-		//Runtime.getRuntime().availableProcessors();
+		
 
 		// Get url of remote space
 		String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;
@@ -112,10 +112,12 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		
 		
 		Computer computer = new ComputerImpl(1,multicore,prefetch);
-		if(computer.runsCores()){
+		// create threads if the computer runs multiple cores
+		if(computer.runsCores()){	
 		((ComputerImpl) computer).createThreads();
 		space.register(computer);
-		}else{
+		}
+		else{
 			
 			space.register(computer);
 			((ComputerImpl) computer).run();
@@ -131,6 +133,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		// TODO Auto-generated method stub
 		return this.id;
 	}
+	
 	@Override
 	public void getTask(Task<?> task) throws RemoteException {
 		tasks.add(task);
@@ -148,6 +151,10 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		
 		return buffer-tasks.size();
 	}
+	
+	/**
+	 * creates the threads according to how many processors the computer has availale
+	 */
 	public void createThreads(){
 		//create threads running f
 				cores =Runtime.getRuntime().availableProcessors();
@@ -162,17 +169,21 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	@Override
 	public Result<?> sendResult() throws RemoteException, InterruptedException {
 		// TODO Auto-generated method stub
-		//System.out.println("Sendt result back");
 		Result<?> r = results.take();
 		return r;
 	}
+	
 	@Override
 	public boolean runsCores() throws RemoteException {
 		// TODO Auto-generated method stub
 		return this.multicore;
 	}
 	
-	
+	/**
+	 * Thread that only does work on tasks
+	 * @author steffenfb
+	 *
+	 */
 	private class ComputeThread extends Thread  {
 
 		private  int id;
@@ -186,12 +197,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		public void run() {
 			
 			while(true) try {
-				//System.out.println("Task queue is "+tasks.size());
-				//System.out.println("thread "+getId()+" running");
-				Task<?> task = tasks.take();
-				//System.out.println("Took "+task.getId()+" tasks");
 				
-				//Thread.sleep(1000);
+				Task<?> task = tasks.take();
+				
 				Result<?> result;
 				try {
 					
@@ -219,17 +227,19 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		// TODO Auto-generated method stub
 		return this.cores;
 	}
+	
+	
+	/**
+	 * for when the computer runs on single core, but use a queue to prefetch
+	 */
 	@Override
 	public void run() {
 		
 		
 		while(true) try {
-			//System.out.println("Task queue is "+tasks.size());
-			//System.out.println("thread "+getId()+" running");
-			Task<?> task = tasks.take();
-			//System.out.println("Took "+task.getId()+" tasks");
 			
-			//Thread.sleep(1000);
+			Task<?> task = tasks.take();
+			
 			Result<?> result;
 			try {
 				

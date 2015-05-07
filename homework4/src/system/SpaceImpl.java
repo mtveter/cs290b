@@ -270,14 +270,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		public void run() {
 			System.out.println("Computer running");
 
-
-			//			System.out.println("SPACE: Proxy is running");
-			// Takes Task in the head of queue, allocates it to a computer, and executes the operation on the task
-
-
-			//System.out.println("SPACE: Computer is taken");
-
-
 			Computer computer = null;
 			try {
 				computer = registeredComputers.take();
@@ -288,59 +280,29 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			}
 
 
+
 			try {
 				if(!computer.runsCores()){
 
+					/**
+					 * Checks if the computer runs buffer, and also if there are enough waiting tasks, so the system 
+					 * doesn't wait if there's not enough tasks.
+					 */
+					if(computer.bufferAvailable() && receivedTasks.size()>(computer.bufferSize())){
+						computer.getTask(task);
 
-						if(computer.bufferAvailable() && receivedTasks.size()>(computer.bufferSize())){
-							computer.getTask(task);
-							//System.out.println("SPACE: Task sent to computer");
-							int available =computer.bufferSize()+computer.coreCount();
-							//System.out.println("Cant take "+available);
-							for (int i = 0; i < available; i++) {
-								//System.out.println("SPACE: Task sent to computer");
-								computer.getTask(receivedTasks.take());
-								
-
-							}
-							for (int i = 0; i < available+1; i++) {
-								//System.out.println("SPACE: Recieved result");
-								Result<?> r = computer.sendResult();
-
-								processResult(r);
-
-							}	
-							//System.out.println("SPACE: all results recieved");
-							registeredComputers.put(computer);
-
-						}else{
-							Result<?> result = (Result<?>) computer.execute(task);
-
-							processResult(result);
-							registeredComputers.put(computer);
-						}
-
-					
-				}
-				/* this is if the computer runs multiple cores */
-				else{
-					//System.out.println("This computer runs cores");
-
-
-					//computer.getTask(task);
-
-
-
-					computer.getTask(task);
-
-					if(computer.bufferAvailable() && receivedTasks.size()>(computer.bufferSize()+computer.coreCount())){
 						int available =computer.bufferSize()+computer.coreCount();
-					//	System.out.println("Cant take "+available);
+
+						// Sends tasks to computer
 						for (int i = 0; i < available; i++) {
-							//System.out.println("SPACE: Task sent to computer");
+
 							computer.getTask(receivedTasks.take());
 
+
 						}
+
+						/* Recieves all the tasks from space, but they are processed as fast as they come in */
+						// to prevent unnecessary delay
 						for (int i = 0; i < available+1; i++) {
 							//System.out.println("SPACE: Recieved result");
 							Result<?> r = computer.sendResult();
@@ -349,14 +311,47 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 						}	
 						//System.out.println("SPACE: all results recieved");
+						registeredComputers.put(computer);
+
+					}else{
+						// if theres no multicore and no prefetching we just use the old execute method
+						Result<?> result = (Result<?>) computer.execute(task);
+
+						processResult(result);
+						registeredComputers.put(computer);
+					}
+
+
+				}
+				/* this is if the computer runs multiple cores */
+				else{
+
+					computer.getTask(task);
+					
+					/**
+					 * Checks if the computer runs buffer, and also if there are enough waiting tasks, so the system 
+					 * doesn't wait if there's not enough tasks.
+					 */
+
+					if(computer.bufferAvailable() && receivedTasks.size()>(computer.bufferSize()+computer.coreCount())){
+						int available =computer.bufferSize()+computer.coreCount();
+						
+						for (int i = 0; i < available; i++) {
+							//System.out.println("SPACE: Task sent to computer");
+							computer.getTask(receivedTasks.take());
+
+						}
+						for (int i = 0; i < available+1; i++) {
+							Result<?> r = computer.sendResult();
+							processResult(r);
+							}	
+						
 						registeredComputers.put(computer);
 
 					}else if (receivedTasks.size()>(computer.coreCount())){
 
-
-
 						int available =computer.coreCount();
-						//System.out.println("Cant take "+available);
+						
 						for (int i = 0; i < available; i++) {
 							//System.out.println("SPACE: Task sent to computer");
 							computer.getTask(receivedTasks.take());
@@ -369,27 +364,19 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 							processResult(r);
 
 						}	
-						//System.out.println("SPACE: all results recieved");
+		
 						registeredComputers.put(computer);
 						printClosures();
 
 					}
-
-
 					else{
-
-
+						/* if the computer can take more tasks, but there are not any more waiting */
 						Result<?> r = computer.sendResult();
-						//System.out.println("collected result");
-						//System.out.println("it was "+r.getId());
+						
 						processResult(r);
 
 						registeredComputers.put(computer);
 					}
-
-
-					//System.out.println("computer back in line");
-					//System.out.println(registeredComputers.size()+" is the size of avail computers");
 
 
 
@@ -411,11 +398,16 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				e.printStackTrace();
 			}
 		}
+		
+		/**
+		 * Takes a result and handels it. 
+		 * If it's done it's returned to it parent closure, 
+		 * and if it still needs more processing it is put in the task queue.
+		 * @param result
+		 * @throws InterruptedException
+		 */
 		private void processResult(Result<?> result) throws InterruptedException {
-			// TODO Auto-generated method stub
-
-			//			System.out.println("this is result: "+result.toString());
-			//receivedResults.put(result);
+			
 			if(result.getStatus().equals(Status.WAITING)) {
 				List<Closure> closures = result.getChildClosures();
 				// Add Closures from
