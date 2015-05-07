@@ -65,7 +65,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				e.printStackTrace();
 			}
 		}
-		//		System.out.println("SPACE: List of tasks is now put");
 	}
 	/**
 	 * @see api.Space Space
@@ -258,7 +257,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		 */
 		@Override
 		public void run() {
-			System.out.println("Computer running");
 
 			Computer computer = null;
 			try {
@@ -350,7 +348,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						}	
 		
 						registeredComputers.put(computer);
-						printClosures();
+						//printClosures();
 
 					}
 					else{
@@ -401,16 +399,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				}
 			}
 			else if(result.getStatus().equals(Status.COMPLETED)) {
-				//				System.out.println("Result is of type n=0 or n=1");
-
 				// return to parent closure
 				for(Closure c : receivedClosures){
-					//					System.out.println("Result is of type n=0 og n=1");
-					//					System.out.println("Closure id "+c.getTask().getId());
-					//					System.out.println("Result id "+result.getId());
 					if(c.getTask().getId().equals(result.getId())){
-
-						//						System.out.println("Task received at: "+c.getTask().getId()+ " : result id  "+result.getId());
 						c.receiveResult(result);
 					}
 				}					

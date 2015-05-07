@@ -208,20 +208,11 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 					
 					result = task.call();
 					results.put(result);
-					//System.out.println("Result put to queue");
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				//Log.debug("-"+id+"- "+task+" = "+result);
-
-
-
 			}catch(InterruptedException e){	}
-			
-			
 		}
-		
 	}
 	/**
 	 * {@inheritDoc}
