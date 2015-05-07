@@ -58,7 +58,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	
 	/**
 	 * checks if the computer uses buffer.
-	 * @return
+	 * @return True if amelioration is used
 	 */
 	public boolean useAmerlioration(){
 		return this.amerlioration;
@@ -75,9 +75,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 * Main method for creating a Computer
 	 * @param args IP-address of remote server, 'localhost' is default if no argument is passed
 	
-	 * @throws RemoteException 
-	 * @throws MalformedURLException 
-	 * @throws NotBoundException 
+	 * @throws RemoteException 			If there is a communication error when remote is referenced
+	 * @throws MalformedURLException 	URL specified is not valid
+	 * @throws NotBoundException 		Attempt to lookup or unbind in the registry a name that has no associated binding.
 	 */
 	public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
 		// If no argument is passed, then connect to local host, otherwise to IPv4 specified 
@@ -123,17 +123,24 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		System.out.println("Computer started and registered at space " + domainName);
 	}
 	
-	
+	/**
+	 * @return Id of computer
+	 */
 	public int getId() {
-		// TODO Auto-generated method stub
 		return this.id;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void getTask(Task<?> task) throws RemoteException {
 		tasks.add(task);
-		
 	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean bufferAvailable(){
 		if(tasks.size()<=buffer && useAmerlioration() ){
 			return true;
@@ -142,11 +149,15 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		}
 		
 	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public int bufferSize(){
 		return buffer-tasks.size();
 	}
 	/**
-	 * Creates the threads according to how many processors the computer has availale
+	 * Creates the threads according to how many processors the computer has available
 	 */
 	public void createThreads(){
 		//create threads running f
@@ -157,12 +168,17 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 					thread.start();
 				}
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Result<?> sendResult() throws RemoteException, InterruptedException {
 		Result<?> r = results.take();
 		return r;
 	}
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean runsCores() throws RemoteException {
 		return this.multicore;
@@ -207,19 +223,19 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		}
 		
 	}
-
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int coreCount() throws RemoteException {
 		return this.cores;
 	}
 	
 	/**
-	 * for when the computer runs on single core, but use a queue to prefetch
+	 * for when the computer runs on single core, but use a queue to pref-etch
 	 */
 	@Override
 	public void run() {
-		
 		
 		while(true) try {
 			
@@ -233,8 +249,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-
-
 		}catch(InterruptedException e){	}	
 	}
 }
