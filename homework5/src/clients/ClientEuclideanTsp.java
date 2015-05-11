@@ -22,9 +22,9 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
     /** Generated Serial ID  */
 	private static final long serialVersionUID = 2126088283156584907L;
 	private static final int NUM_PIXALS = 600;
-    private static final double[][] CITIES = 
+    // Cities for homework 4
+	private static final double[][] CITIES = 
     {
-    	// 12 cities
     	{ 1, 1 },
     	{ 8, 1 },
     	{ 8, 8 },
@@ -36,14 +36,17 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
     	{ 3, 3 },
     	{ 6, 3 },
     	{ 6, 6 },
-    	{ 3, 6 }
+    	{ 3, 6 },
+    	{ 4, 4 },
+    	{ 5, 4 },
+    	{ 5, 5 },
+    	{ 4, 5 }
     };
     
     public ClientEuclideanTsp(String args) throws RemoteException, NotBoundException, MalformedURLException
     { 
         super( "Euclidean TSP", args, new TspJob( CITIES ) ); 
     }
-    
     
     public static void main( String[] args ) throws Exception
     {	

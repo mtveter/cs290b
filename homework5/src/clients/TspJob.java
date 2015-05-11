@@ -35,7 +35,6 @@ public class TspJob implements Job {
 		initializeDistances();
 	}
 
-
 	/**
 	 * Generates partial tasks and adds them to the {@link Space} given as argument to this method. 
 	 * @param space The space the generated tasks should be added to.
