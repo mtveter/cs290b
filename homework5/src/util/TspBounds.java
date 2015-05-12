@@ -5,11 +5,60 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TspBounds {
+	public static double computeUpperBound(List<Integer> cityIdList, double[][] distances){
+		double result = 0;
+		
+		// Visited cities
+		List<Integer> visited = new ArrayList<Integer>();
+		// Unvisited cities
+		List<Integer> unvisited = new ArrayList<Integer>(cityIdList);
+		
+		Integer cityToVisit = unvisited.get(0);
+		unvisited.remove(0);
+		visited.add(cityToVisit);
+		
+		int counter = cityIdList.size();
+		while(counter > 1){
+			
+			double shortestDistance = 0;
+			int cityToVisitNum = 0;
+			Integer tempCityToVisit = null;
+			for(int i = 0; i < unvisited.size(); i++){
+				if(shortestDistance == 0){
+					shortestDistance = distances[cityToVisit][unvisited.get(i)];
+					tempCityToVisit = unvisited.get(i);
+					cityToVisitNum = i;
+				}
+				else{
+					double tempDistance = distances[cityToVisit][unvisited.get(i)];
+					if(tempDistance < shortestDistance) {
+						shortestDistance = tempDistance;
+						tempCityToVisit = unvisited.get(i);
+						cityToVisitNum = i;
+					}
+				}
+			}
+			unvisited.remove(cityToVisitNum);
+			visited.add(tempCityToVisit);
+			cityToVisit = tempCityToVisit;
+			
+			result += shortestDistance;
+			
+			counter--;
+		}
+		Integer startCity = visited.get(0);
+		Integer endCity = visited.get(visited.size() - 1);
+		// Add Cost from last city in tour to start city
+		result += distances[startCity][endCity];
+		
+		return result;
+	}
+	
 	/**
 	 * Calculates the lower
 	 * @param city 					Start node in TSP problem
 	 * @param cityIdentifierList	List of identifier of all cities in subproblem
-	 * @param cities				
+	 * @param cities				Array of all distances between cities in the multi-graph
 	 * @return	The total value of the lower bound
 	 */
 	public static double computeLowerBound(Integer startCityId, List<Integer> cityIdentifierList, double[][] distances) {
@@ -39,39 +88,51 @@ public class TspBounds {
 		return result;
 	}
 	
-	private static double primsMstCost(List<Integer> cityIndentifierList, double[][] distances)  {
+	private static double primsMstCost(List<Integer> cityIdList, double[][] distances)  {
 		double costOfMst = 0;
 		// Visited cities
 		List<Integer> visited = new ArrayList<Integer>();
 		// Unvisited cities
-		List<Integer> unvisited = new ArrayList<Integer>(cityIndentifierList);
-		int counter = cityIndentifierList.size();
-		Integer cityToVisit = unvisited.get(0);
+		List<Integer> unvisited = new ArrayList<Integer>(cityIdList);
+		
+		Integer cityStart = unvisited.get(0);
 		unvisited.remove(0);
-		visited.add(cityToVisit);
+		visited.add(cityStart);
+		
+		int counter = cityIdList.size();
 		while(counter > 1){
+			printList(visited, unvisited);
 			
 			double shortestDistance = 0;
 			int cityToVisitNum = 0;
 			Integer tempCityToVisit = null;
-			for(int i = 0; i < unvisited.size(); i++){
-				if(shortestDistance == 0){
-					shortestDistance = distances[cityToVisit][unvisited.get(i)];
-					tempCityToVisit = unvisited.get(i);
-					cityToVisitNum = i;
-				}
-				else{
-					double tempDistance = distances[cityToVisit][unvisited.get(i)];
-					if(tempDistance < shortestDistance) {
-						shortestDistance = tempDistance;
-						tempCityToVisit = unvisited.get(i);
+			
+			// Double loop to check all visited cities paths to all unvisited cities
+			for(int  i = 0; i < visited.size(); i++) {
+				Integer cityFrom = visited.get(i);
+				
+				for(int  j = 0; j < unvisited.size(); j++) {
+					Integer cityTo = unvisited.get(j);
+					
+					
+					if(shortestDistance == 0){
+						shortestDistance = distances[cityFrom][cityTo];
+						tempCityToVisit = unvisited.get(j);
 						cityToVisitNum = i;
+					}
+					else{
+						double tempDistance = distances[cityFrom][cityTo];
+						if(tempDistance < shortestDistance) {
+							shortestDistance = tempDistance;
+							tempCityToVisit = unvisited.get(j);
+							cityToVisitNum = j;
+						}
 					}
 				}
 			}
 			unvisited.remove(cityToVisitNum);
+			System.out.println("City TO VISIT: " + tempCityToVisit);
 			visited.add(tempCityToVisit);
-			cityToVisit = tempCityToVisit;
 			
 			costOfMst += shortestDistance;
 			
@@ -79,5 +140,9 @@ public class TspBounds {
 		}
 		
 		return costOfMst;
+	}
+	
+	private static void printList(List<Integer> l1, List<Integer> l2) {
+		
 	}
 }
