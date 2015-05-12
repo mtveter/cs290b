@@ -33,6 +33,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	private boolean amerlioration;
 	static Space space;
 	private static int buffer=5;
+	private Shared sharedObject;
 
 	/**
 	 * @throws RemoteException If there is a connection error
@@ -237,5 +238,18 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				e.printStackTrace();
 			}
 		}catch(InterruptedException e){	}	
+	}
+	
+	
+	@Override
+	public synchronized void setShared(Shared sharedObject) {
+		if (this.sharedObject.isOlderThan(sharedObject)){
+			this.sharedObject = sharedObject;
+			space.setShared(sharedObject);
+		}
+	}
+	@Override
+	public Shared getShared() {
+		return sharedObject;
 	}
 }

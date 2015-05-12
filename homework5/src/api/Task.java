@@ -2,6 +2,8 @@ package api;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+
+import system.Computer;
 /**
  * Task interface for implementing Task objects
  * @param <T> 	Value to return
@@ -23,5 +25,9 @@ public interface Task<T> extends Serializable{
 	public Type getType();
 	
 	public int getN();
+	
+	public Computer getComputer();
+
+	public void setComputer(Computer computer);
 	
 }

@@ -3,7 +3,9 @@ package api;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+
 import system.Computer;
+import system.Shared;
 
 /**
  *
@@ -39,4 +41,7 @@ public interface Space extends Remote
      * @throws RemoteException	Communication-related exception that may occur during the execution of a remote method call
      */
     void register( Computer computer ) throws RemoteException;
+	
+    void setShared(Shared sharedObject);
+    Shared getShared();
 }

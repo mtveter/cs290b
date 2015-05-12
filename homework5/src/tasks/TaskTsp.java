@@ -9,7 +9,7 @@ import util.PermutationEnumerator;
 import api.Result;
 import api.Task;
 
-public final class TaskTsp implements Task<List<Integer>>{
+public final class TaskTsp extends BaseTask<List<Integer>>{
 
 	/**	Generated serial ID */
 	private static final long serialVersionUID = 1L;

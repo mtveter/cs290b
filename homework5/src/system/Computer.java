@@ -63,4 +63,8 @@ public interface Computer extends Remote {
 	 * @throws RemoteException If there is a communication error when remote is referenced
 	 */
 	public int coreCount() throws RemoteException;
+	
+	public void setShared(Shared sharedObject);
+	
+	public Shared getShared();
 }

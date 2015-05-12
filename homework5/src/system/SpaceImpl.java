@@ -31,6 +31,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	private BlockingQueue<Task<?>> receivedTasks = new LinkedBlockingQueue<Task<?>>();
 	private List<Closure> receivedClosures = new ArrayList<Closure>();
 	private BlockingQueue<Result<?>> completedResult = new LinkedBlockingQueue<Result<?>>();
+	private Shared sharedObject;
 
 
 	public SpaceImpl() throws RemoteException {
@@ -471,5 +472,21 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			//System.out.println("Closure "+c.getParentId());
 		}
 		System.out.println();
+	}
+	
+	@Override
+	public synchronized void setShared(Shared sharedObject) {
+		if (this.sharedObject.isOlderThan(sharedObject)){
+			this.sharedObject = sharedObject;
+			
+			//Propagate to all computers
+			for (Computer computer : registeredComputers){
+				computer.setShared(sharedObject);
+			}
+		}
+	}
+	@Override
+	public Shared getShared() {
+		return sharedObject;
 	}
 }
