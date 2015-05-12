@@ -17,16 +17,16 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	private static final long serialVersionUID = 1L;
 	/** Identifier of task */
 	private String id;
-	
+
 	private final int n;
-	
+
 	/** The partial list of cities that are to be permuted (excluding the first city). */
 	private List<Integer> partialCityList;
-	
+
 	private List<Integer> lockedCities;
-	
+
 	/** An array containing the computed values for the distances between all cities. */
-	private double[][] distances;
+	public double[][] distances;
 	/** The limit to size of partial cities to by subdivided and executed by Computer*/
 	public static final int RECURSIONLIMIT = 10; 
 
@@ -56,19 +56,18 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	@Override
 	public Result<?> call() throws RemoteException 
 	{
-		
+
 		Result<?> result = null;
 		if(overLowerBound()){
 			//return a result with infinite lenght.
+			System.out.println("TASK: Pruned stop! ");
 			return new Result<>(new Object() ,Double.MAX_VALUE,0l, this.getId());
-			
-			
 		}
-		
+
 		List<Closure> childClosures = new ArrayList<Closure>();
 		long taskStartTime = System.currentTimeMillis();
-		
-		
+
+
 		if(n == TaskTsp.RECURSIONLIMIT) {
 			//int firstCity  = partialCityList.remove(0);
 			//int firstCity = lockedCities.get(lockedCities.size()-1);
@@ -92,40 +91,40 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 					shortestTourDistance = tourDistance;
 				}  
 			}
-			
-			getComputer().setShared(new TspShared(shortestTourDistance));
+			System.out.println("REturned bottom result");
+			//getComputer().setShared(new TspShared(shortestTourDistance));
 			return new Result<>(shortestTour, shortestTourDistance, 0l, this.id);
 		}
 		else if(n > TaskTsp.RECURSIONLIMIT) {
-			
+
 			if(n > TaskTsp.RECURSIONLIMIT + 1) {
 				for (int city : partialCityList) {
-					
+
 					List<Integer> newLockedList = new ArrayList<>(lockedCities);					
 					List<Integer> subPartialCityList = new ArrayList<>(partialCityList);
-					
+
 					subPartialCityList.remove((Integer) city);
 					newLockedList.add((Integer)city);
-					
+
 					TaskTsp task = new TaskTsp(newLockedList, subPartialCityList, distances, this.id+city);
 					//partialTasks.add(task);
-					
+
 					Closure c = new Closure(subPartialCityList.size(), this.id, task);
 					childClosures.add(c);	
 				}
 			}
 			else if(n == TaskTsp.RECURSIONLIMIT + 1) {
 				for (int city : partialCityList) {
-		
+
 					List<Integer> newLockedList = new ArrayList<>(lockedCities);					
 					List<Integer> subPartialCityList = new ArrayList<>(partialCityList);
-					
-					
+
+
 					subPartialCityList.remove((Integer) city);
 					newLockedList.add((Integer)city);
-					
+
 					TaskTsp task = new TaskTsp(newLockedList, subPartialCityList, distances, this.id+city);
-					
+
 					Closure c = new Closure(1, this.id, task);
 					childClosures.add(c);
 				}
@@ -138,20 +137,20 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		else {System.out.println("SPACE: The length of the partial city list is not correct");}
 		return result;
 	}
-	
+
 	private boolean overLowerBound() throws RemoteException {
 		// TODO Auto-generated method stub
 		if(getComputer().getShared().get()!= null){
-		double upperbound = (double) getComputer().getShared().get();
-		double lowerbound = tourDistance(lockedCities);
-		if(upperbound<=lowerbound){
-			return true;
+			double upperbound = (double) getComputer().getShared().get();
+			double lowerbound = tourDistance(lockedCities);
+			System.out.println("TASK: Shared upper is "+upperbound);
+			System.out.println("TASK: this lower is "+lowerbound);
+			if(upperbound<lowerbound){
+				System.out.println("So upper is lower than lower");
+				return true;
+			}
 		}
-		}
-
-			return false;
-		
-		
+		return false;
 	}
 
 
@@ -176,17 +175,17 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	public String getId() {
 		return this.id;
 	}
-	
-  
+
+
 
 	@Override
 	public Type getType() {
 		return Type.TSP;
 	}
-	
+
 	public List<Integer> getPartialCityList(){
 		return this.partialCityList;
-		
+
 	}
 	@Override
 	public int getN() {

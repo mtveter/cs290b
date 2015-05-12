@@ -15,7 +15,7 @@ public class TspShared implements Shared {
 
 	@Override
 	public boolean isOlderThan(Shared other) {
-		return ((Integer) other.get() < (Integer) this.get());
+		return ((double) other.get() < (double) this.get());
 	}
 
 }

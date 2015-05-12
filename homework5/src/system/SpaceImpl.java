@@ -17,6 +17,7 @@ import api.Task;
 import api.Task.Type;
 import system.Closure;
 import tasks.TaskTsp;
+import util.TspBounds;
 
 public class SpaceImpl extends UnicastRemoteObject implements Space {
 
@@ -37,6 +38,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public SpaceImpl() throws RemoteException {
 		super();
 		this.isActive = false;
+		//this.sharedObject=new TspShared(Double.MAX_VALUE);
 		this.sharedObject=new TspShared(Double.MAX_VALUE);
 	}
 	/**
@@ -45,20 +47,28 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	@Override
 	public void putAll(List<Task<?>> taskList) throws RemoteException {
 		System.out.println("SPACE: List of tasks received from Job");
+		
+		List<Integer> cities = new ArrayList<Integer>();
+		double[][] distances = null;
+		
 		for(Task<?> task :  taskList) {
 			try {
 				Closure initialClosure;
 				if(task.getType() == Type.TSP){
 					// Joincounter
+					
 					TaskTsp taskTsp = (TaskTsp) task;
+					distances =taskTsp.distances;
 					initialClosure = new Closure(taskTsp.getPartialCityList().size(),"TOP",task);
 					receivedClosures.add(initialClosure);
 					receivedTasks.put(task);
+					cities.add(Integer.parseInt(task.getId()));
 				}	
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
+		this.sharedObject=new TspShared(TspBounds.computeUpperBound(cities, distances));
 	}
 	/**
 	 * @see api.Space Space
@@ -66,7 +76,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	@Override
 	public Result<?> take() throws RemoteException {
 		try {
-			return completedResult.take();
+			Result <?> r= completedResult.take();
+			System.out.println("SPACE: length of best tour is "+r.getTaskReturnDistance());
+			return r;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -382,8 +394,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		 * and if it still needs more processing it is put in the task queue.
 		 * @param result
 		 * @throws InterruptedException
+		 * @throws RemoteException 
 		 */
-		private void processResult(Result<?> result) throws InterruptedException {
+		private void processResult(Result<?> result) throws InterruptedException, RemoteException {
+
 			
 			if(result.getStatus().equals(Status.WAITING)) {
 				List<Closure> closures = result.getChildClosures();
@@ -394,6 +408,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				}
 			}
 			else if(result.getStatus().equals(Status.COMPLETED)) {
+				double oldShared = (double) getShared().get();
+				double newShared = (double) result.getTaskReturnDistance();
+				System.out.println("SPACE got completed");
+				if (newShared<oldShared){
+					System.out.println("Space is setting new TSP shared");
+					setShared(new TspShared(newShared));
+					//this.sharedObject=new TspShared(newShared);
+				}
 				// return to parent closure
 				for(Closure c : receivedClosures){
 					if(c.getTask().getId().equals(result.getId())){
@@ -408,7 +430,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 		}
 	}
-	private void handleResult(Result<?> result) {
+	private void handleResult(Result<?> result) throws RemoteException {
+		
 		if(result.getStatus().equals(Status.WAITING)) {
 			List<Closure> closures = result.getChildClosures();
 			// Add Closures from result
@@ -423,6 +446,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		}
 		else if(result.getStatus().equals(Status.COMPLETED)) {
 			// return to parent closure
+			
 			for(Closure c : receivedClosures){
 				if(c.getTask().getId().equals(result.getId())){
 					c.receiveResult(result);
@@ -478,11 +502,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	
 	@Override
 	public synchronized void setShared(Shared sharedObject) throws RemoteException {
+		System.out.println("SPACE changed shared object");
 		if (this.sharedObject.isOlderThan(sharedObject)){
 			this.sharedObject = sharedObject;
-			
+			System.out.println("its a newer object");
 			//Propagate to all computers
 			for (Computer computer : registeredComputers){
+				System.out.println("SPACE updating computer");
 				computer.setShared(sharedObject);
 			}
 		}

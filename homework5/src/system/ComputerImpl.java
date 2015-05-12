@@ -246,9 +246,10 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	
 	@Override
 	public synchronized void setShared(Shared sharedObject) throws RemoteException {
+		System.out.println("COMPUTER changed shared object");
 		if (this.sharedObject.isOlderThan(sharedObject)){
 			this.sharedObject = sharedObject;
-			space.setShared(sharedObject);
+			//space.setShared(sharedObject);
 		}
 	}
 	@Override
