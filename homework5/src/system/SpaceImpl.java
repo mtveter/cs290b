@@ -475,7 +475,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	}
 	
 	@Override
-	public synchronized void setShared(Shared sharedObject) {
+	public synchronized void setShared(Shared sharedObject) throws RemoteException {
 		if (this.sharedObject.isOlderThan(sharedObject)){
 			this.sharedObject = sharedObject;
 			

@@ -42,6 +42,7 @@ public interface Space extends Remote
      */
     void register( Computer computer ) throws RemoteException;
 	
-    void setShared(Shared sharedObject);
-    Shared getShared();
+    void setShared(Shared sharedObject) throws RemoteException;
+    
+    Shared getShared() throws RemoteException;
 }

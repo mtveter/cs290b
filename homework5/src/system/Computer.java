@@ -64,7 +64,7 @@ public interface Computer extends Remote {
 	 */
 	public int coreCount() throws RemoteException;
 	
-	public void setShared(Shared sharedObject);
+	public void setShared(Shared sharedObject) throws RemoteException;
 	
-	public Shared getShared();
+	public Shared getShared() throws RemoteException;
 }
