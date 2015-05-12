@@ -2,9 +2,9 @@ package system;
 
 public class TspShared implements Shared {
 	
-	private int value;
+	private double value;
 	
-	public TspShared(int value){
+	public TspShared(double value){
 		this.value = value;
 	}
 

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import system.Closure;
+import system.Shared;
+import system.TspShared;
 import util.PermutationEnumerator;
 import api.Result;
 import api.Task;
@@ -55,6 +57,13 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	public Result<?> call() throws RemoteException 
 	{
 		Result<?> result = null;
+		if(overLowerBound()){
+			//return a result with infinite lenght.
+			return new Result<>(new Object() ,Double.MAX_VALUE,0l, this.getId());
+			
+			
+		}
+		
 		List<Closure> childClosures = new ArrayList<Closure>();
 		long taskStartTime = System.currentTimeMillis();
 		
@@ -82,6 +91,8 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 					shortestTourDistance = tourDistance;
 				}  
 			}
+			
+			getComputer().setShared(new TspShared(shortestTourDistance));
 			return new Result<>(shortestTour, shortestTourDistance, 0l, this.id);
 		}
 		else if(n > TaskTsp.RECURSIONLIMIT) {
@@ -127,6 +138,20 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		return result;
 	}
 	
+	private boolean overLowerBound() {
+		// TODO Auto-generated method stub
+		double upperbound = (double) getComputer().getShared().get();
+		double lowerbound = tourDistance(lockedCities);
+		if(upperbound>=lowerbound){
+			return true;
+		}else{
+			
+			return false;
+		}
+		
+	}
+
+
 	/**
 	 * 
 	 * @param tour The tour of cities

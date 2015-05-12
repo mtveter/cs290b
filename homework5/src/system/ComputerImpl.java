@@ -43,6 +43,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		this.id = id;
 		this.amerlioration = amerlioration;
 		this.multicore = mulitcore;
+		
 	}
 	/**
 	 * @see system.Computer Computer
@@ -132,6 +133,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 */
 	@Override
 	public void getTask(Task<?> task) throws RemoteException {
+		task.setComputer(this);
 		tasks.add(task);
 	}
 	/**
