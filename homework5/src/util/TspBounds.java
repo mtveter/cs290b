@@ -128,9 +128,6 @@ public class TspBounds {
 							cityToVisitNum = j;
 						}
 					}
-					System.out.println("From: " + cityFrom);
-					System.out.println("To:   " + cityTo);
-					System.out.println("-----");
 				}
 			}
 			unvisited.remove(cityToVisitNum);
