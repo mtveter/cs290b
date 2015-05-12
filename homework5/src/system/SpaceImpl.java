@@ -37,6 +37,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public SpaceImpl() throws RemoteException {
 		super();
 		this.isActive = false;
+		this.sharedObject=new TspShared(Double.MAX_VALUE);
 	}
 	/**
 	 * @see api.Space Space
@@ -250,7 +251,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		 */
 		@Override
 		public void run() {
-
+			
+			
 			Computer computer = null;
 			try {
 				computer = registeredComputers.take();

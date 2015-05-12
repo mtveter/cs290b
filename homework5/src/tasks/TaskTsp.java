@@ -56,7 +56,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	@Override
 	public Result<?> call() throws RemoteException 
 	{
-		System.out.println("Running call ! ");
+		
 		Result<?> result = null;
 		if(overLowerBound()){
 			//return a result with infinite lenght.
@@ -141,14 +141,16 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	
 	private boolean overLowerBound() throws RemoteException {
 		// TODO Auto-generated method stub
+		if(getComputer().getShared().get()!= null){
 		double upperbound = (double) getComputer().getShared().get();
 		double lowerbound = tourDistance(lockedCities);
-		if(upperbound>=lowerbound){
+		if(upperbound<=lowerbound){
 			return true;
-		}else{
-			
-			return false;
 		}
+		}
+
+			return false;
+		
 		
 	}
 

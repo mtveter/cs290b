@@ -43,6 +43,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		this.id = id;
 		this.amerlioration = amerlioration;
 		this.multicore = mulitcore;
+		this.sharedObject= new TspShared(Double.MAX_VALUE);
 		
 	}
 	/**
@@ -244,7 +245,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	
 	
 	@Override
-	public synchronized void setShared(Shared sharedObject) {
+	public synchronized void setShared(Shared sharedObject) throws RemoteException {
 		if (this.sharedObject.isOlderThan(sharedObject)){
 			this.sharedObject = sharedObject;
 			space.setShared(sharedObject);
