@@ -68,7 +68,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				e.printStackTrace();
 			}
 		}
-		this.sharedObject=new TspShared(TspBounds.computeUpperBound(cities, distances));
+		
+		System.out.println("THIS IS UPPER BOUND "+TspBounds.computeUpperBound(cities, distances));
+		//this.sharedObject=new TspShared(TspBounds.computeUpperBound(cities, distances));
 	}
 	/**
 	 * @see api.Space Space
@@ -268,9 +270,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			Computer computer = null;
 			try {
 				computer = registeredComputers.take();
+				computer.setShared(sharedObject);
 
 			} catch (InterruptedException e2) {
 				e2.printStackTrace();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 

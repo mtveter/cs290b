@@ -1,6 +1,8 @@
 package system;
 
-public class TspShared implements Shared {
+import java.io.Serializable;
+
+public class TspShared implements Shared,Serializable{
 	
 	private double value;
 	
