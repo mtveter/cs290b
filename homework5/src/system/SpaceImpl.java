@@ -62,15 +62,28 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					initialClosure = new Closure(taskTsp.getPartialCityList().size(),"TOP",task);
 					receivedClosures.add(initialClosure);
 					receivedTasks.put(task);
-					cities.add(Integer.parseInt(task.getId()));
+					
 				}	
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 		
+		for (int i = 0; i < distances.length; i++) {
+			cities.add(i);
+			
+		}
+		System.out.println("Cities:");
+		for(int i : cities){
+			System.out.print(" "+i+" ");
+		}
+		System.out.println("");
+		System.out.println("Distances");
+		for(double[] i : distances){
+			System.out.print(i[0]+i[1]);
+		}
 		System.out.println("THIS IS UPPER BOUND "+TspBounds.computeUpperBound(cities, distances));
-		//this.sharedObject=new TspShared(TspBounds.computeUpperBound(cities, distances));
+		this.sharedObject=new TspShared(TspBounds.computeUpperBound(cities, distances));
 	}
 	/**
 	 * @see api.Space Space
