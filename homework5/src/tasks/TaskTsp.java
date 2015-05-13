@@ -61,8 +61,11 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		Result<?> result = null;
 		if(overLowerBound()){
 			//return a result with infinite lenght.
-			System.out.println("TASK: Pruned stop! ");
-			return new Result<>(lockedCities ,Double.MAX_VALUE,0l, this.getId());
+			//System.out.println("TASK: Pruned stop! ");
+			List<Integer> a = new ArrayList<Integer>();
+			a.addAll(lockedCities);
+			a.addAll(partialCityList);
+			return new Result<>(a ,160.0,0l, this.id);
 		}
 
 		List<Closure> childClosures = new ArrayList<Closure>();
@@ -141,16 +144,14 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 
 	private boolean overLowerBound() throws RemoteException {
 		// TODO Auto-generated method stub
-		if(getComputer().getShared().get()!= null){
+		if(getComputer().getShared().get() != null){
 			double upperbound = (double) getComputer().getShared().get();
-			//double upperbound=32;
-			double lowerbound = tourDistance(lockedCities);
-			//double lowerbound=tourDistance(lockedCities);
-			//double lowerbound= TspBounds.computeLowerBound(lockedCities.get(lockedCities.size()-1), partialCityList, distances);
 			
-			//System.out.println("our lowerbound "+lowerbound);
-			if(upperbound<lowerbound){
-				//System.out.println("So upper is lower than lower");
+			double lowerbound = TspBounds.computeLowerBound(lockedCities.get(lockedCities.size()-1), partialCityList, distances);
+			if(lockedCities.size() > 1){
+				lowerbound+= distances[lockedCities.get(0)][lockedCities.get(1)];
+			}
+			if(upperbound < lowerbound){
 				return true;
 			}
 		}
@@ -167,6 +168,16 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	private double tourDistance( final List<Integer> tour  )
 	{
 		double cost = distances[ tour.get( tour.size() - 1 ) ][ tour.get( 0 ) ];
+
+		for ( int city = 0; city < tour.size() - 1; city ++ )
+		{
+			cost += distances[ tour.get( city ) ][ tour.get( city + 1 ) ];
+		}
+		return cost;
+	}
+	private double tourDistance2( final List<Integer> tour  )
+	{
+		double cost = 0;
 
 		for ( int city = 0; city < tour.size() - 1; city ++ )
 		{

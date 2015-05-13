@@ -57,6 +57,7 @@ public class ResultAdder implements Serializable {
 				// Adds the partial results into a final result value
 				for(int  i = 0; i < numbers.length; i++){
 					if(numbers[i] < tempResult) {
+						
 						tempResult = numbers[i];
 						tempTour = tours.get(i);
 					}

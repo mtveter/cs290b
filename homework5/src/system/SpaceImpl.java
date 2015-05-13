@@ -138,11 +138,15 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 */
 	private void runComputerProxy(boolean hasSpaceRunnableTasks) {
 		this.hasSpaceRunnableTasks = hasSpaceRunnableTasks;
-
+		int runner =0;
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
 			// Check if there are any Closure objects to process
+			runner++;
+			if(runner%30 == 1){
+				System.out.println("running");
+			}
 			if(!receivedClosures.isEmpty()) {
 
 				// If there exits a Closure it tries to merge completed Closure with parent Closure
@@ -351,12 +355,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						
 						for (int i = 0; i < available; i++) {
 							computer.getTask(receivedTasks.take());
-							//System.out.println("Sendt task");
 
 						}
 						for (int i = 0; i < available+1; i++) {
 							Result<?> r = computer.sendResult();
-							//System.out.println("Recieved task");
 							processResult(r);
 							}	
 						
@@ -368,12 +370,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						
 						for (int i = 0; i < available; i++) {
 							computer.getTask(receivedTasks.take());
-							//System.out.println("Sendt task1");
 
 						}
 						for (int i = 0; i < available+1; i++) {
 							Result<?> r = computer.sendResult();
-							//System.out.println("Recieved task");
 							
 							processResult(r);
 
@@ -425,7 +425,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 			//System.out.println("in process result");
 			if(result.getStatus().equals(Status.WAITING)) {
-				//System.out.println("In waiting");
 				List<Closure> closures = result.getChildClosures();
 				// Add Closures from
 				for (Closure closure : closures) {
@@ -434,14 +433,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				}
 			}
 			else if(result.getStatus().equals(Status.COMPLETED)) {
-				//System.out.println("In Complete");
 				double oldShared = (double) getShared().get();
 				double newShared = (double) result.getTaskReturnDistance();
-				//System.out.println("SPACE got completed");
 				if (newShared<oldShared){
 					System.out.println("Space is setting new TSP shared");
 					setShared(new TspShared(newShared));
-					//this.sharedObject=new TspShared(newShared);
 				}
 				// return to parent closure
 				for(Closure c : receivedClosures){
