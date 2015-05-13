@@ -131,7 +131,7 @@ public class TspBounds {
 				}
 			}
 			unvisited.remove(cityToVisitNum);
-			System.out.println("City TO VISIT: " + tempCityToVisit);
+			//System.out.println("City TO VISIT: " + tempCityToVisit);
 			visited.add(tempCityToVisit);
 			
 			costOfMst += shortestDistance;

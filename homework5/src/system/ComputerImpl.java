@@ -52,6 +52,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	@Override
 	public Result<?> execute(Task<?> task) throws RemoteException {
 		Result<?> result = task.call();
+		System.out.println("in execute");
 		return result;
 	}
 	
@@ -207,7 +208,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				try {
 					
 					result = task.call();
+					
 					results.put(result);
+					
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
@@ -236,7 +239,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 			try {
 				
 				result = task.call();
+				
 				results.put(result);
+				
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
@@ -246,8 +251,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	
 	@Override
 	public synchronized void setShared(Shared sharedObject) throws RemoteException {
-		System.out.println("COMPUTER changed shared object");
-		System.out.println("to "+sharedObject.get());
+		//System.out.println("COMPUTER changed shared object");
+		//System.out.println("to "+sharedObject.get());
 		if (this.sharedObject.isOlderThan(sharedObject)){
 			this.sharedObject = sharedObject;
 			//space.setShared(sharedObject);

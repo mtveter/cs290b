@@ -283,13 +283,15 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			Computer computer = null;
 			try {
 				computer = registeredComputers.take();
-				computer.setShared(sharedObject);
+				try {
+					computer.setShared(sharedObject);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					System.out.println("Could not set shared object to computer");
+				}
 
 			} catch (InterruptedException e2) {
 				e2.printStackTrace();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 
 
@@ -349,10 +351,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						
 						for (int i = 0; i < available; i++) {
 							computer.getTask(receivedTasks.take());
+							//System.out.println("Sendt task");
 
 						}
 						for (int i = 0; i < available+1; i++) {
 							Result<?> r = computer.sendResult();
+							//System.out.println("Recieved task");
 							processResult(r);
 							}	
 						
@@ -364,11 +368,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						
 						for (int i = 0; i < available; i++) {
 							computer.getTask(receivedTasks.take());
+							//System.out.println("Sendt task1");
 
 						}
 						for (int i = 0; i < available+1; i++) {
 							Result<?> r = computer.sendResult();
-
+							//System.out.println("Recieved task");
+							
 							processResult(r);
 
 						}	
@@ -417,8 +423,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		 */
 		private void processResult(Result<?> result) throws InterruptedException, RemoteException {
 
-			
+			//System.out.println("in process result");
 			if(result.getStatus().equals(Status.WAITING)) {
+				//System.out.println("In waiting");
 				List<Closure> closures = result.getChildClosures();
 				// Add Closures from
 				for (Closure closure : closures) {
@@ -427,9 +434,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				}
 			}
 			else if(result.getStatus().equals(Status.COMPLETED)) {
+				//System.out.println("In Complete");
 				double oldShared = (double) getShared().get();
 				double newShared = (double) result.getTaskReturnDistance();
-				System.out.println("SPACE got completed");
+				//System.out.println("SPACE got completed");
 				if (newShared<oldShared){
 					System.out.println("Space is setting new TSP shared");
 					setShared(new TspShared(newShared));

@@ -8,6 +8,7 @@ import system.Closure;
 import system.Shared;
 import system.TspShared;
 import util.PermutationEnumerator;
+import util.TspBounds;
 import api.Result;
 import api.Task;
 
@@ -28,7 +29,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	/** An array containing the computed values for the distances between all cities. */
 	public double[][] distances;
 	/** The limit to size of partial cities to by subdivided and executed by Computer*/
-	public static final int RECURSIONLIMIT = 10; 
+	public static final int RECURSIONLIMIT = 9; 
 
 	/**
 	 * @param lockedCities 	List of cities with a locked position in tour for this partial task.
@@ -61,7 +62,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		if(overLowerBound()){
 			//return a result with infinite lenght.
 			System.out.println("TASK: Pruned stop! ");
-			return new Result<>(new Object() ,Double.MAX_VALUE,0l, this.getId());
+			return new Result<>(lockedCities ,Double.MAX_VALUE,0l, this.getId());
 		}
 
 		List<Closure> childClosures = new ArrayList<Closure>();
@@ -91,7 +92,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 					shortestTourDistance = tourDistance;
 				}  
 			}
-			System.out.println("REturned bottom result");
+			//System.out.println("REturned bottom result");
 			//getComputer().setShared(new TspShared(shortestTourDistance));
 			return new Result<>(shortestTour, shortestTourDistance, 0l, this.id);
 		}
@@ -142,11 +143,14 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		// TODO Auto-generated method stub
 		if(getComputer().getShared().get()!= null){
 			double upperbound = (double) getComputer().getShared().get();
+			//double upperbound=32;
 			double lowerbound = tourDistance(lockedCities);
-			System.out.println("TASK: Shared upper is "+upperbound);
-			System.out.println("TASK: this lower is "+lowerbound);
+			//double lowerbound=tourDistance(lockedCities);
+			//double lowerbound= TspBounds.computeLowerBound(lockedCities.get(lockedCities.size()-1), partialCityList, distances);
+			
+			//System.out.println("our lowerbound "+lowerbound);
 			if(upperbound<lowerbound){
-				System.out.println("So upper is lower than lower");
+				//System.out.println("So upper is lower than lower");
 				return true;
 			}
 		}
