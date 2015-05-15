@@ -59,7 +59,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	{
 
 		Result<?> result = null;
-		if(overLowerBound()){
+		if(isOverUpperBound()){
 			//return a result with infinite lenght.
 			//System.out.println("TASK: Pruned stop! ");
 			List<Integer> a = new ArrayList<Integer>();
@@ -143,7 +143,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		return result;
 	}
 
-	private boolean overLowerBound() throws RemoteException {
+	private boolean isOverUpperBound() throws RemoteException {
 		// TODO Auto-generated method stub
 		if(getComputer().getShared().get() != null){
 			double upperbound = (double) getComputer().getShared().get();
