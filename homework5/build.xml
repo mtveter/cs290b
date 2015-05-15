@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="hw3" default="dist" basedir=".">
-    <description>Build xml for homework 3 - CS290B.</description>
+    <description>Build xml for homework 5 - CS290B.</description>
 	
      <!-- set global properties for this build -->
   <property name="src"   location="src" />
   <property name="build" location="build" />
   <property name="dist"  location="dist" />
-	
+
   <target name="compile" description="compile the source" >
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build}"/>  
