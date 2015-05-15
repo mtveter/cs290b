@@ -457,8 +457,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				}
 			}
 			else if(result.getStatus().equals(Status.COMPLETED)) {
-				double oldShared = (double) getShared().get();
-				double newShared = (double) result.getTaskReturnDistance();
+				double oldShared = (Double) getShared().get();
+				double newShared = (Double) result.getTaskReturnDistance();
 				if (newShared<oldShared){
 					System.out.println("Space is setting new TSP shared");
 					setShared(new TspShared(newShared));
