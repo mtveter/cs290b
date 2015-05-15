@@ -69,7 +69,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		}
 
 		List<Closure> childClosures = new ArrayList<Closure>();
-		long taskStartTime = System.currentTimeMillis();
+		long taskStartTime = System.nanoTime();
 
 
 		if(n == TaskTsp.RECURSIONLIMIT) {
@@ -95,9 +95,10 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 					shortestTourDistance = tourDistance;
 				}  
 			}
-			//System.out.println("REturned bottom result");
-			//getComputer().setShared(new TspShared(shortestTourDistance));
-			return new Result<>(shortestTour, shortestTourDistance, 0l, this.id);
+			long taskEndTime = System.nanoTime();
+			long taskRunTime = taskEndTime - taskStartTime;
+			
+			return new Result<>(shortestTour, shortestTourDistance, taskRunTime, this.id);
 		}
 		else if(n > TaskTsp.RECURSIONLIMIT) {
 
@@ -134,7 +135,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 				}
 			}
 			else {System.out.println("SPACE: The length of the partial city list is not correct");}
-			long taskEndTime = System.currentTimeMillis();
+			long taskEndTime = System.nanoTime();
 			long taskRunTime = taskEndTime - taskStartTime;
 			result = new Result<>(childClosures, taskRunTime, this.getId());
 		}

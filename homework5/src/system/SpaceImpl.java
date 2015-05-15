@@ -33,7 +33,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	private List<Closure> receivedClosures = new ArrayList<Closure>();
 	private BlockingQueue<Result<?>> completedResult = new LinkedBlockingQueue<Result<?>>();
 	private Shared sharedObject;
-
+	
+	long decompose_T;
+	long compose_T;
+	long maxSubtask_T;
+	long T_1;
 
 	public SpaceImpl() throws RemoteException {
 		super();
@@ -93,6 +97,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		try {
 			Result <?> r= completedResult.take();
 			System.out.println("SPACE: length of best tour is "+r.getTaskReturnDistance());
+			double milli = 1000000.0;
+			System.out.println("T_Decompose: "+decompose_T/milli + " ms");
+			System.out.println("T_Compose: "+compose_T/milli + " ms");
+			System.out.println("T_MaxSubtask: "+maxSubtask_T/milli + " ms");
+			System.out.println("T_Infinity: "+(decompose_T + compose_T + maxSubtask_T)/milli + " ms");
+			System.out.println("T_1: "+T_1/milli + " ms");
 			return r;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -148,21 +158,25 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				System.out.println("running");
 			}
 			if(!receivedClosures.isEmpty()) {
-
+				long composeStart = System.nanoTime();
 				// If there exits a Closure it tries to merge completed Closure with parent Closure
 				mergeCompletedClosures();
-
+				
 				// If the Top Closure is completed the final result can be put in the blocking queue to be collected by Client
 				if(isTopClosureCompleted()) {
 					try {
-						completedResult.put(receivedClosures.get(0).getAdder().getResult());
+						Result r = receivedClosures.get(0).getAdder().getResult();
+						decompose_T = r.getTaskRunTime();
+						completedResult.put(r);
 						receivedClosures.remove(0);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
+				long composeEnd = System.nanoTime();
+				compose_T += composeEnd - composeStart;
 			}
-			
+			long decomposeStart = System.nanoTime();
 			Task<?> task = null;
 			try {
 				task = receivedTasks.take();
@@ -193,8 +207,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			long decomposeEnd = System.nanoTime();
+			//decompose_T += decomposeEnd - decomposeStart;
 		}
 	}
+	
 	/**
 	 * Takes completed Closure objects and merges them upward in hierarchy
 	 */
@@ -208,9 +225,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			while(iter.hasNext()){
 				
 				Closure c = iter.next();
-
+				
 				// Check if current Closure is completed
 				if(c.isCompleted()){
+					long taskRunTime = c.getAdder().getResult().getTaskRunTime();
+					if (taskRunTime > maxSubtask_T) maxSubtask_T = taskRunTime;
+					T_1 += taskRunTime;
 					String parent = c.getParentId();
 					// Compares the current Closure with other Closure to find parent
 					for (Closure c2 : receivedClosures){
