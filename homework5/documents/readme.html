@@ -1,0 +1,30 @@
+<html>
+<body>
+
+<h1> Readme - homework 5</h1>
+<i> Instructions to compile and run divide and conquer tsp </i><br><br>
+<a href=http://ant.apache.org/> Ant</a> is used to both run and compile the application.<br>
+
+<p><b> 1. Compiling: </b>
+<br>Run the command <b>ant</b> to compile program
+<br>The application has five packages: 
+<br> - api 
+<br> - clients 
+<br> - system
+<br> - tasks
+<br> - util
+
+<b><p> 2. Running the code: </b>
+<p>Space/server:
+<br>2.1 Start the space server by running the command <b>ant runSpace -Darg0="[true/false: true if space runnable tasks activated, false otherwise]"</b>
+<p>Computer(s):
+<br>2.2 Start computer server(s) by running the command <b>ant runComputer -Darg0="[ip of server machine]" -Darg1="[true/false: true if multiple workers activate, false otherwise]" -Darg2="[true/false: true if prefetching activated, false otherwise]"</b>
+<p> Clients:
+<br>2.3 Euclidean TSP: To run the Euclidean TSP task: <b>ant runTspClient -Darg0="[ip of server machine]"</b>
+
+<p>If no argument is passed with ant command to Clients EuclideanTSP or Computer, the program will use default value for server domain which is "localhost"</p>
+
+
+
+</body>
+</html>
