@@ -158,7 +158,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				System.out.println("running");
 			}
 			if(!receivedClosures.isEmpty()) {
-				long composeStart = System.nanoTime();
+				//long composeStart = System.nanoTime();
 				// If there exits a Closure it tries to merge completed Closure with parent Closure
 				mergeCompletedClosures();
 				
@@ -173,8 +173,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						e.printStackTrace();
 					}
 				}
-				long composeEnd = System.nanoTime();
-				compose_T += composeEnd - composeStart;
+				//long composeEnd = System.nanoTime();
+				//compose_T += composeEnd - composeStart;
 			}
 			long decomposeStart = System.nanoTime();
 			Task<?> task = null;
@@ -231,6 +231,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					long taskRunTime = c.getAdder().getResult().getTaskRunTime();
 					if (taskRunTime > maxSubtask_T) maxSubtask_T = taskRunTime;
 					T_1 += taskRunTime;
+					long composeStart = System.nanoTime(); 
 					String parent = c.getParentId();
 					// Compares the current Closure with other Closure to find parent
 					for (Closure c2 : receivedClosures){
@@ -240,6 +241,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 							if(parent.equals(c2.getTask().getId())){
 								// Passes result of completed Closure to parent Closure
 								c2.receiveResult(c.getAdder().getResult());
+								if (parent.equals("0")){
+									compose_T += System.nanoTime() - composeStart;
+								}
 								removeList.add(c);
 							}
 						}
