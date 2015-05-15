@@ -3,7 +3,13 @@
 
 <h3>Design Document</h3>
 
-<h4>1.) API changes:</h4>
+<h4>1. API changes:</h4>
+
+<p> 
+	- Shared: Shared object that stores a value to share</br>
+	- 'TspShared': Implemetion of 'Shared' object for TSP problem, that stores a double value of 'upperbound' for the problem instance.
+	- 'isOlderThan(Shared other)': Evaluates the new object value against the old one. In the case of TSP the method will return true if the new value for 'upperbound' is less than the older value.
+</p>
 <p> 
 	- Task: </br>
 	- 'setComputer(Computer computer)': Set the 'Computer' of a 'Task' to provide access to the 'Computer' processing the task
@@ -11,28 +17,40 @@
 <p> 
 	- Space: </br>
 	Added new interface methods: </br>
-	- 'setShared(Shared sharedObject)': Method to set the shared object of a 'Space'
-	- 'getShared'(): Method to get the shared object of a 'Space'
+	- 'setShared(Shared sharedObject)': Method to set the shared object of a 'Space'</br>
+	- 'getShared()': Method to get the shared object of a 'Space'
 </p>
 <p> 
 	- Computer: </br>
-	- 'setShared(Shared sharedObject)': Method to set the shared object of a 'Computer'
-	- 'getShared'(): Method to get the shared object of a 'Computer'
+	- 'setShared(Shared sharedObject)': Method to set the shared object of a 'Computer'</br>
+	- 'getShared():' Method to get the shared object of a 'Computer'
 </p>
 
-<h4>2.) Bounds</h4>
+<h4>2. Bounds:</h4>
 
 <h5>2.1 Upper Bound:</h5>
 <p> 
-	</br>
+	The group has implemented the greedy 'Nearest Neighbor' algorithm to provide an upper bound for the TSP problem. 
+	The algorithm finds the a tour in the multigraph by a greedy approach that start at one city, and for each city finds the nearest city that has not been visited, and when all cities are visited adds a path back to start.</br>
+	This upper bound is set at the start of decomposition of tasks, and is only updated if a tour with a shorter tour distance is found,.
+</p>
+
+<h5>2.2 Lower Bound</h5>
+<p> 
+	The group has implemented a strong lower bound for the TSP problem. The algorithm used is finding a minimal cost spanning tree(MST) for the partial tour and combine this cost with the distance between the 
+	two cities closest to the last city in the list of already locked cities. The algorithm used for finding a MST is Prim's algorithm. </br>
+	The lower bound is calculated for each subtree in the decomposition of tasks. Unfortunately the group has not implemented an update procedure with time complexity of O(1), 
+	which leads to loosing some of the performance gained by the increased pruning resulted from the the stronger lower bound.
 	
 </p>
 
-<h5>2. Lower Bound</h5>
-<p> </br>
-
+<h4>3. Pruning:</h4>
+<p> 
+	The pruning is implemented in the 'isOverUpperBound()'(Class: 'TaskTsp'). This method accesses the value of the shared object, which for the TSP problem is the current 'upperbound' of the 'Job'. 
+	This value is evaluated against the computed lower of the TSP problem for the partial city list, and if the 'lowerbound' of this sub-problem is greater than the 'upperbound' the method returns true.</br>
+	Returning true results in the 'Task' returning a 'Result' object that indicates that sub-problems where ruled out and pruned, instead of generating children 'Closure' objects with corresponding 'Task' 
+	for the given 'Closure'/Task'
 </p>
-
 
 </body>
 </html>
