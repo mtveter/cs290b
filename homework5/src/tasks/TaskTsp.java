@@ -29,7 +29,9 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	/** An array containing the computed values for the distances between all cities. */
 	public double[][] distances;
 	/** The limit to size of partial cities to by subdivided and executed by Computer*/
-	public static final int RECURSIONLIMIT = 9; 
+	public static final int RECURSIONLIMIT = 7; 
+	
+	private boolean pruning=true;
 
 	/**
 	 * @param lockedCities 	List of cities with a locked position in tour for this partial task.
@@ -57,19 +59,30 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	@Override
 	public Result<?> call() throws RemoteException 
 	{
-
+		if(this.id.equals("062")){
+			System.out.println("thisis locked "+this.lockedCities);
+		}
+		
 		Result<?> result = null;
-		if(isOverUpperBound()){
+		List<Closure> childClosures = new ArrayList<Closure>();
+		long taskStartTime = System.nanoTime();
+		if(pruning && isOverUpperBound()){
 			//return a result with infinite lenght.
 			//System.out.println("TASK: Pruned stop! ");
+			//System.out.println(lockedCities);
 			List<Integer> a = new ArrayList<Integer>();
 			a.addAll(lockedCities);
 			a.addAll(partialCityList);
-			return new Result<>(a ,160.0,0l, this.id);
+			return new Result<>(a ,160.0,0l, this.id,true);
+			/*TaskTsp task = new TaskTsp(lockedCities, partialCityList, distances, this.id+3);
+			
+			Closure c = new Closure(1, this.id, task);
+			c.getAdder().addResult(new Result<>(lockedCities,160.0,0l,this.id));
+			childClosures.add(c);
+			return new Result<>(childClosures, 1009, this.getId());*/
+			
 		}
 
-		List<Closure> childClosures = new ArrayList<Closure>();
-		long taskStartTime = System.nanoTime();
 
 
 		if(n == TaskTsp.RECURSIONLIMIT) {
@@ -110,12 +123,13 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 
 					subPartialCityList.remove((Integer) city);
 					newLockedList.add((Integer)city);
-
+					
 					TaskTsp task = new TaskTsp(newLockedList, subPartialCityList, distances, this.id+city);
 					//partialTasks.add(task);
 
 					Closure c = new Closure(subPartialCityList.size(), this.id, task);
 					childClosures.add(c);	
+					
 				}
 			}
 			else if(n == TaskTsp.RECURSIONLIMIT + 1) {

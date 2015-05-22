@@ -70,4 +70,8 @@ public class ResultAdder implements Serializable {
 	public Result<?> getResult(){
 		return finalresult;
 	}
+	public void setResult(Result<?> result ){
+		finalresult=result;
+		
+	}
 }

@@ -35,6 +35,9 @@ public class Closure implements Serializable{
 	public int getJoinCounter() {
 		return this.joinCounter;
 	}
+	public void setJoinCounter(int i ){
+		this.joinCounter =i;
+	}
 	/**
 	 * Receives a Result and passes it to its ResultAdder
 	 * @param r	Result to be processed by Closure

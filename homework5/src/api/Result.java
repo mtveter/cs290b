@@ -25,6 +25,8 @@ public class Result<T> implements Serializable
     /** */
     private List<Closure> childClosures = new ArrayList<>();
     /**  */
+    public boolean pruned = false;
+    
     public enum Status{
     	WAITING, COMPLETED;
     }
@@ -62,6 +64,18 @@ public class Result<T> implements Serializable
         this.id = id;
         this.childClosures = null;
         this.taskReturnDistance = taskReturnDistance;
+    }
+    public Result( T taskReturnValue, T taskReturnDistance, long taskRunTime, String id,boolean pruned)
+    {
+    	this.status = Status.COMPLETED;
+        assert taskReturnValue != null;
+        assert taskRunTime >= 0;
+        this.taskReturnValue = taskReturnValue;
+        this.taskRunTime = taskRunTime;
+        this.id = id;
+        this.childClosures = null;
+        this.taskReturnDistance = taskReturnDistance;
+        this.pruned = true;
     }
     /**
      * Constructor used for result with a task value

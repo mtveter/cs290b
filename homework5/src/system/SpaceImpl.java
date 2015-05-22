@@ -178,6 +178,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			}
 			long decomposeStart = System.nanoTime();
 			Task<?> task = null;
+			//printClosures();
 			try {
 				task = receivedTasks.take();
 				if(hasSpaceRunnableTasks) {
@@ -446,6 +447,29 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		 * @throws RemoteException 
 		 */
 		private void processResult(Result<?> result) throws InterruptedException, RemoteException {
+			List<Closure> cl = result.getChildClosures();
+			if(result.getId().equals("062")){
+				System.out.println("got the 062 result");
+				
+				for(Closure c: receivedClosures){
+					if(c.getTask().getId().equals("06")){
+						System.out.println("There is a 06 closure");
+					}
+					if(c.getTask().getId().equals("062")){
+						System.out.println("There is a 062 closure");
+					}
+				}
+				
+				
+			}
+			
+			if(cl!=null){
+			for(Closure c: cl){
+				if(c.getParentId().equals("062")){
+					System.out.println("Size "+cl.size());
+					System.out.println("the taks id in closure 062 is "+c.getTask().getId());
+				}
+			}}
 
 			//System.out.println("in process result");
 			if(result.getStatus().equals(Status.WAITING)) {
@@ -466,7 +490,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				// return to parent closure
 				for(Closure c : receivedClosures){
 					if(c.getTask().getId().equals(result.getId())){
+						
 						c.receiveResult(result);
+						if(result.pruned){
+							c.setJoinCounter(0);
+							c.getAdder().setResult(result);
+							
+						}
+						
 					}
 				}					
 			}
