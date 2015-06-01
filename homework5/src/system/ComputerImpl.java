@@ -52,7 +52,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	@Override
 	public Result<?> execute(Task<?> task) throws RemoteException {
 		Result<?> result = task.call();
-		System.out.println("in execute");
+//		System.out.println("in execute");
 		return result;
 	}
 	

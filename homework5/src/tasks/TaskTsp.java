@@ -60,7 +60,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	public Result<?> call() throws RemoteException 
 	{
 		if(this.id.equals("062")){
-			System.out.println("thisis locked "+this.lockedCities);
+//			System.out.println("thisis locked "+this.lockedCities);
 		}
 		
 		Result<?> result = null;
@@ -158,15 +158,33 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	}
 
 	private boolean isOverUpperBound() throws RemoteException {
-		// TODO Auto-generated method stub
 		if(getComputer().getShared().get() != null){
 			double upperbound = (double) getComputer().getShared().get();
 			
-			double lowerbound = TspBounds.computeLowerBound(lockedCities.get(lockedCities.size()-1), partialCityList, distances);
+			double lowerbound = 0;
+			Integer firstLocked = lockedCities.get(0);
+			Integer lastLocked = lockedCities.get(lockedCities.size() - 1);
+			
+			if(lockedCities.size() == 1 || TspBounds.lbAdjacencyMap.get(lastLocked).size() > 2) {
+				lowerbound = TspBounds.computeLowerBound(true, firstLocked, lastLocked, partialCityList, distances);
+			}
+			else if(TspBounds.lbAdjacencyMap.get(lastLocked).size() == 2) {
+				TspBounds.removeCityFromMst(2, lastLocked, distances);
+				lowerbound = TspBounds.computeLowerBound(false, firstLocked, lastLocked, partialCityList, distances);
+			}
+			else if(TspBounds.lbAdjacencyMap.get(lastLocked).size() == 1) {
+				TspBounds.removeCityFromMst(1, lastLocked, distances);
+				lowerbound = TspBounds.computeLowerBound(false, firstLocked, lastLocked, partialCityList, distances);
+			}
+			
+			
 			if(lockedCities.size() > 1){
-				lowerbound+= distances[lockedCities.get(0)][lockedCities.get(1)];
+				for(int i = 0; i < lockedCities.size() - 1; i++) {
+					lowerbound += distances[lockedCities.get(0)][lockedCities.get(0+1)];
+				}
 			}
 			if(upperbound < lowerbound){
+				System.out.println("PRUNED");
 				return true;
 			}
 		}
