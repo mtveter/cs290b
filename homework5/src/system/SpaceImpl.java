@@ -77,17 +77,17 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			cities.add(i);
 			
 		}
-		System.out.println("Cities:");
+//		System.out.println("Cities:");
 		for(int i : cities){
-			System.out.print(" "+i+" ");
+//			System.out.print(" "+i+" ");
 		}
-		System.out.println("");
-		System.out.println("Distances");
+//		System.out.println("");
+//		System.out.println("Distances");
 		for(double[] i : distances){
-			System.out.print(i[0]+i[1]);
+//			System.out.print(i[0]+i[1]);
 		}
 		System.out.println("THIS IS UPPER BOUND "+TspBounds.computeUpperBound(cities, distances));
-		this.sharedObject=new TspShared(TspBounds.computeUpperBound(cities, distances));
+		this.sharedObject = new TspShared(TspBounds.computeUpperBound(cities, distances));
 	}
 	/**
 	 * @see api.Space Space
@@ -155,7 +155,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			// Check if there are any Closure objects to process
 			runner++;
 			if(runner%30 == 1){
-				System.out.println("running");
+//				System.out.println("running");
 			}
 			if(!receivedClosures.isEmpty()) {
 				//long composeStart = System.nanoTime();
@@ -449,14 +449,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		private void processResult(Result<?> result) throws InterruptedException, RemoteException {
 			List<Closure> cl = result.getChildClosures();
 			if(result.getId().equals("062")){
-				System.out.println("got the 062 result");
+//				System.out.println("got the 062 result");
 				
 				for(Closure c: receivedClosures){
 					if(c.getTask().getId().equals("06")){
-						System.out.println("There is a 06 closure");
+//						System.out.println("There is a 06 closure");
 					}
 					if(c.getTask().getId().equals("062")){
-						System.out.println("There is a 062 closure");
+//						System.out.println("There is a 062 closure");
 					}
 				}
 				
@@ -466,8 +466,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			if(cl!=null){
 			for(Closure c: cl){
 				if(c.getParentId().equals("062")){
-					System.out.println("Size "+cl.size());
-					System.out.println("the taks id in closure 062 is "+c.getTask().getId());
+//					System.out.println("Size "+cl.size());
+//					System.out.println("the taks id in closure 062 is "+c.getTask().getId());
 				}
 			}}
 
@@ -484,7 +484,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				double oldShared = (Double) getShared().get();
 				double newShared = (Double) result.getTaskReturnDistance();
 				if (newShared<oldShared){
-					System.out.println("Space is setting new TSP shared");
+//					System.out.println("Space is setting new TSP shared");
 					setShared(new TspShared(newShared));
 				}
 				// return to parent closure
@@ -580,13 +580,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	
 	@Override
 	public synchronized void setShared(Shared sharedObject) throws RemoteException {
-		System.out.println("SPACE changed shared object");
+//		System.out.println("SPACE changed shared object");
 		if (this.sharedObject.isOlderThan(sharedObject)){
 			this.sharedObject = sharedObject;
-			System.out.println("its a newer object");
+//			System.out.println("its a newer object");
 			//Propagate to all computers
 			for (Computer computer : registeredComputers){
-				System.out.println("SPACE updating computer");
+//				System.out.println("SPACE updating computer");
 				computer.setShared(sharedObject);
 			}
 		}
