@@ -4,13 +4,10 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import api.Result;
 import system.Closure;
-import system.Shared;
-import system.TspShared;
 import util.PermutationEnumerator;
 import util.TspBounds;
-import api.Result;
-import api.Task;
 
 public final class TaskTsp extends BaseTask<List<Integer>>{
 
@@ -31,7 +28,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	/** The limit to size of partial cities to by subdivided and executed by Computer*/
 	public static final int RECURSIONLIMIT = 7; 
 	
-	private boolean pruning=true;
+	private boolean pruning = true;
 
 	/**
 	 * @param lockedCities 	List of cities with a locked position in tour for this partial task.
@@ -40,7 +37,6 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	 * @param id Identifier of Task
 	 * @param lockedCities are the cities that have
 	 */
-
 	public TaskTsp(List<Integer>lockedCities, List<Integer> partialCityList, double[][] distances,String id){
 		this.lockedCities = lockedCities;
 		this.partialCityList = partialCityList;
@@ -49,7 +45,6 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		this.id = id;
 		this.n = partialCityList.size();
 	}
-
 
 	/**
 	 * {@inheritDoc}
@@ -82,7 +77,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 				nrOfPrunedTasks *= i;
 			}
 			
-			return new Result<>(a ,160.0,0l, this.id,true, nrOfPrunedTasks);
+			return new Result<>(a, 160.0, 0l, this.id, true, nrOfPrunedTasks);
 			/*TaskTsp task = new TaskTsp(lockedCities, partialCityList, distances, this.id+3);
 			
 			Closure c = new Closure(1, this.id, task);

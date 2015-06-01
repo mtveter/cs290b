@@ -152,7 +152,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 */
 	private void runComputerProxy(boolean hasSpaceRunnableTasks) {
 		this.hasSpaceRunnableTasks = hasSpaceRunnableTasks;
-		int runner =0;
+		int runner = 0;
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
@@ -496,12 +496,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					if(c.getTask().getId().equals(result.getId())){
 						
 						c.receiveResult(result);
-						if(result.pruned){
+						if(result.isPruned()){
+							pruningModel.addPrunedTasks(result.getNrOfPrunedTasks());
 							c.setJoinCounter(0);
 							c.getAdder().setResult(result);
-							
 						}
-						
 					}
 				}					
 			}

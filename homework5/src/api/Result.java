@@ -25,7 +25,7 @@ public class Result<T> implements Serializable
     /** */
     private List<Closure> childClosures = new ArrayList<>();
     /** True if result is a result of a tasks that pruned all subtasks */
-    public boolean pruned = false;
+    private boolean pruned = false;
     /** */
     private Integer nrOfPrunedTasks = 0;
     
@@ -121,5 +121,8 @@ public class Result<T> implements Serializable
     }
 	public Integer getNrOfPrunedTasks() {
 		return nrOfPrunedTasks;
+	}
+	public boolean isPruned() {
+		return this.pruned;
 	}
 }
