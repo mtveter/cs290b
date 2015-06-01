@@ -24,8 +24,10 @@ public class Result<T> implements Serializable
     private Status status;
     /** */
     private List<Closure> childClosures = new ArrayList<>();
-    /**  */
+    /** True if result is a result of a tasks that pruned all subtasks */
     public boolean pruned = false;
+    /** */
+    private Integer nrOfPrunedTasks = 0;
     
     public enum Status{
     	WAITING, COMPLETED;
@@ -65,7 +67,7 @@ public class Result<T> implements Serializable
         this.childClosures = null;
         this.taskReturnDistance = taskReturnDistance;
     }
-    public Result( T taskReturnValue, T taskReturnDistance, long taskRunTime, String id,boolean pruned)
+    public Result( T taskReturnValue, T taskReturnDistance, long taskRunTime, String id, boolean pruned, Integer nrOfPrunedTasks)
     {
     	this.status = Status.COMPLETED;
         assert taskReturnValue != null;
@@ -76,6 +78,7 @@ public class Result<T> implements Serializable
         this.childClosures = null;
         this.taskReturnDistance = taskReturnDistance;
         this.pruned = true;
+        this.nrOfPrunedTasks = nrOfPrunedTasks;
     }
     /**
      * Constructor used for result with a task value
@@ -116,4 +119,7 @@ public class Result<T> implements Serializable
         //stringBuilder.append( "\n\tReturn value:\n\t" ).append( taskReturnValue.toString() );
         return stringBuilder.toString();
     }
+	public Integer getNrOfPrunedTasks() {
+		return nrOfPrunedTasks;
+	}
 }

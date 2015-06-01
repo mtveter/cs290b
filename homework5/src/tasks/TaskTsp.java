@@ -67,13 +67,22 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		List<Closure> childClosures = new ArrayList<Closure>();
 		long taskStartTime = System.nanoTime();
 		if(pruning && isOverUpperBound()){
-			//return a result with infinite lenght.
+			//return a result with infinite length.
 			//System.out.println("TASK: Pruned stop! ");
 			//System.out.println(lockedCities);
 			List<Integer> a = new ArrayList<Integer>();
 			a.addAll(lockedCities);
 			a.addAll(partialCityList);
-			return new Result<>(a ,160.0,0l, this.id,true);
+			
+			
+			/* Calculate number of tasks that is pruned */
+			Integer nrOfPrunedTasks = null;
+			nrOfPrunedTasks = new Integer(1);
+			for(int i = TaskTsp.RECURSIONLIMIT; i <= this.n; i++) {
+				nrOfPrunedTasks *= i;
+			}
+			
+			return new Result<>(a ,160.0,0l, this.id,true, nrOfPrunedTasks);
 			/*TaskTsp task = new TaskTsp(lockedCities, partialCityList, distances, this.id+3);
 			
 			Closure c = new Closure(1, this.id, task);

@@ -27,6 +27,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	private boolean isActive;
 	/** Describes if Space implementation has feature to run some specified Task objects in Space */
 	private boolean hasSpaceRunnableTasks;
+	
+	/* Model for pruning efficiency */
+	private Pruning pruningModel;
 
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
 	private BlockingQueue<Task<?>> receivedTasks = new LinkedBlockingQueue<Task<?>>();
@@ -41,9 +44,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 	public SpaceImpl() throws RemoteException {
 		super();
+		this.pruningModel = new Pruning();
 		this.isActive = false;
 		//this.sharedObject=new TspShared(Double.MAX_VALUE);
-		this.sharedObject=new TspShared(Double.MAX_VALUE);
+		this.sharedObject = new TspShared(Double.MAX_VALUE);
 	}
 	/**
 	 * @see api.Space Space
