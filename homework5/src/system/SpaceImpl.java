@@ -29,7 +29,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	private boolean hasSpaceRunnableTasks;
 	
 	/* Model for progress of branch and bound  */
-	private DataProgress progressModel;
+	private TasksProgressModel progressModel;
 
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
 	private BlockingQueue<Task<?>> receivedTasks = new LinkedBlockingQueue<Task<?>>();
@@ -60,7 +60,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		
 		
 		/* Sets the pruning model */
-		this.progressModel = new DataProgress(taskList.size());
+		this.progressModel = new TasksProgressModel(taskList.size());
 		
 		for(Task<?> task :  taskList) {
 			try {

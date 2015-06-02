@@ -3,14 +3,14 @@ package system;
 import tasks.TaskTsp;
 
 /* Model accessing maintaining progress data of tasks in branch and bound composition and decomposition */
-public class DataProgress {
+public class TasksProgressModel {
 	
 	private int totalPrunedTasks;
 	private int totalGeneratedTasks;
 	private int totalCompletedTasks;
 	private int totalTasks;
 
-	public DataProgress(int n) {
+	public TasksProgressModel(int n) {
 		totalPrunedTasks = 0;
 		totalGeneratedTasks = 0;
 		totalCompletedTasks = 0;
