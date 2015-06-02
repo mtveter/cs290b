@@ -4,13 +4,10 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import api.Result;
 import system.Closure;
-import system.Shared;
-import system.TspShared;
 import util.PermutationEnumerator;
 import util.TspBounds;
-import api.Result;
-import api.Task;
 
 public final class TaskTsp extends BaseTask<List<Integer>>{
 
@@ -31,7 +28,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	/** The limit to size of partial cities to by subdivided and executed by Computer*/
 	public static final int RECURSIONLIMIT = 7; 
 	
-	private boolean pruning=true;
+	private boolean pruning = true;
 
 	/**
 	 * @param lockedCities 	List of cities with a locked position in tour for this partial task.
@@ -40,7 +37,6 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	 * @param id Identifier of Task
 	 * @param lockedCities are the cities that have
 	 */
-
 	public TaskTsp(List<Integer>lockedCities, List<Integer> partialCityList, double[][] distances,String id){
 		this.lockedCities = lockedCities;
 		this.partialCityList = partialCityList;
@@ -49,7 +45,6 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		this.id = id;
 		this.n = partialCityList.size();
 	}
-
 
 	/**
 	 * {@inheritDoc}
@@ -60,20 +55,29 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	public Result<?> call() throws RemoteException 
 	{
 		if(this.id.equals("062")){
-			System.out.println("thisis locked "+this.lockedCities);
+//			System.out.println("thisis locked "+this.lockedCities);
 		}
 		
 		Result<?> result = null;
 		List<Closure> childClosures = new ArrayList<Closure>();
 		long taskStartTime = System.nanoTime();
 		if(pruning && isOverUpperBound()){
-			//return a result with infinite lenght.
+			//return a result with infinite length.
 			//System.out.println("TASK: Pruned stop! ");
 			//System.out.println(lockedCities);
 			List<Integer> a = new ArrayList<Integer>();
 			a.addAll(lockedCities);
 			a.addAll(partialCityList);
-			return new Result<>(a ,160.0,0l, this.id,true);
+			
+			
+			/* Calculate number of tasks that is pruned */
+			Integer nrOfPrunedTasks = null;
+			nrOfPrunedTasks = new Integer(1);
+			for(int i = TaskTsp.RECURSIONLIMIT; i <= this.n; i++) {
+				nrOfPrunedTasks *= i;
+			}
+			
+			return new Result<>(a, 160.0, 0l, this.id, true, nrOfPrunedTasks);
 			/*TaskTsp task = new TaskTsp(lockedCities, partialCityList, distances, this.id+3);
 			
 			Closure c = new Closure(1, this.id, task);
@@ -158,15 +162,33 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	}
 
 	private boolean isOverUpperBound() throws RemoteException {
-		// TODO Auto-generated method stub
 		if(getComputer().getShared().get() != null){
 			double upperbound = (double) getComputer().getShared().get();
 			
-			double lowerbound = TspBounds.computeLowerBound(lockedCities.get(lockedCities.size()-1), partialCityList, distances);
+			double lowerbound = 0;
+			Integer firstLocked = lockedCities.get(0);
+			Integer lastLocked = lockedCities.get(lockedCities.size() - 1);
+			
+			if(lockedCities.size() == 1 || TspBounds.lbAdjacencyMap.get(lastLocked).size() > 2) {
+				lowerbound = TspBounds.computeLowerBound(true, firstLocked, lastLocked, partialCityList, distances);
+			}
+			else if(TspBounds.lbAdjacencyMap.get(lastLocked).size() == 2) {
+				TspBounds.removeCityFromMst(2, lastLocked, distances);
+				lowerbound = TspBounds.computeLowerBound(false, firstLocked, lastLocked, partialCityList, distances);
+			}
+			else if(TspBounds.lbAdjacencyMap.get(lastLocked).size() == 1) {
+				TspBounds.removeCityFromMst(1, lastLocked, distances);
+				lowerbound = TspBounds.computeLowerBound(false, firstLocked, lastLocked, partialCityList, distances);
+			}
+			
+			
 			if(lockedCities.size() > 1){
-				lowerbound+= distances[lockedCities.get(0)][lockedCities.get(1)];
+				for(int i = 0; i < lockedCities.size() - 1; i++) {
+					lowerbound += distances[lockedCities.get(0)][lockedCities.get(0+1)];
+				}
 			}
 			if(upperbound < lowerbound){
+				System.out.println("PRUNED");
 				return true;
 			}
 		}
