@@ -27,6 +27,8 @@ public class Result<T> implements Serializable
     /**  */
     public boolean pruned = false;
     
+    private long latency = 0;
+    
     public enum Status{
     	WAITING, COMPLETED;
     }
@@ -115,5 +117,15 @@ public class Result<T> implements Serializable
         stringBuilder.append( "\n\tExecution time:\n\t" ).append( taskRunTime );
         //stringBuilder.append( "\n\tReturn value:\n\t" ).append( taskReturnValue.toString() );
         return stringBuilder.toString();
+    }
+    
+    public void setLatency(long latency){
+    	
+    	this.latency = latency;
+    	
+    }
+    
+    public long getLatency(){
+    	return this.latency;
     }
 }

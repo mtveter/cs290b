@@ -28,8 +28,9 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 
 	/** An array containing the computed values for the distances between all cities. */
 	public double[][] distances;
+	
 	/** The limit to size of partial cities to by subdivided and executed by Computer*/
-	public static final int RECURSIONLIMIT = 7; 
+	public static int RECURSIONLIMIT = 7; 
 	
 	private boolean pruning=true;
 
@@ -220,5 +221,8 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	@Override
 	public int getN() {
 		return this.n;
+	}
+	public void setRecLimit(int i){
+		this.RECURSIONLIMIT = i;
 	}
 }

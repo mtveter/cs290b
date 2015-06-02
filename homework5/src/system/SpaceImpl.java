@@ -369,6 +369,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			
 			Computer computer = null;
 			ComputerStatus cs = new ComputerStatus();
+			
 			try {
 				computer = registeredComputers.take();
 				
