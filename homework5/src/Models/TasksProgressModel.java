@@ -64,27 +64,27 @@ public class TasksProgressModel {
 	 * @return	Ratio
 	 */
 	public double getPrunedOfGeneratedTasksRatio() {
-		return (double) (totalPrunedTasks/totalGeneratedTasks);
+		return ((double)totalPrunedTasks)/totalGeneratedTasks;
 	}
 	/**
 	 * Calculates ratio of pruned tasks relative to total tasks
 	 * @return	Ratio
 	 */
 	public double getPrunedOfTotalTasksRatio(){
-		return (double) (totalPrunedTasks/totalTasks);
+		return ((double)totalPrunedTasks)/totalTasks;
 	}
 	/**
 	 * Calculates ratio of completed tasks relative to total tasks
 	 * @return	Ratio
 	 */
 	public double getCompletedOfTotalTasksRatio(){
-		return (double) (totalCompletedTasks/totalTasks);
+		return ((double)totalCompletedTasks)/totalTasks;
 	}
 	/**
 	 * Calculates ratio of generated tasks relative to total tasks
 	 * @return	Ratio
 	 */
 	public double getGeneratedOfTotalTasksRatio(){
-		return (double) (totalGeneratedTasks/totalTasks);
+		return ((double)totalGeneratedTasks)/totalTasks;
 	}
 }
