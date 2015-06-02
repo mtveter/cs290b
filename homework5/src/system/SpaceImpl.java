@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import Models.TasksProgressModel;
 import api.Result;
 import api.Result.Status;
 import api.Space;
@@ -27,6 +28,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	private boolean isActive;
 	/** Describes if Space implementation has feature to run some specified Task objects in Space */
 	private boolean hasSpaceRunnableTasks;
+	
+	/* Model for progress of branch and bound  */
+	private TasksProgressModel progressModel;
 
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
 	private BlockingQueue<Task<?>> receivedTasks = new LinkedBlockingQueue<Task<?>>();
@@ -43,7 +47,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		super();
 		this.isActive = false;
 		//this.sharedObject=new TspShared(Double.MAX_VALUE);
-		this.sharedObject=new TspShared(Double.MAX_VALUE);
+		this.sharedObject = new TspShared(Double.MAX_VALUE);
 	}
 	/**
 	 * @see api.Space Space
@@ -54,6 +58,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		
 		List<Integer> cities = new ArrayList<Integer>();
 		double[][] distances = null;
+		
+		
+		/* Sets the pruning model */
+		this.progressModel = new TasksProgressModel(taskList.size());
 		
 		for(Task<?> task :  taskList) {
 			try {
@@ -77,15 +85,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			cities.add(i);
 			
 		}
-//		System.out.println("Cities:");
-		for(int i : cities){
-//			System.out.print(" "+i+" ");
-		}
-//		System.out.println("");
-//		System.out.println("Distances");
-		for(double[] i : distances){
-//			System.out.print(i[0]+i[1]);
-		}
+		
 		System.out.println("THIS IS UPPER BOUND "+TspBounds.computeUpperBound(cities, distances));
 		this.sharedObject = new TspShared(TspBounds.computeUpperBound(cities, distances));
 	}
@@ -148,7 +148,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 */
 	private void runComputerProxy(boolean hasSpaceRunnableTasks) {
 		this.hasSpaceRunnableTasks = hasSpaceRunnableTasks;
-		int runner =0;
+		int runner = 0;
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
@@ -165,7 +165,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				// If the Top Closure is completed the final result can be put in the blocking queue to be collected by Client
 				if(isTopClosureCompleted()) {
 					try {
-						Result r = receivedClosures.get(0).getAdder().getResult();
+						Result<?> r = receivedClosures.get(0).getAdder().getResult();
 						decompose_T = r.getTaskRunTime();
 						completedResult.put(r);
 						receivedClosures.remove(0);
@@ -447,29 +447,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		 * @throws RemoteException 
 		 */
 		private void processResult(Result<?> result) throws InterruptedException, RemoteException {
-			List<Closure> cl = result.getChildClosures();
-			if(result.getId().equals("062")){
-//				System.out.println("got the 062 result");
-				
-				for(Closure c: receivedClosures){
-					if(c.getTask().getId().equals("06")){
-//						System.out.println("There is a 06 closure");
-					}
-					if(c.getTask().getId().equals("062")){
-//						System.out.println("There is a 062 closure");
-					}
-				}
-				
-				
-			}
-			
-			if(cl!=null){
-			for(Closure c: cl){
-				if(c.getParentId().equals("062")){
-//					System.out.println("Size "+cl.size());
-//					System.out.println("the taks id in closure 062 is "+c.getTask().getId());
-				}
-			}}
 
 			//System.out.println("in process result");
 			if(result.getStatus().equals(Status.WAITING)) {
@@ -479,6 +456,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					receivedClosures.add(closure);
 					receivedTasks.put(closure.getTask());
 				}
+				/* Add generated tasks count */
+				progressModel.increaseTotalGeneratedTasks(closures.size());
 			}
 			else if(result.getStatus().equals(Status.COMPLETED)) {
 				double oldShared = (Double) getShared().get();
@@ -492,14 +471,15 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					if(c.getTask().getId().equals(result.getId())){
 						
 						c.receiveResult(result);
-						if(result.pruned){
+						if(result.isPruned()){
+							progressModel.increaseTotalPrunedTasks(result.getNrOfPrunedTasks());
 							c.setJoinCounter(0);
 							c.getAdder().setResult(result);
-							
 						}
-						
 					}
-				}					
+				}
+				/* Register that 1 more task has been completed */
+				progressModel.increaseTotalCompletedTasks(1);
 			}
 			else {
 				System.out.println("Result received did not have a valid Status");

@@ -71,7 +71,7 @@ public class ResultAdder implements Serializable {
 		return finalresult;
 	}
 	public void setResult(Result<?> result ){
-		finalresult=result;
+		finalresult = result;
 		
 	}
 }
