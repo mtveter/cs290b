@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import Models.TasksProgressModel;
 import api.Result;
 import api.Result.Status;
 import api.Space;

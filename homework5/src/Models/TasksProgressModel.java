@@ -1,4 +1,4 @@
-package system;
+package Models;
 
 import tasks.TaskTsp;
 
