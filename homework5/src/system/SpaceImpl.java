@@ -28,8 +28,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	/** Describes if Space implementation has feature to run some specified Task objects in Space */
 	private boolean hasSpaceRunnableTasks;
 	
-	/* Model for pruning efficiency */
-	private Pruning pruningModel;
+	/* Model for progress of branch and bound  */
+	private DataProgress progressModel;
 
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
 	private BlockingQueue<Task<?>> receivedTasks = new LinkedBlockingQueue<Task<?>>();
@@ -60,7 +60,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		
 		
 		/* Sets the pruning model */
-		this.pruningModel = new Pruning(taskList.size());
+		this.progressModel = new DataProgress(taskList.size());
 		
 		for(Task<?> task :  taskList) {
 			try {
@@ -456,7 +456,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					receivedTasks.put(closure.getTask());
 				}
 				/* Add generated tasks count */
-				pruningModel.increaseTotalGeneratedTasks(closures.size());
+				progressModel.increaseTotalGeneratedTasks(closures.size());
 			}
 			else if(result.getStatus().equals(Status.COMPLETED)) {
 				double oldShared = (Double) getShared().get();
@@ -471,14 +471,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						
 						c.receiveResult(result);
 						if(result.isPruned()){
-							pruningModel.increaseTotalPrunedTasks(result.getNrOfPrunedTasks());
+							progressModel.increaseTotalPrunedTasks(result.getNrOfPrunedTasks());
 							c.setJoinCounter(0);
 							c.getAdder().setResult(result);
 						}
 					}
 				}
 				/* Register that 1 more task has been completed */
-				pruningModel.increaseTotalCompletedTasks(1);
+				progressModel.increaseTotalCompletedTasks(1);
 			}
 			else {
 				System.out.println("Result received did not have a valid Status");

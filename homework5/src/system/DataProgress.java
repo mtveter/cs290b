@@ -2,14 +2,15 @@ package system;
 
 import tasks.TaskTsp;
 
-public class Pruning {
+/* Model accessing maintaining progress data of tasks in branch and bound composition and decomposition */
+public class DataProgress {
 	
 	private int totalPrunedTasks;
 	private int totalGeneratedTasks;
 	private int totalCompletedTasks;
 	private int totalTasks;
 
-	public Pruning(int n) {
+	public DataProgress(int n) {
 		totalPrunedTasks = 0;
 		totalGeneratedTasks = 0;
 		totalCompletedTasks = 0;
@@ -42,5 +43,18 @@ public class Pruning {
 	}
 	public void increaseTotalCompletedTasks(int completedTasks) {
 		this.totalCompletedTasks += completedTasks;
+	}
+	
+	public double getPrunedOfGeneratedTasksRatio() {
+		return (double) (totalPrunedTasks/totalGeneratedTasks);
+	}
+	public double getPrunedOfTotalTasksRatio(){
+		return (double) (totalPrunedTasks/totalTasks);
+	}
+	public double getCompletedOfTotalTasksRatio(){
+		return (double) (totalCompletedTasks/totalTasks);
+	}
+	public double getGeneratedOfTotalTasksRatio(){
+		return (double) (totalGeneratedTasks/totalTasks);
 	}
 }
