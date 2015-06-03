@@ -1,5 +1,8 @@
 package system;
 
+import gui.LatencyData;
+import gui.SpaceListener;
+
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -31,6 +34,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	
 	/* Model for progress of branch and bound  */
 	private TasksProgressModel progressModel;
+	
+	private LatencyData latencyData;
 
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
 	private BlockingQueue<Task<?>> receivedTasks = new LinkedBlockingQueue<Task<?>>();
@@ -42,12 +47,16 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	long compose_T;
 	long maxSubtask_T;
 	long T_1;
+	
+	private ArrayList<SpaceListener> listeners;
 
 	public SpaceImpl() throws RemoteException {
 		super();
 		this.isActive = false;
-		//this.sharedObject=new TspShared(Double.MAX_VALUE);
 		this.sharedObject = new TspShared(Double.MAX_VALUE);
+		this.progressModel = new TasksProgressModel();
+		this.latencyData = new LatencyData();
+		this.listeners = new ArrayList<SpaceListener>();
 	}
 	/**
 	 * @see api.Space Space
@@ -61,7 +70,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		
 		
 		/* Sets the pruning model */
-		this.progressModel = new TasksProgressModel(taskList.size());
+		this.progressModel.setTotalTasks(taskList.size());
 		
 		for(Task<?> task :  taskList) {
 			try {
@@ -521,28 +530,32 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 * @throws RemoteException If there is a connection error
 	 */
 	public static void main(String[] args) throws RemoteException {
-		// Construct and set a security manager
-		System.setSecurityManager( new SecurityManager() );
-
-
-		// Instantiate a computer server object
-		SpaceImpl space = new SpaceImpl();
-
-		// Construct an RMI-registry within this JVM using the default port
-		Registry registry = LocateRegistry.createRegistry( Space.PORT  );
-
-		// Bind Compute Space server in RMI-registry
-		registry.rebind( Space.SERVICE_NAME, space);
-
 		boolean hasSpaceRunnableTasks = false;
 		if(args.length > 0 && args[0].equals("true")) {
 			hasSpaceRunnableTasks = true;
 		}
 
+		new SpaceImpl().startSpace(hasSpaceRunnableTasks);
+	}
+	
+	public void startSpace(boolean hasSpaceRunnableTasks) throws RemoteException{
+		// Construct and set a security manager
+		System.setSecurityManager( new SecurityManager() );
+
+
+		// Instantiate a computer server object
+		//SpaceImpl space = new SpaceImpl();
+
+		// Construct an RMI-registry within this JVM using the default port
+		Registry registry = LocateRegistry.createRegistry( Space.PORT  );
+
+		// Bind Compute Space server in RMI-registry
+		registry.rebind( Space.SERVICE_NAME, this);
+
 		// Print acknowledgement
 		System.out.println("Computer Space: Ready. on port " + Space.PORT);
 
-		space.runComputerProxy(hasSpaceRunnableTasks);
+		runComputerProxy(hasSpaceRunnableTasks);
 	}
 
 	/**
@@ -575,4 +588,22 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public Shared getShared() {
 		return sharedObject;
 	}
+	
+    public void addSpaceListener(SpaceListener listener){
+        listeners.add(listener);
+    }
+    
+    public void firePropertyChanged(String propertyName, Object value){
+        for (SpaceListener listener : listeners){
+            listener.update(propertyName, value);
+        }
+    }
+    
+    public TasksProgressModel getTasksProgressModel(){
+    	return progressModel;
+    }
+    
+    public LatencyData getLatencyData(){
+    	return latencyData;
+    }
 }

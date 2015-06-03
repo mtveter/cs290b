@@ -10,13 +10,10 @@ public class TasksProgressModel {
 	private int totalCompletedTasks;
 	private int totalTasks;
 
-	public TasksProgressModel(int n) {
-		totalPrunedTasks = 0;
-		totalGeneratedTasks = 0;
-		totalCompletedTasks = 0;
-		setTotalTasks(n);
+	public TasksProgressModel() {
 	}
-	private void setTotalTasks(int n){
+	
+	public void setTotalTasks(int n){
 		this.totalTasks = n;
 		for(int i = n - 1; i > TaskTsp.RECURSIONLIMIT; i--) {
 			this.totalTasks *= i;

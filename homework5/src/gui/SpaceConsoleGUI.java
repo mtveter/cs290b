@@ -16,14 +16,17 @@ import javax.swing.UIManager;
  *
  * @author Varun
  */
-public class MainFrame extends javax.swing.JFrame {
+public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole {
+
+    SpaceController spaceController;
     
     /**
      * Creates new form NewJFrame1
      */
-    public MainFrame() {
+    public SpaceConsoleGUI() {
         initComponents();
         initComponentsCustom();
+        spaceController = new SpaceController(this);
     }
 
     /**
@@ -46,8 +49,8 @@ public class MainFrame extends javax.swing.JFrame {
         finishedTasksLabel = new javax.swing.JLabel();
         activeTasksLabel = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
-        jLabel6 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        spaceLabel = new javax.swing.JLabel();
+        hasSpaceRunnableCheckBox = new javax.swing.JCheckBox();
         startSpaceButton = new javax.swing.JButton();
         avgPruningDepthValueLabel = new javax.swing.JLabel();
         maxDepthValueLabel = new javax.swing.JLabel();
@@ -85,16 +88,21 @@ public class MainFrame extends javax.swing.JFrame {
 
         activeTasksLabel.setText("Active tasks:");
 
-        jLabel6.setText("Space");
+        spaceLabel.setText("Space");
 
-        jCheckBox1.setText("hasSpaceRunnable");
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+        hasSpaceRunnableCheckBox.setText("SpaceRunnable");
+        hasSpaceRunnableCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
+                hasSpaceRunnableCheckBoxActionPerformed(evt);
             }
         });
 
         startSpaceButton.setText("Start Space");
+        startSpaceButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startSpaceButtonActionPerformed(evt);
+            }
+        });
 
         avgPruningDepthValueLabel.setText("0");
 
@@ -120,9 +128,9 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 358, Short.MAX_VALUE)
-                        .addComponent(jCheckBox1)
+                        .addComponent(spaceLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 376, Short.MAX_VALUE)
+                        .addComponent(hasSpaceRunnableCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(startSpaceButton))
                     .addGroup(mainPanelLayout.createSequentialGroup()
@@ -163,8 +171,8 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel6)
-                        .addComponent(jCheckBox1))
+                        .addComponent(spaceLabel)
+                        .addComponent(hasSpaceRunnableCheckBox))
                     .addComponent(startSpaceButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -285,7 +293,7 @@ public class MainFrame extends javax.swing.JFrame {
                     try {
                         Thread.sleep(800);
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(SpaceConsoleGUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     tle.updateProgress(jProgressBar1.getValue());
                     estimatedTimeLeftValueLabel.setText(tle.toString());
@@ -297,9 +305,9 @@ public class MainFrame extends javax.swing.JFrame {
         t.start();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+    private void hasSpaceRunnableCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hasSpaceRunnableCheckBoxActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
+    }//GEN-LAST:event_hasSpaceRunnableCheckBoxActionPerformed
 
     private void computerComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_computerComboBoxActionPerformed
         // TODO add your handling code here:
@@ -310,6 +318,10 @@ public class MainFrame extends javax.swing.JFrame {
             graphPanel.setRandomScores();
         }
     }//GEN-LAST:event_computerComboBoxItemStateChanged
+
+    private void startSpaceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSpaceButtonActionPerformed
+        spaceController.startSpace();
+    }//GEN-LAST:event_startSpaceButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -329,20 +341,21 @@ public class MainFrame extends javax.swing.JFrame {
             }*/
             javax.swing.UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SpaceConsoleGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SpaceConsoleGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SpaceConsoleGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SpaceConsoleGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainFrame().setVisible(true);
+                new SpaceConsoleGUI().setVisible(true);
             }
         });
     }
@@ -360,9 +373,8 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel finishedTasksLabel;
     private javax.swing.JLabel finishedTasksValueLabel;
     private gui.GraphPanel graphPanel;
+    private javax.swing.JCheckBox hasSpaceRunnableCheckBox;
     private javax.swing.JButton jButton1;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabelStatus;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JSeparator jSeparator1;
@@ -371,6 +383,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel mainPanel;
     private javax.swing.JLabel maxDepthLabel;
     private javax.swing.JLabel maxDepthValueLabel;
+    private javax.swing.JLabel spaceLabel;
     private javax.swing.JButton startSpaceButton;
     private javax.swing.JLabel totalTasksLabel;
     private javax.swing.JLabel totalTasksValueLabel;
