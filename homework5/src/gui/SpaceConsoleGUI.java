@@ -9,6 +9,7 @@ import java.awt.event.ItemEvent;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.UIManager;
 
 
@@ -25,7 +26,6 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
      */
     public SpaceConsoleGUI() {
         initComponents();
-        initComponentsCustom();
         spaceController = new SpaceController(this);
     }
 
@@ -387,9 +387,51 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
     private javax.swing.JButton startSpaceButton;
     private javax.swing.JLabel totalTasksLabel;
     private javax.swing.JLabel totalTasksValueLabel;
+	private LatencyData latencyData;
     // End of variables declaration//GEN-END:variables
 
-    private void initComponentsCustom() {
+	@Override
+	public void setActiveTasks(int n) {
+		activeTasksValueLabel.setText(n+"");
+	}
 
-    }
+	@Override
+	public void setFinishedTasks(int n) {
+		finishedTasksValueLabel.setText(n+"");
+	}
+
+	@Override
+	public void setTotalTasks(int n) {
+		totalTasksValueLabel.setText(n+"");
+	}
+
+	@Override
+	public void setAvgPruningDepth(double d) {
+		avgPruningDepthValueLabel.setText(d+"");
+	}
+
+	@Override
+	public void setMaxDepth(int n) {
+		maxDepthValueLabel.setText(n+"");
+	}
+
+	@Override
+	public void setProgress(int n) {
+		jProgressBar1.setValue(n);
+	}
+
+	@Override
+	public void setStatus(String s) {
+		jLabelStatus.setText(s);
+	}
+
+	@Override
+	public void setEstimatedTimeLeft(String s) {
+		estimatedTimeLeftValueLabel.setText(s);
+	}
+
+	@Override
+	public void setLatencyData(LatencyData latencyData) {
+		this.latencyData = latencyData;
+	}
 }

@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 import Models.TasksProgressModel;
 import api.Result;
@@ -143,6 +144,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public void register(Computer computer) throws RemoteException {
 		System.out.println("New computer registerd");
 		registeredComputers.add(computer);
+		latencyData.addComputer(computer.toString());
 	}
 	/**
 	 * Checks if space is running
@@ -606,4 +608,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
     public LatencyData getLatencyData(){
     	return latencyData;
     }
+    
+    private AtomicLong idCounter = new AtomicLong();
+
+    public String createId() throws RemoteException {
+        return String.valueOf(idCounter.getAndIncrement());
+    };
+    
 }

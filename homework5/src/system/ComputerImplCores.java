@@ -28,8 +28,8 @@ public class ComputerImplCores extends ComputerImpl implements Runnable {
 	static Space space;
 	
 	
-	protected ComputerImplCores(int id) throws RemoteException {
-		super(id, runscores, prefetch);
+	protected ComputerImplCores(String id, String domainName) throws RemoteException, MalformedURLException, NotBoundException {
+		super(id, runscores, prefetch, domainName);
 		//this.runscores=true;
 		//this.prefetch=prefetch;
 	}
@@ -65,7 +65,7 @@ public class ComputerImplCores extends ComputerImpl implements Runnable {
 		
 
 		space = (Space) Naming.lookup( url );
-		Computer computer = new ComputerImplCores(1);
+		Computer computer = new ComputerImplCores(space.createId(), domainName);
 		((ComputerImplCores) computer).createThreads();
 		space.register(computer);
 

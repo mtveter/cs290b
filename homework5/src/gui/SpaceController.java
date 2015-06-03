@@ -28,7 +28,6 @@ public class SpaceController implements SpaceListener {
     public SpaceController(SpaceConsole console){
     	this.console = console;
     	Thread t = new Thread(new Runnable(){
-
 			@Override
 			public void run() {
 				while (true) {
@@ -36,7 +35,6 @@ public class SpaceController implements SpaceListener {
 					try {
 						Thread.sleep(UPDATE_INTERVAL);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -67,8 +65,17 @@ public class SpaceController implements SpaceListener {
         System.out.println(propertyName+": "+value);
     }
     
+    int n = 0; //For testing
     private void updateConsole(){
     	// Update GUI Console
+    	console.setActiveTasks(n++);
+    	
+    	//Example of use:
+    	console.setFinishedTasks(tasksProgressModel.getTotalCompletedTasks());
+    	console.setTotalTasks(tasksProgressModel.getTotalTasks());
+    	
+    	console.setProgress(n);
+    	if (n >= 100) console.setStatus("Done.");
     }
     
 }

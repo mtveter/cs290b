@@ -24,7 +24,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 
 	/** Generated serial ID	 */
 	private static final long serialVersionUID = -3092303569928556422L;
-	private int id;
+	private String id;
 	private transient List<ComputeThread> threads= new ArrayList<ComputerImpl.ComputeThread>();
 	private transient BlockingQueue<Result<?>> results= new LinkedBlockingQueue<Result<?>>();
 	private transient BlockingQueue<Task<?>> tasks= new LinkedBlockingQueue<Task<?>>();
@@ -34,18 +34,44 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	static Space space;
 	private static int buffer=5;
 	private Shared sharedObject;
+	private String domainName;
 
 	/**
 	 * @throws RemoteException If there is a connection error
+	 * @throws NotBoundException 
+	 * @throws MalformedURLException 
 	 */
-	protected ComputerImpl(int id, boolean mulitcore,boolean amerlioration) throws RemoteException {
+	protected ComputerImpl(String id, boolean mulitcore,boolean amerlioration, String domainName) throws RemoteException, MalformedURLException, NotBoundException {
 		super();
 		this.id = id;
 		this.amerlioration = amerlioration;
 		this.multicore = mulitcore;
 		this.sharedObject= new TspShared(Double.MAX_VALUE);
+		this.domainName = domainName;
 		
+		// Construct and set a security manager
+		System.setSecurityManager( new SecurityManager() );
+
+		// Get url of remote space
+		String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;
+		// Try to get remote reference from rmiregistry and register new computer to space
+
+		space = (Space) Naming.lookup( url );
+		this.id = space.createId();
+		if(runsCores()) {	
+			createThreads();
+			space.register(this);
+		}
+		else {
+			space.register(this);
+			run();
+		}
+		
+		// Print acknowledgement
+		System.out.println("Computer started and registered at space " + domainName);
+		System.out.println("toString(): "+toString());
 	}
+	
 	/**
 	 * @see system.Computer Computer
 	 */
@@ -81,9 +107,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 */
 	public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
 		// If no argument is passed, then connect to local host, otherwise to IPv4 specified 
-		String domainName;
 		boolean multicore;
 		boolean prefetch;
+		String domainName;
 		if(args.length > 0) {
 			domainName = args[0];
 			multicore =(args.length > 1)? Boolean.parseBoolean(args[1]): true;
@@ -95,38 +121,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 			multicore=true;
 			prefetch= true;
 		}
-
-		// Construct and set a security manager
-		System.setSecurityManager( new SecurityManager() );
-
-		// Get url of remote space
-		String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;
-		// Try to get remote reference from rmiregistry and register new computer to space
-		Space space;
-
-		space = (Space) Naming.lookup( url );
 		
-		
-		Computer computer = new ComputerImpl(1,multicore,prefetch);
-		// create threads if the computer runs multiple cores
-		if(computer.runsCores()){	
-			((ComputerImpl) computer).createThreads();
-			space.register(computer);
-		}
-		else{
-			
-			space.register(computer);
-			((ComputerImpl) computer).run();
-			
-		}
-		// Print acknowledgement
-		System.out.println("Computer started and registered at space " + domainName);
+		new ComputerImpl("N/A", multicore, prefetch, domainName);
 	}
 	
 	/**
 	 * @return Id of computer
 	 */
-	public int getId() {
+	public String getId() {
 		return this.id;
 	}
 	
@@ -261,5 +263,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	@Override
 	public Shared getShared() {
 		return sharedObject;
+	}
+	
+	public String toString(){
+		return "Computer "+id+" ["+domainName+"]";
 	}
 }
