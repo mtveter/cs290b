@@ -7,7 +7,9 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import Models.TasksProgressModel;
@@ -33,7 +35,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	private TasksProgressModel progressModel;
 
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
-	private BlockingQueue<Task<?>> receivedTasks = new LinkedBlockingQueue<Task<?>>();
+	/* Lifo queue for tasks */
+	private BlockingDeque<Task<?>> receivedTasks = new LinkedBlockingDeque<Task<?>>();
 	private List<Closure> receivedClosures = new ArrayList<Closure>();
 	private BlockingQueue<Result<?>> completedResult = new LinkedBlockingQueue<Result<?>>();
 	private Shared sharedObject;
@@ -72,7 +75,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					distances =taskTsp.distances;
 					initialClosure = new Closure(taskTsp.getPartialCityList().size(),"TOP",task);
 					receivedClosures.add(initialClosure);
-					receivedTasks.put(task);
+					receivedTasks.putLast(task);
 					
 				}	
 			} catch (InterruptedException e) {
@@ -179,7 +182,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			Task<?> task = null;
 			//printClosures();
 			try {
-				task = receivedTasks.take();
+				task = receivedTasks.takeLast();
 				if(hasSpaceRunnableTasks) {
 					/* Implementation of Space-Runnable tasks*/
 					
@@ -339,7 +342,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						// Sends tasks to computer
 						for (int i = 0; i < available; i++) {
 
-							computer.getTask(receivedTasks.take());
+							computer.getTask(receivedTasks.takeLast());
 
 
 						}
@@ -378,7 +381,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						int available =computer.bufferSize()+computer.coreCount();
 						
 						for (int i = 0; i < available; i++) {
-							computer.getTask(receivedTasks.take());
+							computer.getTask(receivedTasks.takeLast());
 
 						}
 						for (int i = 0; i < available+1; i++) {
@@ -393,7 +396,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						int available =computer.coreCount();
 						
 						for (int i = 0; i < available; i++) {
-							computer.getTask(receivedTasks.take());
+							computer.getTask(receivedTasks.takeLast());
 
 						}
 						for (int i = 0; i < available+1; i++) {
@@ -423,7 +426,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			} catch (RemoteException e) {
 				// If there's a RemoteException, task is put back in the queue
 				try {
-					receivedTasks.put(task);
+					receivedTasks.putLast(task);
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
@@ -453,7 +456,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				// Add Closures from
 				for (Closure closure : closures) {
 					receivedClosures.add(closure);
-					receivedTasks.put(closure.getTask());
+					receivedTasks.putLast(closure.getTask());
 				}
 				/* Add generated tasks count */
 				progressModel.increaseTotalGeneratedTasks(closures.size());
@@ -495,7 +498,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			for (Closure closure : closures) {
 				receivedClosures.add(closure);
 				try {
-					receivedTasks.put(closure.getTask());
+					receivedTasks.putLast(closure.getTask());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

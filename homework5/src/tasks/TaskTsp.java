@@ -188,7 +188,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 				}
 			}
 			if(upperbound < lowerbound){
-				System.out.println("PRUNED");
+				System.out.println("PRUNED Task(s)");
 				return true;
 			}
 		}
