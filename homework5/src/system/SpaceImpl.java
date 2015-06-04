@@ -59,7 +59,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		List<Integer> cities = new ArrayList<Integer>();
 		double[][] distances = null;
 		
-		
 		/* Sets the pruning model */
 		this.progressModel = new TasksProgressModel(taskList.size());
 		
