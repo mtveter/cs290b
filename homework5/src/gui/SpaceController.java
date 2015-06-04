@@ -24,33 +24,47 @@ public class SpaceController implements SpaceListener {
     SpaceConsole console;
     
     private final long UPDATE_INTERVAL = 500;
+	private boolean isSpaceActive;
+	private boolean isTaskActive;
     
     public SpaceController(SpaceConsole console){
     	this.console = console;
-    	Thread t = new Thread(new Runnable(){
-			@Override
-			public void run() {
-				while (true) {
-					updateConsole();
-					try {
-						Thread.sleep(UPDATE_INTERVAL);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-    		
-    	});
-    	t.start();
     }
     
     public void startSpace(){
         try {
 			spaceImpl = new SpaceImpl();
 	        spaceImpl.addSpaceListener(this);
-	        spaceImpl.startSpace(hasSpaceRunnableTasks);
+	        Thread spaceThread = new Thread(new Runnable(){
+				@Override
+				public void run() {
+					try {
+						isSpaceActive = true;
+						spaceImpl.startSpace(hasSpaceRunnableTasks);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}	
+				}	
+	        });
+	        spaceThread.start();
 	    	latencyData = spaceImpl.getLatencyData();
 	    	tasksProgressModel = spaceImpl.getTasksProgressModel();
+	    	console.setSpaceActive();
+	    	/*Thread t = new Thread(new Runnable(){
+				@Override
+				public void run() {
+					while (true) {
+						updateConsole();
+						try {
+							Thread.sleep(UPDATE_INTERVAL);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+	    		
+	    	});
+	    	t.start();*/
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -63,19 +77,46 @@ public class SpaceController implements SpaceListener {
     @Override
     public void update(String propertyName, Object value) {
         System.out.println(propertyName+": "+value);
+        if (propertyName.equals(SpaceListener.COMPUTER_ADDED)){
+        	console.updateComputersList();        	
+        } else if (propertyName.equals(SpaceListener.MASTER_TASK_STARTED)){
+        	isTaskActive = true;
+        	console.setTaskStarted();
+        } else if (propertyName.equals(SpaceListener.MASTER_TASK_FINISHED)){
+        	isTaskActive = false;
+        	console.setTaskFinished();
+        }
     }
     
-    int n = 0; //For testing
+    //int n = 0; //For testing
     private void updateConsole(){
     	// Update GUI Console
-    	console.setActiveTasks(n++);
+    	//console.setActiveTasks(n++);
     	
     	//Example of use:
     	console.setFinishedTasks(tasksProgressModel.getTotalCompletedTasks());
     	console.setTotalTasks(tasksProgressModel.getTotalTasks());
     	
-    	console.setProgress(n);
-    	if (n >= 100) console.setStatus("Done.");
+    	//console.setProgress(n);
+    	//if (n >= 100) console.setStatus("Done.");
+    	
+    	//console.addLatencyValue(null, 50);
     }
+    
+    public LatencyData getLatencyData(){
+    	return latencyData;
+    }
+
+	public boolean isSpaceActive() {
+		return isSpaceActive;
+	}
+	
+	public boolean hasActiveComputers(){
+		return spaceImpl.hasActiveComputers();
+	}
+
+	public boolean isTaskActive() {
+		return isTaskActive;
+	}
     
 }

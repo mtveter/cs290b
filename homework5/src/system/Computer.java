@@ -67,4 +67,6 @@ public interface Computer extends Remote {
 	public void setShared(Shared sharedObject) throws RemoteException;
 	
 	public Shared getShared() throws RemoteException;
+	
+	public String getNameString() throws RemoteException;
 }

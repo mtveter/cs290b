@@ -14,6 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 
 
+
 import api.Result;
 import api.Space;
 import api.Task;
@@ -69,7 +70,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		
 		// Print acknowledgement
 		System.out.println("Computer started and registered at space " + domainName);
-		System.out.println("toString(): "+toString());
+		System.out.println("Computer name: "+getNameString());
 	}
 	
 	/**
@@ -264,8 +265,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	public Shared getShared() {
 		return sharedObject;
 	}
-	
-	public String toString(){
+
+	@Override
+	public String getNameString() throws RemoteException {
 		return "Computer "+id+" ["+domainName+"]";
 	}
 }

@@ -10,6 +10,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
@@ -65,7 +66,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	@Override
 	public void putAll(List<Task<?>> taskList) throws RemoteException {
 		System.out.println("SPACE: List of tasks received from Job");
-		
+		firePropertyChanged(SpaceListener.MASTER_TASK_STARTED, null);
 		List<Integer> cities = new ArrayList<Integer>();
 		double[][] distances = null;
 		
@@ -106,6 +107,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public Result<?> take() throws RemoteException {
 		try {
 			Result <?> r= completedResult.take();
+			firePropertyChanged(SpaceListener.MASTER_TASK_FINISHED, null);
 			System.out.println("SPACE: length of best tour is "+r.getTaskReturnDistance());
 			double milli = 1000000.0;
 			System.out.println("T_Decompose: "+decompose_T/milli + " ms");
@@ -144,7 +146,15 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public void register(Computer computer) throws RemoteException {
 		System.out.println("New computer registerd");
 		registeredComputers.add(computer);
-		latencyData.addComputer(computer.toString());
+		latencyData.addComputer(computer.getNameString());
+		for (int i=0; i<30; i++){
+			latencyData.addLatencyValue(computer.getNameString(), new Random().nextDouble()*70+30);
+		}
+		firePropertyChanged(SpaceListener.COMPUTER_ADDED, latencyData);
+	}
+	
+	public boolean hasActiveComputers(){
+		return !registeredComputers.isEmpty();
 	}
 	/**
 	 * Checks if space is running
@@ -156,13 +166,19 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	/**
 	 * Initiates the Space, sets it active and runs a new ComputerProxy thread
 	 * @param hasSpaceRunnableTasks2 
+	 * @throws RemoteException 
 	 */
-	private void runComputerProxy(boolean hasSpaceRunnableTasks) {
+	private void runComputerProxy(boolean hasSpaceRunnableTasks) throws RemoteException {
 		this.hasSpaceRunnableTasks = hasSpaceRunnableTasks;
 		int runner = 0;
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
+			if (!registeredComputers.isEmpty()){
+				double value = 30.0+new Random().nextDouble()*70;
+				System.out.println("Latency value added: "+value+" for computer: "+registeredComputers.peek().getNameString());
+				latencyData.addLatencyValue(registeredComputers.peek().getNameString(), value);
+			}
 			// Check if there are any Closure objects to process
 			runner++;
 			if(runner%30 == 1){

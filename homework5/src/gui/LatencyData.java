@@ -25,9 +25,9 @@ public class LatencyData {
         computerLatencies.get(computer).add(value);
     }
     
-    public void setLatencyList(String computer, List<Double> latencies){
+    /*public void setLatencyList(String computer, List<Double> latencies){
         computerLatencies.put(computer, latencies);
-    }
+    }*/
     
     public double getAvgLatency(String computer){
         List<Double> latencies = computerLatencies.get(computer);
@@ -38,11 +38,24 @@ public class LatencyData {
         return sum/latencies.size();
     }
     
+    public static double getAverage(List<Double> list){
+    	synchronized(list){    		
+    		double sum = 0.0;
+    		for (double d : list){
+    			sum += d;
+    		}
+    		return sum/list.size();
+    	}
+    }
+    
+    public List<Double> getMostRecentLatencies(String computer, int n){
+    	List<Double> latencies = computerLatencies.get(computer);
+    	int size;
+    	if (latencies == null || (size = latencies.size()) <= n) return latencies;
+    	else return latencies.subList(size-n, size);
+    }
+    
     public Set<String> getComputers(){
-        //TODO: return list of all computer names/IDs/IPs
-        /*ArrayList<String> computerNames = new ArrayList<String>();
-        computerNames.addAll(computerLatencies.keySet());
-        return computerNames;*/
         return computerLatencies.keySet();
     }
     

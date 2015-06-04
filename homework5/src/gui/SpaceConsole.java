@@ -13,6 +13,14 @@ public interface SpaceConsole {
 	public void setEstimatedTimeLeft(String s);
 	
 	//public void setLatencies(String computer, ArrayList<Double> latencies);
-	public void setLatencyData(LatencyData latencyData);
+	//public void addLatencyValue(String computer, double value);
+	
+	public void updateComputersList();
+	
+	//public void updateLatencies();
+	
+	public void setSpaceActive();
+	public void setTaskStarted();
+	public void setTaskFinished();
 
 }

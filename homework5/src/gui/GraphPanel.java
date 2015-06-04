@@ -53,11 +53,11 @@ public class GraphPanel extends JPanel {
     
     public GraphPanel(){
         this.scores = new ArrayList<Double>();
-        Random random = new Random();
+        /*Random random = new Random();
         int maxScore = 100;
         for (int i = 0; i < maxDataPoints; i++) {
             scores.add((double) random.nextDouble() * maxScore);
-        }
+        }*/
     }
 
     @Override
@@ -175,7 +175,7 @@ public class GraphPanel extends JPanel {
         return scores;
     }
     
-    public void setRandomScores(){
+    /*public void setRandomScores(){
         scores.clear();
         Random random = new Random();
         int maxScore = 100;
@@ -212,5 +212,5 @@ public class GraphPanel extends JPanel {
             createAndShowGui();
          }
       });
-   }
+   }*/
 }
