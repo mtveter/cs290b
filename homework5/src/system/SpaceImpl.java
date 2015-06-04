@@ -62,6 +62,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public void putAll(List<Task<?>> taskList) throws RemoteException {
 		System.out.println("SPACE: List of tasks received from Job");
 		
+		this.sharedObject=new TspShared(Double.MAX_VALUE);
+		for(Computer c:registeredComputers){
+			c.setSharedForced(sharedObject);
+		}
+		
 		List<Integer> cities = new ArrayList<Integer>();
 		double[][] distances = null;
 		

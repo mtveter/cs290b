@@ -265,4 +265,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	public void setId(int id) throws RemoteException {
 		this.id = id;
 	}
+	@Override
+	public void setSharedForced(Shared sharedObject) throws RemoteException {
+		// TODO Auto-generated method stub
+		this.sharedObject = sharedObject;
+	}
 }
