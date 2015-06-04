@@ -9,8 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
-import clients.ClientEuclideanTsp;
 import clients.ClientFibonacci;
 import api.Result;
 import api.Result.Status;
@@ -24,14 +24,15 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 	/** Generated serial identifier	 */
 	private static final long serialVersionUID = 1L;
-
+	/** Variable describing state of Space */
 	private boolean isActive;
+	/** Describes if Space implementation has feature to run some specified Task objects in Space */
+	private boolean hasSpaceRunnableTasks;
 
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
 	private BlockingQueue<Task<?>> receivedTasks = new LinkedBlockingQueue<Task<?>>();
 	private List<Closure> receivedClosures = new ArrayList<Closure>();
 	private BlockingQueue<Result<?>> completedResult = new LinkedBlockingQueue<Result<?>>();
-
 
 
 	public SpaceImpl() throws RemoteException {
@@ -47,13 +48,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		for(Task<?> task :  taskList) {
 			try {
 				Closure initialClosure;
-				if(task.getType()==Type.FIB){
+				if(task.getType() == Type.FIB){
 					// Generate closure for initial task
 					initialClosure = new Closure(ClientFibonacci.joinCounter, "TOP", task);
 					receivedClosures.add(initialClosure);
 					receivedTasks.put(task);
 				}
-				else if(task.getType()==Type.TSP){
+				else if(task.getType() == Type.TSP){
 					// Joincounter
 					TaskTsp taskTsp = (TaskTsp) task;
 					initialClosure = new Closure(taskTsp.getPartialCityList().size(),"TOP",task);
@@ -64,7 +65,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				e.printStackTrace();
 			}
 		}
-		//		System.out.println("SPACE: List of tasks is now put");
 	}
 	/**
 	 * @see api.Space Space
@@ -101,6 +101,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 */
 	@Override
 	public void register(Computer computer) throws RemoteException {
+		System.out.println("New computer registerd");
 		registeredComputers.add(computer);
 	}
 	/**
@@ -112,40 +113,59 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	}
 	/**
 	 * Initiates the Space, sets it active and runs a new ComputerProxy thread
+	 * @param hasSpaceRunnableTasks2 
 	 */
-	private void runComputerProxy() {
+	private void runComputerProxy(boolean hasSpaceRunnableTasks) {
+		this.hasSpaceRunnableTasks = hasSpaceRunnableTasks;
+
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
 			// Check if there are any Closure objects to process
 			if(!receivedClosures.isEmpty()) {
-				
+
 				// If there exits a Closure it tries to merge completed Closure with parent Closure
 				mergeCompletedClosures();
-				
+
 				// If the Top Closure is completed the final result can be put in the blocking queue to be collected by Client
 				if(isTopClosureCompleted()) {
 					try {
-//						System.out.println("Added final result to results ");
 						completedResult.put(receivedClosures.get(0).getAdder().getResult());
 						receivedClosures.remove(0);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			}
-			// For Debug purpose
-//			printClosures();
 			
 			Task<?> task = null;
 			try {
 				task = receivedTasks.take();
-//				System.out.println("SPACE: Task is taken");
-				ComputerProxy proxy = new ComputerProxy(task);
-				proxy.run();
+				if(hasSpaceRunnableTasks) {
+					/* Implementation of Space-Runnable tasks*/
+					
+					// IF Fibonacci task is a base case, then compute result locally on Space
+					if(task.getType() == Type.FIB && task.getN() < 2) {
+						LocalWorker worker = new LocalWorker(task);
+						worker.run();
+					}
+					// IF TSP task is a base case, then compute result locally on Space
+					else if(task.getType() == Type.TSP && task.getN() > TaskTsp.RECURSIONLIMIT) {
+						LocalWorker worker = new LocalWorker(task);
+						worker.run();
+					}
+					// Otherwise send task to computer
+					else{
+						ComputerProxy proxy = new ComputerProxy(task);
+						proxy.run();
+					}
+				}
+				else{
+					ComputerProxy proxy = new ComputerProxy(task);
+					proxy.run();
+
+				}
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -154,7 +174,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 * Takes completed Closure objects and merges them upward in hierarchy
 	 */
 	private void mergeCompletedClosures() {
-//		System.out.println("----RUNING COMPOSER---");
 
 		boolean removeListIsEmpty = false;
 		while(!removeListIsEmpty) {
@@ -162,12 +181,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			List<Closure> removeList = new ArrayList<Closure>();
 			// Iterates over all Closure objects
 			while(iter.hasNext()){
-//				System.out.println("Taking a closure");
-				Closure c = iter.next();
 				
+				Closure c = iter.next();
+
 				// Check if current Closure is completed
 				if(c.isCompleted()){
-//					System.out.println(c.getTask().getId() + ": is completed and ready to be merged");
 					String parent = c.getParentId();
 					// Compares the current Closure with other Closure to find parent
 					for (Closure c2 : receivedClosures){
@@ -177,8 +195,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 							if(parent.equals(c2.getTask().getId())){
 								// Passes result of completed Closure to parent Closure
 								c2.receiveResult(c.getAdder().getResult());
-//								System.out.println("ID: " + c2.getTask().getId() + " Received result from ID: " + c2.getTask().getId());
-			
 								removeList.add(c);
 							}
 						}
@@ -201,12 +217,31 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 */
 	private boolean isTopClosureCompleted() {
 		if(receivedClosures.get(0).getParentId().equals("TOP")){
-//			System.out.println("First closure is top");
+			
 			if(receivedClosures.get(0).isCompleted()){
 				return true;
 			}
 		}
 		return false;
+	}
+	private class LocalWorker implements Runnable{
+		Task<?> task;
+
+		public LocalWorker(Task<?> task) {
+			this.task = task;
+		}
+
+		@Override
+		public void run() {
+			Result<?> result;
+			try {
+				result = task.call();
+
+				handleResult(result);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	/**
 	 * Thread that allocate tasks to computers and execute computation
@@ -222,51 +257,112 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		 */
 		@Override
 		public void run() {
-//			System.out.println("SPACE: Proxy is running");
-			// Takes Task in the head of queue, allocates it to a computer, and executes the operation on the task
-			
 
-//			System.out.println("SPACE: Computer is taken");
 			Computer computer = null;
 			try {
 				computer = registeredComputers.take();
+
 			} catch (InterruptedException e2) {
 				e2.printStackTrace();
 			}
+
+
+
 			try {
-//				System.out.println("SPACE: Computer is taken");
-				Result<?> result = (Result<?>) computer.execute(task);
-//				System.out.println("SPACE: Result is received from Computer");
+				if(!computer.runsCores()){
 
-//				System.out.println("this is result: "+result.toString());
-				//receivedResults.put(result);
-				if(result.getStatus().equals(Status.WAITING)) {
-					List<Closure> closures = result.getChildClosures();
-					// Add Closures from
-					for (Closure closure : closures) {
-						receivedClosures.add(closure);
-						receivedTasks.put(closure.getTask());
-					}
-				}
-				else if(result.getStatus().equals(Status.COMPLETED)) {
-//					System.out.println("Result is of type n=0 or n=1");
+					/**
+					 * Checks if the computer runs buffer, and also if there are enough waiting tasks, so the system 
+					 * doesn't wait if there's not enough tasks.
+					 */
+					if(computer.bufferAvailable() && receivedTasks.size()>(computer.bufferSize())){
+						computer.getTask(task);
 
-					// return to parent closure
-					for(Closure c : receivedClosures){
-//						System.out.println("Result is of type n=0 og n=1");
-//						System.out.println("Closure id "+c.getTask().getId());
-//						System.out.println("Result id "+result.getId());
-						if(c.getTask().getId().equals(result.getId())){
-						
-//							System.out.println("Task received at: "+c.getTask().getId()+ " : result id  "+result.getId());
-							c.receiveResult(result);
+						int available =computer.bufferSize()+computer.coreCount();
+
+						// Sends tasks to computer
+						for (int i = 0; i < available; i++) {
+
+							computer.getTask(receivedTasks.take());
+
+
 						}
-					}					
+
+						/* Receives all the tasks from space, but they are processed as fast as they come in 
+						 * to prevent unnecessary delay */
+						for (int i = 0; i < available+1; i++) {
+							Result<?> r = computer.sendResult();
+
+							processResult(r);
+
+						}
+						registeredComputers.put(computer);
+
+					}else{
+						// if theres no multicore and no prefetching we just use the old execute method
+						Result<?> result = (Result<?>) computer.execute(task);
+
+						processResult(result);
+						registeredComputers.put(computer);
+					}
+
+
 				}
-				else {
-					System.out.println("Result received did not have a valid Status");
+				/* this is if the computer runs multiple cores */
+				else{
+
+					computer.getTask(task);
+					
+					/**
+					 * Checks if the computer runs buffer, and also if there are enough waiting tasks, so the system 
+					 * doesn't wait if there's not enough tasks.
+					 */
+
+					if(computer.bufferAvailable() && receivedTasks.size()>(computer.bufferSize()+computer.coreCount())){
+						int available =computer.bufferSize()+computer.coreCount();
+						
+						for (int i = 0; i < available; i++) {
+							computer.getTask(receivedTasks.take());
+
+						}
+						for (int i = 0; i < available+1; i++) {
+							Result<?> r = computer.sendResult();
+							processResult(r);
+							}	
+						
+						registeredComputers.put(computer);
+
+					}else if (receivedTasks.size()>(computer.coreCount())){
+
+						int available =computer.coreCount();
+						
+						for (int i = 0; i < available; i++) {
+							computer.getTask(receivedTasks.take());
+
+						}
+						for (int i = 0; i < available+1; i++) {
+							Result<?> r = computer.sendResult();
+
+							processResult(r);
+
+						}	
+		
+						registeredComputers.put(computer);
+						//printClosures();
+
+					}
+					else{
+						/* if the computer can take more tasks, but there are not any more waiting */
+						Result<?> r = computer.sendResult();
+						
+						processResult(r);
+
+						registeredComputers.put(computer);
+					}
+
+
+
 				}
-				registeredComputers.put(computer);
 
 			} catch (RemoteException e) {
 				// If there's a RemoteException, task is put back in the queue
@@ -284,6 +380,63 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				e.printStackTrace();
 			}
 		}
+		
+		/**
+		 * Takes a result and handels it. 
+		 * If it's done it's returned to it parent closure, 
+		 * and if it still needs more processing it is put in the task queue.
+		 * @param result
+		 * @throws InterruptedException
+		 */
+		private void processResult(Result<?> result) throws InterruptedException {
+			
+			if(result.getStatus().equals(Status.WAITING)) {
+				List<Closure> closures = result.getChildClosures();
+				// Add Closures from
+				for (Closure closure : closures) {
+					receivedClosures.add(closure);
+					receivedTasks.put(closure.getTask());
+				}
+			}
+			else if(result.getStatus().equals(Status.COMPLETED)) {
+				// return to parent closure
+				for(Closure c : receivedClosures){
+					if(c.getTask().getId().equals(result.getId())){
+						c.receiveResult(result);
+					}
+				}					
+			}
+			else {
+				System.out.println("Result received did not have a valid Status");
+			}
+
+
+		}
+	}
+	private void handleResult(Result<?> result) {
+		if(result.getStatus().equals(Status.WAITING)) {
+			List<Closure> closures = result.getChildClosures();
+			// Add Closures from result
+			for (Closure closure : closures) {
+				receivedClosures.add(closure);
+				try {
+					receivedTasks.put(closure.getTask());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		else if(result.getStatus().equals(Status.COMPLETED)) {
+			// return to parent closure
+			for(Closure c : receivedClosures){
+				if(c.getTask().getId().equals(result.getId())){
+					c.receiveResult(result);
+				}
+			}					
+		}
+		else {
+			System.out.println("Result received did not have a valid Status");
+		}
 	}
 	/**
 	 * Main method for creating Space
@@ -294,6 +447,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		// Construct and set a security manager
 		System.setSecurityManager( new SecurityManager() );
 
+
 		// Instantiate a computer server object
 		SpaceImpl space = new SpaceImpl();
 
@@ -303,10 +457,15 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		// Bind Compute Space server in RMI-registry
 		registry.rebind( Space.SERVICE_NAME, space);
 
+		boolean hasSpaceRunnableTasks = false;
+		if(args.length > 0 && args[0].equals("true")) {
+			hasSpaceRunnableTasks = true;
+		}
+
 		// Print acknowledgement
 		System.out.println("Computer Space: Ready. on port " + Space.PORT);
-		
-		space.runComputerProxy();
+
+		space.runComputerProxy(hasSpaceRunnableTasks);
 	}
 
 	/**
@@ -315,7 +474,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public void printClosures(){
 		System.out.println();
 		for(Closure c: receivedClosures){
-			
+
 			System.out.print(c.getTask().getId()+ ": " + c.getJoinCounter() + " // ");
 			//System.out.println("Closure "+c.getParentId());
 		}

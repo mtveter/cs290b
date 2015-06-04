@@ -1,0 +1,44 @@
+<html>
+<body>
+
+<h3>Design Document</h3>
+
+<h4>1.) API changes:</h4>
+<p> 
+	- Task: </br>
+	We have added a method 'getN()' to the 'Task' interface to get the n-value of each task. For Fibonacci that is the N'th fibonacci number, and for TSP that is the number of cities in the subpartial list of cities.
+</p>
+<p> 
+	- Computer: </br>
+	The computer has a queue for its tasks and results. If it enables multithreading, it has one thread that manages collection of tasks and communicating with the space, 
+	and the rest are working threads that only execute tasks and puts it back on a result queue in the computer. 
+	If it's single threaded with a queue it the computer does the job of communicating and working on it's own. 
+	We have changed the space so it sends multiple tasks simultaneously, if the computer accepts it. 
+	If the computer has multiple cores enabled, it will send out one task for each core. If the computer ameliorates communication latency, it sends in addition enough tasks to fill the buffer. 
+	The proxy results will be processed contineously as they get back to the space, and when the proxy has received all its results it terminates.
+</p>
+
+<h4>2.) Ameliorate communication latency:</h4>
+<p> 
+	In an attempt to reduce communication latency the group has implementing the following: </br>
+	- Task prefetching:</br>
+	Instead of having the 'Computer' just receiving an amount of tasks equal to the number of the 'Computer' cores(or one without multiple worker threads),
+	the 'Computer' received if available a double amount 'Task' objects. This will reduced the total number of connections established to finish a 'Job' and hence reduce total communication latency</br>
+</p>
+<p>
+	- Space runnable tasks: </br>
+	In some cases it will be beneficial to compute certain 'Task' objects locally in the 'Space' instead of delegating the computation to a 'Computer'. 
+	The group has implemented a feature where for a Fibonacci 'Task' the 'Space' will compute 'Task' if the value 'n' is equal to 0 or 1(i.e. base cases of fibonacci recursion). 
+	For a TSP 'Task' the 'Space' will delegate a 'Task' to a 'Computer' only if it's a base case. Since base cases of TSP require heavy computing it will be worth the latency to delegate the computation to a 'Computer', 
+	while for other cases the 'Space' will compute the 'Task' that only require low amount of computation.
+</p>
+
+<h4>3.) Multiple worker threads</h4>
+<p> 
+	Each 'Computer' will have a given amount of processor cores to assign computation to. By mapping each 'Task' to a distinct processor core parallell execution of 'Task' computation. 
+	When a 'Computer' is created, it will create one thread for each available core, and the cores will synchronously take available 'Task' objects from a queue in the 'Computer', 
+	execute them and put 'Result' in queue at 'Computer' which will pass 'Result' to 'Space'.
+</p>
+
+</body>
+</html>
