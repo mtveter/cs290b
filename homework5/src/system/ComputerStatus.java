@@ -4,17 +4,19 @@ import java.io.Serializable;
 
 public class ComputerStatus implements Serializable{
 	
-	double averageTaskTime;
+	double taskTime;
+	double taskTimeCount;
 	
-	double averageBottomcaseTime;
+	double bottomcaseTime;
+	double bottomcaseCount;
 	
 	double sumLatency;
 	double countLatency;
 	
 	public ComputerStatus(){
-		this.averageBottomcaseTime =0.0;
+		this.bottomcaseTime =0.0;
 		this.sumLatency = 0.0;
-		this.averageTaskTime =0.0;
+		this.taskTime =0.0;
 		this.countLatency =0;
 		
 	}
@@ -25,6 +27,16 @@ public class ComputerStatus implements Serializable{
 		this.sumLatency += latency;
 		this.countLatency+=1;
 	}
+	
+	public void addBottomcaseTime(long time ){
+		bottomcaseTime+=time;
+		bottomcaseCount++;
+		
+	}
+	public void addTaskTime(long time ){
+		taskTime+=time;
+		taskTimeCount++;
+	}
 
 	public double getAverageLatency() {
 		
@@ -33,24 +45,13 @@ public class ComputerStatus implements Serializable{
 	
 	
 	public double getAverageTaskTime() {
-		return averageTaskTime;
+		return this.taskTime/this.taskTimeCount;
 	}
 
-
-	public void setAverageTaskTime(double averageTaskTime) {
-		this.averageTaskTime = averageTaskTime;
-	}
-
-
+	
 	public double getAverageBottomcaseTime() {
-		return averageBottomcaseTime;
+		return this.bottomcaseTime/this.bottomcaseCount;
 	}
-
-
-	public void setAverageBottomcaseTime(double averageBottomcaseTime) {
-		this.averageBottomcaseTime = averageBottomcaseTime;
-	}
-
 
 
 //done

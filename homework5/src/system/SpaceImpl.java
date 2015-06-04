@@ -394,6 +394,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 			try {
 				if(!computer.runsCores()){
+					
+					System.out.println("SPACE: in other");
+
 
 					/**
 					 * Checks if the computer runs buffer, and also if there are enough waiting tasks, so the system 
@@ -430,11 +433,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						processResult(result);
 						computer.setComputerPreferences(cs);
 						registeredComputers.put(computer);
+						System.out.println("SPACE: in other");
 					}
 
 
 				}
 				/* this is if the computer runs multiple cores */
+				/* RUNS HERE */
 				else{
 
 					computer.getTask(task);
@@ -462,11 +467,23 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 							Result<?> r = computer.sendResult();
 							processResult(r);
 							cs.addLatency(r.getLatency());
+							if(r.getStatus().equals(Status.COMPLETED)){
+								cs.addBottomcaseTime(r.getWorkTime());
+							}
+							else if (r.getStatus().equals(Status.WAITING)){
+								cs.addTaskTime(r.getWorkTime());
+							}
 							}	
 						computer.setComputerPreferences(cs);
 						registeredComputers.put(computer);
+						
+						System.out.println("Computer avg btmct: "+cs.getAverageBottomcaseTime());
+						System.out.println("Computer avg tasktime "+cs.getAverageTaskTime());
+						System.out.println("Computer avg latency "+cs.getAverageLatency());
+						
 
 					}else if (receivedTasks.size()>(computer.coreCount())){
+						System.out.println(" In other");
 
 						int available =computer.coreCount();
 						

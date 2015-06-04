@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import system.Closure;
+import system.MetaData;
 
 /**
  * @param <T> type of return value of corresponding Task.
@@ -28,6 +29,9 @@ public class Result<T> implements Serializable
     public boolean pruned = false;
     
     private long latency = 0;
+    private long workTime =0; //in ms
+    
+    private static MetaData md = new MetaData(-1, -1, -1);
     
     public enum Status{
     	WAITING, COMPLETED;
@@ -127,5 +131,15 @@ public class Result<T> implements Serializable
     
     public long getLatency(){
     	return this.latency;
+    }
+    
+    public long getWorkTime() {
+		return workTime;
+	}
+	public void setWorkTime(long workTime) {
+		this.workTime = workTime;
+	}
+	public void setMetaData(MetaData m){
+    	this.md = m;
     }
 }

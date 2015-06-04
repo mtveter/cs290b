@@ -39,7 +39,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	static Space space;
 	private static int buffer=10;
 	private Shared sharedObject;
-	private long latency =330;
+	private long latency =90;
 	//private ComputerStatus computerstatus;
 	private ComputerPreferences compPref;
 	private int recursionLimit = 9;
@@ -63,7 +63,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	public Result<?> execute(Task<?> task) throws RemoteException {
 		Result<?> result = task.call();
 		System.out.println("in execute");
-		result.setLatency(getLatency());
+		MetaData md = new MetaData((int) getLatency(), -1, -1);
+		
+		result.setMetaData(md);
 		return result;
 	}
 	
@@ -219,7 +221,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 *
 	 */
 	private class ComputeThread extends Thread  {
-
+		long start;
+		long stop;
+		long workTime;
 		private  int id;
 		Random randomGenerator = new Random();
 		private int recLimit = 6;
@@ -244,8 +248,15 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				
 				try {
 					task.setRecLimit(recLimit);
+					start = System.nanoTime();
 					result = task.call();
+					stop = System.nanoTime();
+					workTime = (stop-start)/1000000;
+					
+					result.setWorkTime(workTime);
+					
 					result.setLatency(getLatency());
+					
 					results.put(result);
 					
 				} catch (RemoteException e) {
@@ -278,6 +289,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 			try {
 				
 				result = task.call();
+				MetaData md = new MetaData((int) getLatency(), -1, -1);
+				
+				result.setMetaData(md);
 				
 				results.put(result);
 				
@@ -330,8 +344,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 			
 		}
 		for(ComputeThread t: threads){
-			//t.recLimit=this.recursionLimit;
-			System.out.println("Changed reclimit in thread");
+			t.recLimit=this.recursionLimit;
+			System.out.println("Changed reclimit in thread to "+this.recursionLimit);
 		}
 		
 	}
