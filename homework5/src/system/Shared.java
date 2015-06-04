@@ -10,7 +10,6 @@ public interface Shared {
 	
 	public ArrayList<Integer> getLbAdjacencyMapValue(Integer key);
 	
-	
 	public void putAdjacencyList(int n);
 	
 	public void addNeighborToCity(Integer city, Integer neighbor);

@@ -33,6 +33,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	
 	/* Model for progress of branch and bound  */
 	private TasksProgressModel progressModel;
+	/* Integer representing the integer value to assign to the next registered computer
+	 * Counting mechanism ensure uniqueness of all identifier values */
+	private int computerUniqueIdGenerator;
 
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
 	/* Lifo queue for tasks */
@@ -135,6 +138,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	@Override
 	public void register(Computer computer) throws RemoteException {
 		System.out.println("New computer registerd");
+		
+		/* Sets a unique integer identifier for the computer */
+		int id = computerUniqueIdGenerator;
+		computer.setId(id);
+		computerUniqueIdGenerator += 1;
+		
 		registeredComputers.add(computer);
 	}
 	/**

@@ -14,13 +14,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 
 
+
 import api.Result;
 import api.Space;
 import api.Task;
 
 public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnable {
-
-
 
 	/** Generated serial ID	 */
 	private static final long serialVersionUID = -3092303569928556422L;
@@ -124,12 +123,12 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	}
 	
 	/**
-	 * @return Id of computer
+	 * {@inheritDoc}
 	 */
+	@Override
 	public int getId() {
 		return this.id;
 	}
-	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -261,5 +260,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	@Override
 	public Shared getShared() {
 		return sharedObject;
+	}
+	@Override
+	public void setId(int id) throws RemoteException {
+		this.id = id;
 	}
 }
