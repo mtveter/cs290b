@@ -2,6 +2,8 @@
 /homework1/src/test/
 /homework2/src/test/
 
+/RemoteSystemsTempFiles/
+
 *.class
 
 # Mobile Tools for Java (J2ME)
