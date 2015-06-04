@@ -247,7 +247,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				Result<?> result;
 				
 				try {
-					task.setRecLimit(recLimit);
+					//task.setRecLimit(recLimit);
 					start = System.nanoTime();
 					result = task.call();
 					stop = System.nanoTime();
@@ -287,7 +287,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 			
 			Result<?> result;
 			try {
-				
+				task.setRecLimit(recursionLimit);
 				result = task.call();
 				MetaData md = new MetaData((int) getLatency(), -1, -1);
 				
