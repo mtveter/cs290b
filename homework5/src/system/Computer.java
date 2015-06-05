@@ -66,7 +66,18 @@ public interface Computer extends Remote {
 	
 	public void setShared(Shared sharedObject) throws RemoteException;
 	
+	public void setSharedForced(Shared sharedObject) throws RemoteException;
+	
 	public Shared getShared() throws RemoteException;
 	
 	public String getNameString() throws RemoteException;
+
+	//public int getId() throws RemoteException;
+	
+	//public void setId(int id) throws RemoteException;
+
+	public ComputerStatus getComputerStatus() throws RemoteException;
+	
+	public void setComputerPreferences( ComputerStatus cs) throws RemoteException;
+
 }

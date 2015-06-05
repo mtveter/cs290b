@@ -1,10 +1,8 @@
 package system;
 
 import java.net.MalformedURLException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -22,11 +20,10 @@ public class ComputerImplCores extends ComputerImpl implements Runnable {
 	private transient List<ComputeThread> threads= new ArrayList<ComputerImplCores.ComputeThread>();
 	private transient BlockingQueue<Result<?>> results= new LinkedBlockingQueue<Result<?>>();
 	private transient BlockingQueue<Task<?>> tasks= new LinkedBlockingQueue<Task<?>>();
-	int cores;
+	private int cores;
 	private static boolean runscores;
 	private static boolean prefetch;
 	static Space space;
-	
 	
 	protected ComputerImplCores(String id, String domainName) throws RemoteException, MalformedURLException, NotBoundException {
 		super(id, runscores, prefetch, domainName);
@@ -40,13 +37,12 @@ public class ComputerImplCores extends ComputerImpl implements Runnable {
 	
 	@Override
 	public Result<?> sendResult() throws RemoteException, InterruptedException {
-		// TODO Auto-generated method stub
-		Result<?> r = results.take();
-		return r;
+		Result<?> result = results.take();
+		return result;
 	}
 	
 	
-	public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
+	/*public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
 		// If no argument is passed, then connect to local host, otherwise to IPv4 specified 
 		String domainName;
 		if(args.length > 0){
@@ -72,45 +68,21 @@ public class ComputerImplCores extends ComputerImpl implements Runnable {
 		// Print acknowledgement
 		System.out.println("ComputerCore started and registered at space " + domainName);
 		//((ComputerImplCores) computer).run();
-	}
+	}*/
+
 	public void getTask(Task<?> task){
 		tasks.add(task);
-		//System.out.println("task size "+ tasks.size());
-	}
-	
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		while(true){
-			
-			while(!results.isEmpty()){
-				
-				//Result<?> r = results.remove(0);
-				
-				
-			}
-			
-			
-		}
-		
 	}
 	
 	public void createThreads(){
-		//create threads running f
-				cores =Runtime.getRuntime().availableProcessors();
-				for(int i=0; i<cores; i++){
-					ComputeThread thread = new ComputeThread(i);
-					threads.add(thread);
-					thread.start();
-				}
+		//create threads running
+		cores = Runtime.getRuntime().availableProcessors();
+		for(int i = 0; i < cores; i++){
+			ComputeThread thread = new ComputeThread(i);
+			threads.add(thread);
+			thread.start();
+		}
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	private class ComputeThread extends Thread {
 
@@ -125,24 +97,17 @@ public class ComputerImplCores extends ComputerImpl implements Runnable {
 		@Override
 		public void run() {
 			while(true) try {
-				//System.out.println("thread "+getId()+" running");
 				Task<?> task = tasks.take();
-				//System.out.println("Took "+task.getId()+" tasks");
 				Result<?> result;
 				try {
-					
 					result = task.call();
 					results.put(result);
-					//System.out.println("Result put to queue");
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					System.out.println("There was a remote exception when trying to execute task");
 				}
-				//Log.debug("-"+id+"- "+task+" = "+result);
-
-
-
-			}catch(InterruptedException e){	}
+			}catch(InterruptedException e){
+				e.printStackTrace();
+			}
 		}
 	}
 

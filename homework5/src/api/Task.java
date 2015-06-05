@@ -30,4 +30,6 @@ public interface Task<T> extends Serializable{
 
 	public void setComputer(Computer computer);
 	
+	public void setRecLimit(int i);
+	
 }
