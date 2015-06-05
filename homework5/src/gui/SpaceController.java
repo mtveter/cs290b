@@ -98,12 +98,12 @@ public class SpaceController implements SpaceListener {
     	// Update GUI Console
     	console.setActiveTasks(tasksProgressModel.getTotalGeneratedTasks());
     	console.setFinishedTasks(tasksProgressModel.getTotalCompletedTasks());
-    	console.setTotalTasks(tasksProgressModel.getTotalTasks());
+    	console.setPercentageCompleted(tasksProgressModel.getTasksCompletedPercentage());
     	
     	console.setAvgPruningDepth(tasksProgressModel.getPrunedOfTotalTasksRatio());
     	console.setMaxDepth((int) tasksProgressModel.getPrunedOfGeneratedTasksRatio());
     	
-    	int progress = 100*tasksProgressModel.getTotalCompletedTasks()/tasksProgressModel.getTotalGeneratedTasks();
+    	int progress = (int)(100*tasksProgressModel.getTasksCompletedPercentage());
     	console.setProgress(progress);
     	if (progress > 5){
     		timeLeftEstimation.updateEstimation(progress);

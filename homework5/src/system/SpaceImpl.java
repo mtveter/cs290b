@@ -87,7 +87,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		double[][] distances = null;
 		
 		/* Sets the pruning model */
-		this.progressModel.setTotalTasks(taskList.size());
+		this.progressModel.setTotalCities(taskList.size());
 		
 		for(Task<?> task :  taskList) {
 			try {
@@ -618,6 +618,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					if(c.getTask().getId().equals(result.getId())){
 						
 						c.receiveResult(result);
+						progressModel.addCompletedTaskWeight(result.getId());
 						if(result.isPruned()){
 							progressModel.increaseTotalPrunedTasks(result.getNrOfPrunedTasks());
 							c.setJoinCounter(0);

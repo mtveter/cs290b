@@ -54,7 +54,7 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
         jButton1 = new javax.swing.JButton();
         maxDepthLabel = new javax.swing.JLabel();
         avgPruningDepthLabel = new javax.swing.JLabel();
-        totalTasksLabel = new javax.swing.JLabel();
+        percentageCompletedLabel = new javax.swing.JLabel();
         finishedTasksLabel = new javax.swing.JLabel();
         activeTasksLabel = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
@@ -65,7 +65,7 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
         maxDepthValueLabel = new javax.swing.JLabel();
         activeTasksValueLabel = new javax.swing.JLabel();
         finishedTasksValueLabel = new javax.swing.JLabel();
-        totalTasksValueLabel = new javax.swing.JLabel();
+        percentageCompletedValueLabel = new javax.swing.JLabel();
         estimatedTimeLeftValueLabel = new javax.swing.JLabel();
         estimatedTimeLeftLabel = new javax.swing.JLabel();
         latencyPanel = new javax.swing.JPanel();
@@ -91,7 +91,7 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
 
         avgPruningDepthLabel.setText("Avg. pruning depth:");
 
-        totalTasksLabel.setText("Total tasks:");
+        percentageCompletedLabel.setText("Total tasks:");
 
         finishedTasksLabel.setText("Finished tasks:");
 
@@ -121,7 +121,7 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
 
         finishedTasksValueLabel.setText("0");
 
-        totalTasksValueLabel.setText("0");
+        percentageCompletedValueLabel.setText("0");
 
         estimatedTimeLeftValueLabel.setText("");
         estimatedTimeLeftValueLabel.setVisible(false);
@@ -164,9 +164,9 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(finishedTasksValueLabel))
                             .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(totalTasksLabel)
+                                .addComponent(percentageCompletedLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(totalTasksValueLabel)))
+                                .addComponent(percentageCompletedValueLabel)))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addComponent(jLabelStatus)
@@ -197,8 +197,8 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
                     .addComponent(finishedTasksValueLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(totalTasksLabel)
-                    .addComponent(totalTasksValueLabel))
+                    .addComponent(percentageCompletedLabel)
+                    .addComponent(percentageCompletedValueLabel))
                 .addGap(18, 18, 18)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(avgPruningDepthLabel)
@@ -403,8 +403,8 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
     private javax.swing.JLabel maxDepthValueLabel;
     private javax.swing.JLabel spaceLabel;
     private javax.swing.JButton startSpaceButton;
-    private javax.swing.JLabel totalTasksLabel;
-    private javax.swing.JLabel totalTasksValueLabel;
+    private javax.swing.JLabel percentageCompletedLabel;
+    private javax.swing.JLabel percentageCompletedValueLabel;
     // End of variables declaration//GEN-END:variables
 
 	@Override
@@ -418,8 +418,8 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
 	}
 
 	@Override
-	public void setTotalTasks(int n) {
-		totalTasksValueLabel.setText(n+"");
+	public void setPercentageCompleted(double n) {
+		percentageCompletedValueLabel.setText(n+"");
 	}
 
 	@Override
@@ -434,7 +434,7 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
 
 	@Override
 	public void setProgress(int n) {
-		jProgressBar1.setValue(n);
+		jProgressBar1.setValue((int) n);
 	}
 
 	@Override
