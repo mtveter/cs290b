@@ -309,201 +309,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			}
 		}
 	}
-	/**
-	 * Thread that allocate tasks to computers and execute computation
-	 */
-	public class ComputerProxy implements Runnable{
-		Task<?> task;
 
-		public ComputerProxy(Task<?> task) {
-			this.task = task;
-		}
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void run() {
-			
-			
-			Computer computer = null;
-			try {
-				computer = registeredComputers.take();
-				try {
-					computer.setShared(sharedObject);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					System.out.println("Could not set shared object to computer");
-				}
-
-			} catch (InterruptedException e2) {
-				e2.printStackTrace();
-			}
-
-
-
-			try {
-				if(!computer.runsCores()){
-
-					/**
-					 * Checks if the computer runs buffer, and also if there are enough waiting tasks, so the system 
-					 * doesn't wait if there's not enough tasks.
-					 */
-					if(computer.bufferAvailable() && receivedTasks.size()>(computer.bufferSize())){
-						computer.getTask(task);
-
-						int available =computer.bufferSize()+computer.coreCount();
-
-						// Sends tasks to computer
-						for (int i = 0; i < available; i++) {
-
-							computer.getTask(receivedTasks.takeLast());
-
-
-						}
-
-						/* Receives all the tasks from space, but they are processed as fast as they come in 
-						 * to prevent unnecessary delay */
-						for (int i = 0; i < available+1; i++) {
-							Result<?> r = computer.sendResult();
-
-							processResult(r);
-
-						}
-						registeredComputers.put(computer);
-
-					}else{
-						// if theres no multicore and no prefetching we just use the old execute method
-						Result<?> result = (Result<?>) computer.execute(task);
-
-						processResult(result);
-						registeredComputers.put(computer);
-					}
-
-
-				}
-				/* this is if the computer runs multiple cores */
-				else{
-
-					computer.getTask(task);
-					
-					/**
-					 * Checks if the computer runs buffer, and also if there are enough waiting tasks, so the system 
-					 * doesn't wait if there's not enough tasks.
-					 */
-
-					if(computer.bufferAvailable() && receivedTasks.size()>(computer.bufferSize()+computer.coreCount())){
-						int available =computer.bufferSize()+computer.coreCount();
-						
-						for (int i = 0; i < available; i++) {
-							computer.getTask(receivedTasks.takeLast());
-
-						}
-						for (int i = 0; i < available+1; i++) {
-							Result<?> r = computer.sendResult();
-							processResult(r);
-							}	
-						
-						registeredComputers.put(computer);
-
-					}else if (receivedTasks.size()>(computer.coreCount())){
-
-						int available =computer.coreCount();
-						
-						for (int i = 0; i < available; i++) {
-							computer.getTask(receivedTasks.takeLast());
-
-						}
-						for (int i = 0; i < available+1; i++) {
-							Result<?> r = computer.sendResult();
-							
-							processResult(r);
-
-						}	
-		
-						registeredComputers.put(computer);
-						//printClosures();
-
-					}
-					else{
-						/* if the computer can take more tasks, but there are not any more waiting */
-						Result<?> r = computer.sendResult();
-						
-						processResult(r);
-
-						registeredComputers.put(computer);
-					}
-
-
-
-				}
-
-			} catch (RemoteException e) {
-				// If there's a RemoteException, task is put back in the queue
-				try {
-					receivedTasks.putLast(task);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-				System.out.println("There was a remote exception: A computer might have been terminated");
-				// Unregister the faulty computer from list of available computers in Space
-				if(!computer.equals(null)) {
-					registeredComputers.remove(computer);
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		/**
-		 * Takes a result and handels it. 
-		 * If it's done it's returned to it parent closure, 
-		 * and if it still needs more processing it is put in the task queue.
-		 * @param result
-		 * @throws InterruptedException
-		 * @throws RemoteException 
-		 */
-		private void processResult(Result<?> result) throws InterruptedException, RemoteException {
-
-			//System.out.println("in process result");
-			if(result.getStatus().equals(Status.WAITING)) {
-				List<Closure> closures = result.getChildClosures();
-				// Add Closures from
-				for (Closure closure : closures) {
-					receivedClosures.add(closure);
-					receivedTasks.putLast(closure.getTask());
-				}
-				/* Add generated tasks count */
-				progressModel.increaseTotalGeneratedTasks(closures.size());
-			}
-			else if(result.getStatus().equals(Status.COMPLETED)) {
-				double oldShared = (Double) getShared().get();
-				double newShared = (Double) result.getTaskReturnDistance();
-				if (newShared<oldShared){
-//					System.out.println("Space is setting new TSP shared");
-					setShared(new TspShared(newShared));
-				}
-				// return to parent closure
-				for(Closure c : receivedClosures){
-					if(c.getTask().getId().equals(result.getId())){
-						
-						c.receiveResult(result);
-						if(result.isPruned()){
-							progressModel.increaseTotalPrunedTasks(result.getNrOfPrunedTasks());
-							c.setJoinCounter(0);
-							c.getAdder().setResult(result);
-						}
-					}
-				}
-				/* Register that 1 more task has been completed */
-				progressModel.increaseTotalCompletedTasks(1);
-			}
-			else {
-				System.out.println("Result received did not have a valid Status");
-			}
-
-
-		}
-	}
 	private void handleResult(Result<?> result) throws RemoteException {
 		
 		if(result.getStatus().equals(Status.WAITING)) {
@@ -512,7 +318,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			for (Closure closure : closures) {
 				receivedClosures.add(closure);
 				try {
-					receivedTasks.putLast(closure.getTask());
+					receivedTasks.put(closure.getTask());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -560,6 +366,249 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 		space.runComputerProxy(hasSpaceRunnableTasks);
 	}
+
+	/**
+	 * Thread that allocate tasks to computers and execute computation
+	 */
+	public class ComputerProxy implements Runnable{
+		Task<?> task;
+
+		public ComputerProxy(Task<?> task) {
+			this.task = task;
+		}
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void run() {
+			
+			
+			Computer computer = null;
+			ComputerStatus cs = new ComputerStatus();
+			
+			try {
+				computer = registeredComputers.take();
+				
+				//Used to set the right preferences for the computer
+				ComputerStatus status  = computer.getComputerStatus();
+				
+				try {
+					computer.setShared(sharedObject);
+					
+					
+					
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					System.out.println("Could not set shared object to computer");
+				}
+
+			} catch (InterruptedException | RemoteException e2) {
+				e2.printStackTrace();
+			}
+
+
+
+			try {
+				if(!computer.runsCores()){
+					
+					System.out.println("SPACE: in other");
+
+
+					/**
+					 * Checks if the computer runs buffer, and also if there are enough waiting tasks, so the system 
+					 * doesn't wait if there's not enough tasks.
+					 */
+					if(computer.bufferAvailable() && receivedTasks.size()>(computer.bufferSize())){
+						computer.getTask(task);
+						
+						int available =computer.bufferSize()+computer.coreCount();
+
+						// Sends tasks to computer
+						for (int i = 0; i < available; i++) {
+
+							computer.getTask(receivedTasks.takeLast());
+
+
+						}
+
+						/* Receives all the tasks from space, but they are processed as fast as they come in 
+						 * to prevent unnecessary delay */
+						for (int i = 0; i < available+1; i++) {
+							Result<?> r = computer.sendResult();
+							cs.addLatency(r.getLatency());
+							processResult(r);
+
+						}
+						computer.setComputerPreferences(cs);
+						registeredComputers.put(computer);
+
+					}else{
+						// if theres no multicore and no prefetching we just use the old execute method
+						Result<?> result = (Result<?>) computer.execute(task);
+						cs.addLatency(result.getLatency());
+						processResult(result);
+						computer.setComputerPreferences(cs);
+						registeredComputers.put(computer);
+						System.out.println("SPACE: in other");
+					}
+
+
+				}
+				/* this is if the computer runs multiple cores */
+				/* RUNS HERE */
+				else{
+
+					computer.getTask(task);
+					
+					/**
+					 * Checks if the computer runs buffer, and also if there are enough waiting tasks, so the system 
+					 * doesn't wait if there's not enough tasks.
+					 */
+
+					if(computer.bufferAvailable() /*&& receivedTasks.size()>(computer.bufferSize()+computer.coreCount())*/){
+						int available;
+						if(receivedTasks.size()>(computer.bufferSize()+computer.coreCount())){
+							available = computer.bufferSize()+computer.coreCount();
+						}else{
+							available = receivedTasks.size();
+						}
+						
+						System.out.println("SPACE: In buffermode");
+						
+						for (int i = 0; i < available; i++) {
+							computer.getTask(receivedTasks.takeLast());
+
+						}
+						for (int i = 0; i < available+1; i++) {
+							Result<?> r = computer.sendResult();
+							processResult(r);
+							cs.addLatency(r.getLatency());
+							if(r.getStatus().equals(Status.COMPLETED)){
+								cs.addBottomcaseTime(r.getWorkTime());
+							}
+							else if (r.getStatus().equals(Status.WAITING)){
+								cs.addTaskTime(r.getWorkTime());
+							}
+							}	
+						computer.setComputerPreferences(cs);
+						registeredComputers.put(computer);
+						
+						System.out.println("Computer avg btmct: "+cs.getAverageBottomcaseTime());
+						System.out.println("Computer avg tasktime "+cs.getAverageTaskTime());
+						System.out.println("Computer avg latency "+cs.getAverageLatency());
+						
+
+					}else if (receivedTasks.size()>(computer.coreCount())){
+						System.out.println(" In other");
+
+						int available =computer.coreCount();
+						
+						for (int i = 0; i < available; i++) {
+							computer.getTask(receivedTasks.takeLast());
+
+						}
+						for (int i = 0; i < available+1; i++) {
+							Result<?> r = computer.sendResult();
+							cs.addLatency(r.getLatency());
+							processResult(r);
+
+						}	
+						computer.setComputerPreferences(cs);
+						registeredComputers.put(computer);
+						//printClosures();
+
+					}
+					else{
+						/* if the computer can take more tasks, but there are not any more waiting */
+						Result<?> r = computer.sendResult();
+						cs.addLatency(r.getLatency());
+						processResult(r);
+						computer.setComputerPreferences(cs);
+
+						registeredComputers.put(computer);
+					}
+
+
+
+				}
+
+			} catch (RemoteException e) {
+				// If there's a RemoteException, task is put back in the queue
+				try {
+					receivedTasks.putLast(task);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				System.out.println("There was a remote exception: A computer might have been terminated");
+				// Unregister the faulty computer from list of available computers in Space
+				if(!computer.equals(null)) {
+					registeredComputers.remove(computer);
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		/**
+		 * Takes a result and handels it. 
+		 * If it's done it's returned to it parent closure, 
+		 * and if it still needs more processing it is put in the task queue.
+		 * @param result
+		 * @throws InterruptedException
+		 * @throws RemoteException 
+		 */
+		private void processResult(Result<?> result) throws InterruptedException, RemoteException {
+
+			List<Closure> cl = result.getChildClosures();
+			
+
+
+			//System.out.println("in process result");
+			if(result.getStatus().equals(Status.WAITING)) {
+				List<Closure> closures = result.getChildClosures();
+				// Add Closures from
+				for (Closure closure : closures) {
+					receivedClosures.add(closure);
+					receivedTasks.putLast(closure.getTask());
+				}
+				/* Add generated tasks count */
+				progressModel.increaseTotalGeneratedTasks(closures.size());
+			}
+			else if(result.getStatus().equals(Status.COMPLETED)) {
+				double oldShared = (Double) getShared().get();
+				double newShared = (Double) result.getTaskReturnDistance();
+				if (newShared<oldShared){
+//					System.out.println("Space is setting new TSP shared");
+					setShared(new TspShared(newShared));
+				}
+				// return to parent closure
+				for(Closure c : receivedClosures){
+					if(c.getTask().getId().equals(result.getId())){
+						
+						c.receiveResult(result);
+						if(result.isPruned()){
+							progressModel.increaseTotalPrunedTasks(result.getNrOfPrunedTasks());
+							c.setJoinCounter(0);
+							c.getAdder().setResult(result);
+						}
+					}
+				}
+				/* Register that 1 more task has been completed */
+				progressModel.increaseTotalCompletedTasks(1);
+			}
+			else {
+				System.out.println("Result received did not have a valid Status");
+			}
+
+
+		}
+	}
+
+	/**
+	 * Main method for creating Space
+	 * @param args Not needed
+	 * @throws RemoteException If there is a connection error
+	 */
 
 	/**
 	 * Print method to print all Closure object with their current join counter

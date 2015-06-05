@@ -70,7 +70,13 @@ public interface Computer extends Remote {
 	
 	public Shared getShared() throws RemoteException;
 	
+
 	public int getId() throws RemoteException;
 	
 	public void setId(int id) throws RemoteException;
+
+	public ComputerStatus getComputerStatus() throws RemoteException;
+	
+	public void setComputerPreferences( ComputerStatus cs) throws RemoteException;
+
 }

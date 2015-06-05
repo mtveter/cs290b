@@ -27,8 +27,9 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 
 	/** An array containing the computed values for the distances between all cities. */
 	public double[][] distances;
+	
 	/** The limit to size of partial cities to by subdivided and executed by Computer*/
-	public static final int RECURSIONLIMIT = 7; 
+	public static int RECURSIONLIMIT = 7; 
 	
 	private boolean pruning = true;
 
@@ -227,6 +228,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	public int getN() {
 		return this.n;
 	}
+
 	
 	/**
 	 * Calculates the lower
@@ -236,7 +238,8 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	 * @param cities				Array of all distances between cities in the multi-graph
 	 * @return	The total value of the lower bound
 	 */
-	public double computeLowerBound(boolean newMst, Integer firstLocked, Integer startCityId, List<Integer> cityIdentifierList) {
+
+public double computeLowerBound(boolean newMst, Integer firstLocked, Integer startCityId, List<Integer> cityIdentifierList) {
 		double result = 0; 
 		
 		try {
@@ -398,7 +401,11 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		return costOfMst;
 	}
 	
-	private void printList(List<Integer> l1, List<Integer> l2) {
+	
 		
+
+	public void setRecLimit(int i){
+		this.RECURSIONLIMIT = i;
+
 	}
 }
