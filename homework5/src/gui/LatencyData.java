@@ -22,30 +22,34 @@ public class LatencyData {
     }
     
     public void addLatencyValue(String computer, double value){
-        computerLatencies.get(computer).add(value);
+    	computerLatencies.get(computer).add(value);
+    	/*List<Double> latencies = computerLatencies.get(computer);
+        synchronized(latencies){        	
+        	latencies.add(value);
+        }*/
     }
     
     /*public void setLatencyList(String computer, List<Double> latencies){
         computerLatencies.put(computer, latencies);
     }*/
     
-    public double getAvgLatency(String computer){
+    /*public double getAvgLatency(String computer){
         List<Double> latencies = computerLatencies.get(computer);
         double sum = 0;
         for (double d : latencies){
             sum += d;
         }
         return sum/latencies.size();
-    }
+    }*/
     
     public static double getAverage(List<Double> list){
-    	synchronized(list){    		
-    		double sum = 0.0;
-    		for (double d : list){
-    			sum += d;
-    		}
-    		return sum/list.size();
-    	}
+    	//synchronized(list){    		
+		double sum = 0.0;
+		for (double d : list){
+			sum += d;
+		}
+		return sum/list.size();
+    	//}
     }
     
     public List<Double> getMostRecentLatencies(String computer, int n){

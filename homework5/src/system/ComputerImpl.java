@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	static Space space;
 	private static int buffer=10;
 	private Shared sharedObject;
-	private String domainName;
+	//private String domainName;
 
 	private long latency =90;
 	//private ComputerStatus computerstatus;
@@ -50,7 +51,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		this.amerlioration = amerlioration;
 		this.multicore = mulitcore;
 		this.sharedObject= new TspShared(Double.MAX_VALUE);
-		this.domainName = domainName;
 		this.compPref = new ComputerPreferences();
 		
 		// Construct and set a security manager
@@ -73,7 +73,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		
 		// Print acknowledgement
 		System.out.println("Computer started and registered at space " + domainName);
-		System.out.println("Computer name: "+getNameString());
+		//System.out.println("Computer name: "+getNameString());
 	}
 	
 	/**
@@ -274,7 +274,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				Result<?> result;
 				
 				try {
-					task.setRecLimit(recLimit);
+					//task.setRecLimit(recLimit);
 					start = System.nanoTime();
 					result = task.call();
 					stop = System.nanoTime();
@@ -345,7 +345,12 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 
 	@Override
 	public String getNameString() throws RemoteException {
-		return "Computer "+id+" ["+domainName+"]";
+		try {
+			return "Computer "+id+" ["+getClientHost()+"]";
+		} catch (ServerNotActiveException e) {
+			e.printStackTrace();
+		}
+		return "Computer "+id+" [N/A]";
 	}
 
 	/*@Override

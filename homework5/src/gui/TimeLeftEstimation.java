@@ -18,7 +18,11 @@ public class TimeLeftEstimation {
         startTime = System.currentTimeMillis();
     }
     
-    public void updateProgress(int progress){
+    public void finished(){
+    	timeLeft = 0;
+    }
+    
+    public void updateEstimation(int progress){
         estimateTimeLeft(progress, System.currentTimeMillis()-startTime);
     }
     

@@ -30,7 +30,7 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
 	SpaceController spaceController;
     
     /**
-     * Creates new form NewJFrame1
+     * Creates new form SpaceConsoleGUI
      */
     public SpaceConsoleGUI() {
         initComponents();
@@ -99,7 +99,7 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
 
         spaceLabel.setText("Space");
 
-        hasSpaceRunnableCheckBox.setText("SpaceRunnable");
+        hasSpaceRunnableCheckBox.setText("hasSpaceRunnable");
         hasSpaceRunnableCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hasSpaceRunnableCheckBoxActionPerformed(evt);
@@ -298,16 +298,22 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
             @Override
             public void run() {
                 tle.start();
-                while (jProgressBar1.getValue() < 100){
+                estimatedTimeLeftLabel.setVisible(true);
+                estimatedTimeLeftValueLabel.setVisible(true);
+                estimatedTimeLeftValueLabel.setText("-");
+                int progress;
+                while ((progress = jProgressBar1.getValue()) <= 100){
                     graphPanel.addValue((double) new Random().nextDouble()*100);
-                    jProgressBar1.setValue(jProgressBar1.getValue()+1);
+                    jProgressBar1.setValue(progress+1);
                     try {
-                        Thread.sleep(800);
+                        Thread.sleep(500);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(SpaceConsoleGUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    tle.updateProgress(jProgressBar1.getValue());
-                    estimatedTimeLeftValueLabel.setText(tle.toString());
+                    if (progress > 5){
+                    	tle.updateEstimation(progress);
+                    	estimatedTimeLeftValueLabel.setText(tle.toString());
+                    }
                 }
                 jLabelStatus.setText("Done.");
             }
@@ -317,7 +323,7 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void hasSpaceRunnableCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hasSpaceRunnableCheckBoxActionPerformed
-        // TODO add your handling code here:
+        spaceController.setHasSpaceRunnableTasks(hasSpaceRunnableCheckBox.isSelected());
     }//GEN-LAST:event_hasSpaceRunnableCheckBoxActionPerformed
 
     private void computerComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_computerComboBoxActionPerformed
@@ -399,7 +405,6 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
     private javax.swing.JButton startSpaceButton;
     private javax.swing.JLabel totalTasksLabel;
     private javax.swing.JLabel totalTasksValueLabel;
-	private LatencyData latencyData;
     // End of variables declaration//GEN-END:variables
 
 	@Override
@@ -476,7 +481,6 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
 	
     private void initThreads() {
 		Thread updateLatenciesThread = new Thread(new Runnable(){
-
 			@Override
 			public void run() {
 				while (true) {

@@ -168,9 +168,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		
 		registeredComputers.add(computer);
 		latencyData.addComputer(computer.getNameString());
-		for (int i=0; i<30; i++){
+		/*for (int i=0; i<30; i++){
 			latencyData.addLatencyValue(computer.getNameString(), new Random().nextDouble()*70+30);
-		}
+		}*/
 		firePropertyChanged(SpaceListener.COMPUTER_ADDED, latencyData);
 	}
 	
@@ -472,8 +472,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 						}
 						computer.setComputerPreferences(cs);
+						latencyData.addLatencyValue(computer.getNameString(), cs.sumLatency);
 						registeredComputers.put(computer);
-
 					}else{
 						// if theres no multicore and no prefetching we just use the old execute method
 						Result<?> result = (Result<?>) computer.execute(task);

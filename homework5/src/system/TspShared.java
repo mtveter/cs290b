@@ -12,7 +12,7 @@ public class TspShared implements Shared,Serializable{
 	
 	public TspShared(double value){
 		this.value = value;
-		putAdjacencyList(16);
+		putAdjacencyList(20);
 	}
 
 	@Override

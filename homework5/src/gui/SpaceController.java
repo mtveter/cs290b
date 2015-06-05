@@ -26,6 +26,8 @@ public class SpaceController implements SpaceListener {
     private final long UPDATE_INTERVAL = 500;
 	private boolean isSpaceActive;
 	private boolean isTaskActive;
+	
+	private TimeLeftEstimation timeLeftEstimation;
     
     public SpaceController(SpaceConsole console){
     	this.console = console;
@@ -50,11 +52,11 @@ public class SpaceController implements SpaceListener {
 	    	latencyData = spaceImpl.getLatencyData();
 	    	tasksProgressModel = spaceImpl.getTasksProgressModel();
 	    	console.setSpaceActive();
-	    	/*Thread t = new Thread(new Runnable(){
+	    	Thread t = new Thread(new Runnable(){
 				@Override
 				public void run() {
 					while (true) {
-						updateConsole();
+						if (isTaskActive()) updateConsole();
 						try {
 							Thread.sleep(UPDATE_INTERVAL);
 						} catch (InterruptedException e) {
@@ -64,7 +66,7 @@ public class SpaceController implements SpaceListener {
 				}
 	    		
 	    	});
-	    	t.start();*/
+	    	t.start();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -81,26 +83,32 @@ public class SpaceController implements SpaceListener {
         	console.updateComputersList();        	
         } else if (propertyName.equals(SpaceListener.MASTER_TASK_STARTED)){
         	isTaskActive = true;
+        	timeLeftEstimation = new TimeLeftEstimation();
+        	timeLeftEstimation.start();
         	console.setTaskStarted();
         } else if (propertyName.equals(SpaceListener.MASTER_TASK_FINISHED)){
+        	updateConsole();
         	isTaskActive = false;
+        	timeLeftEstimation.finished();
         	console.setTaskFinished();
         }
     }
     
-    //int n = 0; //For testing
     private void updateConsole(){
     	// Update GUI Console
-    	//console.setActiveTasks(n++);
-    	
-    	//Example of use:
+    	console.setActiveTasks(tasksProgressModel.getTotalGeneratedTasks());
     	console.setFinishedTasks(tasksProgressModel.getTotalCompletedTasks());
     	console.setTotalTasks(tasksProgressModel.getTotalTasks());
     	
-    	//console.setProgress(n);
-    	//if (n >= 100) console.setStatus("Done.");
+    	console.setAvgPruningDepth(tasksProgressModel.getPrunedOfTotalTasksRatio());
+    	console.setMaxDepth((int) tasksProgressModel.getPrunedOfGeneratedTasksRatio());
     	
-    	//console.addLatencyValue(null, 50);
+    	int progress = 100*tasksProgressModel.getTotalCompletedTasks()/tasksProgressModel.getTotalGeneratedTasks();
+    	console.setProgress(progress);
+    	if (progress > 5){
+    		timeLeftEstimation.updateEstimation(progress);
+    		console.setEstimatedTimeLeft(timeLeftEstimation.toString());
+    	}
     }
     
     public LatencyData getLatencyData(){

@@ -47,11 +47,5 @@ public interface Space extends Remote
     
     Shared getShared() throws RemoteException;
     
-    /*static AtomicLong idCounter = new AtomicLong();
-
-    public static String createId() throws RemoteException {
-        return String.valueOf(idCounter.getAndIncrement());
-    };*/
-    
     public String createId() throws RemoteException;
 }
