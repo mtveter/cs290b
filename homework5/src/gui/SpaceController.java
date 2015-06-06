@@ -7,7 +7,7 @@ package gui;
 
 import java.rmi.RemoteException;
 
-import Models.TasksProgressModel;
+import models.TasksProgressModel;
 import system.SpaceImpl;
 
 /**
