@@ -1,6 +1,4 @@
-package Models;
-
-import tasks.TaskTsp;
+package models;
 
 /* Model accessing maintaining progress data of tasks in branch and bound composition and decomposition */
 public class TasksProgressModel {

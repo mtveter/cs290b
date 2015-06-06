@@ -20,7 +20,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
-import Models.TasksProgressModel;
+import models.TasksProgressModel;
 import api.Result;
 import api.Result.Status;
 import api.Space;
