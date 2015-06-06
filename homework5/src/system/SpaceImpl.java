@@ -12,7 +12,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import Models.TasksProgressModel;
+import models.TasksProgressModel;
 import api.Result;
 import api.Result.Status;
 import api.Space;
@@ -54,6 +54,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		this.isActive = false;
 		//this.sharedObject=new TspShared(Double.MAX_VALUE);
 		this.sharedObject = new TspShared(Double.MAX_VALUE);
+		this.progressModel = new TasksProgressModel();
 	}
 	/**
 	 * @see api.Space Space
@@ -70,8 +71,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		List<Integer> cities = new ArrayList<Integer>();
 		double[][] distances = null;
 		
-		/* Sets the pruning model */
-		this.progressModel = new TasksProgressModel(taskList.size());
+		this.progressModel.setTotalCities(taskList.size());
 		
 		for(Task<?> task :  taskList) {
 			try {
