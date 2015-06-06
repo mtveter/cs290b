@@ -8,7 +8,7 @@ public class TspShared implements Shared,Serializable{
 	
 	private double value;
 	public ConcurrentHashMap<Integer, ArrayList<Integer>> lbAdjacencyMap = new ConcurrentHashMap<Integer, ArrayList<Integer>>();
-	public Double currentMstCost;	
+	public double currentMstCost;	
 	
 	public TspShared(double value){
 		this.value = value;
@@ -49,11 +49,15 @@ public class TspShared implements Shared,Serializable{
 	}
 	@Override
 	public void decrementCurrentMstCost(Double mstCost) {
-		this.currentMstCost -= mstCost;
+		if(mstCost <= this.currentMstCost) {
+			this.currentMstCost -= mstCost;
+		}
 	}
 	@Override
 	public void incrementCurrentMstCost(Double mstCost) {
-		this.currentMstCost += mstCost;
+		if(mstCost > 0) {
+			this.currentMstCost += mstCost;
+		}
 	}
 
 	@Override

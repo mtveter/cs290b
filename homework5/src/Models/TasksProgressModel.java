@@ -24,6 +24,9 @@ public class TasksProgressModel {
 	public void setTotalCities(int n){
 		this.numberOfCities = n;
 	}
+	public int getTotalCities() {
+		return this.numberOfCities;
+	}
 	public int getTotalPrunedTasks() {
 		return totalPrunedTasks;
 	}
