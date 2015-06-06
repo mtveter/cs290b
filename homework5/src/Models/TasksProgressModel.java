@@ -43,7 +43,7 @@ public class TasksProgressModel {
 		for(int level = 1; level < numberOfLevels; level++) {
 			tempWeight /= (numberOfCities - level); 
 		}
-		tasksCompletedPercentage += (100/tempWeight);
+		tasksCompletedPercentage += tempWeight;
 	}
 	/**
 	 * Increases count of total pruned tasks
