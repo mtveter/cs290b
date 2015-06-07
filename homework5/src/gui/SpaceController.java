@@ -104,6 +104,7 @@ public class SpaceController implements SpaceListener {
     	console.setMaxDepth((int) tasksProgressModel.getPrunedOfGeneratedTasksRatio());
     	
     	int progress = (int)(tasksProgressModel.getTasksCompletedPercentage());
+    	System.out.println("Progress: "+progress);
     	console.setProgress(progress);
     	if (progress > 5){
     		timeLeftEstimation.updateEstimation(progress);

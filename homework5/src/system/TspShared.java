@@ -2,17 +2,19 @@ package system;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TspShared implements Shared,Serializable{
 	
 	private double value;
-	public ConcurrentHashMap<Integer, ArrayList<Integer>> lbAdjacencyMap = new ConcurrentHashMap<Integer, ArrayList<Integer>>();
+	public ConcurrentHashMap<Integer, List<Integer>> lbAdjacencyMap = new ConcurrentHashMap<Integer, List<Integer>>();
 	public Double currentMstCost;	
 	
 	public TspShared(double value){
 		this.value = value;
-		putAdjacencyList(20);
+		putAdjacencyList(16);
 	}
 
 	@Override
@@ -26,7 +28,7 @@ public class TspShared implements Shared,Serializable{
 	}
 	
 	@Override
-	public ArrayList<Integer> getLbAdjacencyMapValue(Integer key) {
+	public List<Integer> getLbAdjacencyMapValue(Integer key) {
 		return lbAdjacencyMap.get(key);
 	}
 	
@@ -34,7 +36,7 @@ public class TspShared implements Shared,Serializable{
 	public void putAdjacencyList(int n) {
 		if(lbAdjacencyMap.isEmpty()) {
 			for (int v = 0; v < n; v++) {
-				lbAdjacencyMap.put(v, new ArrayList<Integer>());
+				lbAdjacencyMap.put(v, Collections.synchronizedList(new ArrayList<Integer>()));
 			}
 		}
 	}
@@ -58,17 +60,17 @@ public class TspShared implements Shared,Serializable{
 
 	@Override
 	public void addNeighborToCity(Integer city, Integer neighbor) {
-		ArrayList<Integer> list = lbAdjacencyMap.get(city);
+		List<Integer> list = Collections.synchronizedList(lbAdjacencyMap.get(city));
 		list.add(neighbor);
 	}
 
 	@Override
 	public void removeNeighborFromCity(Integer city, Integer neighbor) {
-		lbAdjacencyMap.get(city).remove(new Integer(neighbor));
+		Collections.synchronizedList(lbAdjacencyMap.get(city)).remove(new Integer(neighbor));
 	}
 
 	@Override
 	public void clearAdjList(Integer key) {
-		lbAdjacencyMap.get(key).clear();
+		Collections.synchronizedList(lbAdjacencyMap.get(key)).clear();
 	}
 }

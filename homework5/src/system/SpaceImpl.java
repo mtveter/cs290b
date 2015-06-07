@@ -86,8 +86,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		List<Integer> cities = new ArrayList<Integer>();
 		double[][] distances = null;
 		
-		/* Sets the pruning model */
-		this.progressModel.setTotalCities(taskList.size());
 		
 		for(Task<?> task :  taskList) {
 			try {
@@ -107,9 +105,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			}
 		}
 		
+		/* Sets the pruning model */
+		this.progressModel.setTotalCities(distances.length);
+		
 		for (int i = 0; i < distances.length; i++) {
 			cities.add(i);
-			
 		}
 		
 		System.out.println("THIS IS UPPER BOUND "+TspBounds.computeUpperBound(cities, distances));
@@ -277,6 +277,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				
 				// Check if current Closure is completed
 				if(c.isCompleted()){
+					
 					long taskRunTime = c.getAdder().getResult().getTaskRunTime();
 					if (taskRunTime > maxSubtask_T) maxSubtask_T = taskRunTime;
 					T_1 += taskRunTime;
@@ -290,6 +291,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 							if(parent.equals(c2.getTask().getId())){
 								// Passes result of completed Closure to parent Closure
 								c2.receiveResult(c.getAdder().getResult());
+								int level = c.getTask().getLevel();
+								if(level == 3){
+									System.out.println("#ID: "+c.getTask().getId());
+									progressModel.addCompletedTaskWeight(level);
+								}
+								
 								if (parent.equals("0")){
 									compose_T += System.nanoTime() - composeStart;
 								}
@@ -618,7 +625,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					if(c.getTask().getId().equals(result.getId())){
 						
 						c.receiveResult(result);
-						progressModel.addCompletedTaskWeight(result.getId());
+						
 						if(result.isPruned()){
 							progressModel.increaseTotalPrunedTasks(result.getNrOfPrunedTasks());
 							c.setJoinCounter(0);

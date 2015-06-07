@@ -110,14 +110,4 @@ public class ComputerImplCores extends ComputerImpl implements Runnable {
 			}
 		}
 	}
-
-
-
-
-
-
-
-
-	
-
 }

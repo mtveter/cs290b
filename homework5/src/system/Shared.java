@@ -1,6 +1,7 @@
 package system;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface Shared {
 	
@@ -8,7 +9,7 @@ public interface Shared {
 	
 	public boolean isOlderThan(Shared other);
 	
-	public ArrayList<Integer> getLbAdjacencyMapValue(Integer key);
+	public List<Integer> getLbAdjacencyMapValue(Integer key);
 	
 	public void putAdjacencyList(int n);
 	
