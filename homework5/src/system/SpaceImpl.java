@@ -195,11 +195,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
-			if (!registeredComputers.isEmpty()){
+			/*if (!registeredComputers.isEmpty()){
 				double value = 30.0+new Random().nextDouble()*70;
 				System.out.println("Latency value added: "+value+" for computer: "+registeredComputers.peek().getNameString());
 				latencyData.addLatencyValue(registeredComputers.peek().getNameString(), value);
-			}
+			}*/
 			// Check if there are any Closure objects to process
 			runner++;
 			if(runner%30 == 1){
@@ -479,7 +479,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 						}
 						computer.setComputerPreferences(cs);
-						latencyData.addLatencyValue(computer.getNameString(), cs.sumLatency);
 						registeredComputers.put(computer);
 					}else{
 						// if theres no multicore and no prefetching we just use the old execute method
@@ -490,7 +489,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						registeredComputers.put(computer);
 						System.out.println("SPACE: in other");
 					}
-
 
 				}
 				/* this is if the computer runs multiple cores */
@@ -536,7 +534,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						System.out.println("Computer avg tasktime "+cs.getAverageTaskTime());
 						System.out.println("Computer avg latency "+cs.getAverageLatency());
 						
-
 					}else if (receivedTasks.size()>(computer.coreCount())){
 						System.out.println(" In other");
 
@@ -566,10 +563,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 						registeredComputers.put(computer);
 					}
-
-
-
 				}
+				
+				latencyData.addLatencyValue(computer.getNameString(), cs.getAverageLatency());
 
 			} catch (RemoteException e) {
 				// If there's a RemoteException, task is put back in the queue
