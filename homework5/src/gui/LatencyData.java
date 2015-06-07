@@ -45,7 +45,7 @@ public class LatencyData {
     }*/
     
     public static double getAverage(List<Double> list){
-    	list = new ArrayList<Double>(list);
+    	//list = new ArrayList<Double>(list);
 		double sum = 0.0;
 		for (double d : list){
 			sum += d;
@@ -57,7 +57,7 @@ public class LatencyData {
     	List<Double> latencies = computerLatencies.get(computer);
     	int size;
     	if (latencies == null || (size = latencies.size()) <= n) return latencies;
-    	else return Collections.synchronizedList(latencies.subList(size-n, size));
+    	else return Collections.synchronizedList(new ArrayList<Double>(latencies.subList(size-n, size)));
     }
     
     public Set<String> getComputers(){
