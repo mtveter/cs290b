@@ -101,9 +101,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		if(randomGenerator.nextBoolean()){
 			variance= variance *-1;
 		}
-		
-		return this.latency+variance;
-		
+		this.latency+=variance;
+		return this.latency;
 		
 	}
 	
@@ -258,6 +257,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		private  int id;
 		Random randomGenerator = new Random();
 		private int recLimit = 6;
+		private int latency;
 		
 		public ComputeThread(int id){
 			this.id = id;
@@ -271,6 +271,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				Task<?> task = tasks.take();
 				
 				//Latency
+				
 				Thread.sleep(getLatency());
 				
 				
