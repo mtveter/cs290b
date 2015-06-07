@@ -82,7 +82,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 			for(int i = TaskTsp.RECURSIONLIMIT; i <= this.n; i++) {
 				nrOfPrunedTasks *= i;
 			}
-			return new Result<>(a, 160.0, 0l, this.id, true, nrOfPrunedTasks);
+			return new Result<>(a, 160.0, 0l, this.id, true, nrOfPrunedTasks, getLevel());
 		}
 
 		if(n == TaskTsp.RECURSIONLIMIT) {
@@ -182,7 +182,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 			lowerbound += pathDistance(lockedCities);
 			
 			if(upperbound < lowerbound){
-				System.out.println("PRUNED Task(s)");
+//				System.out.println("PRUNED Task(s)");
 				return true;
 			}
 		}

@@ -87,7 +87,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 
 //		System.out.println("in execute");
 
-		System.out.println("in execute");
 		MetaData md = new MetaData((int) getLatency(), -1, -1);
 		
 		result.setMetaData(md);
@@ -396,7 +395,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		}
 		for(ComputeThread t: threads){
 			t.recLimit=this.recursionLimit;
-			System.out.println("Changed reclimit in thread to "+this.recursionLimit);
+//			System.out.println("Changed reclimit in thread to "+this.recursionLimit);
 		}
 		
 	}

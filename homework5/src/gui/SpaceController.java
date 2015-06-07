@@ -100,7 +100,7 @@ public class SpaceController implements SpaceListener {
     	console.setFinishedTasks(tasksProgressModel.getTotalCompletedTasks());
     	console.setPercentageCompleted(tasksProgressModel.getTasksCompletedPercentage());
     	
-    	console.setAvgPruningDepth(tasksProgressModel.getPrunedOfTotalTasksRatio());
+    	console.setAvgPruningDepth(tasksProgressModel.getAveragePruningDepth());
     	console.setMaxDepth((int) tasksProgressModel.getPrunedOfGeneratedTasksRatio());
     	
     	int progress = (int)(tasksProgressModel.getTasksCompletedPercentage());
