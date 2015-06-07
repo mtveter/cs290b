@@ -36,9 +36,11 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	//private String domainName;
 
 	private long latency =90;
-	//private ComputerStatus computerstatus;
+	private Random randomGenerator= new Random();
 	private ComputerPreferences compPref;
 	private int recursionLimit = 9;
+	int variance;
+	
 
 	/**
 	 * @throws RemoteException If there is a connection error
@@ -94,11 +96,13 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	}
 	
 	private long getLatency(){
-		//long time =170;
-		//long time =200;
-		//time = randomGenerator.nextInt(600);
+		variance = randomGenerator.nextInt(50);
 		
-		return this.latency;
+		if(randomGenerator.nextBoolean()){
+			variance= variance *-1;
+		}
+		
+		return this.latency+variance;
 		
 		
 	}
@@ -274,7 +278,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				Result<?> result;
 				
 				try {
-					//task.setRecLimit(recLimit);
+					task.setRecLimit(recLimit);
 					start = System.nanoTime();
 					result = task.call();
 					stop = System.nanoTime();

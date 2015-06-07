@@ -413,9 +413,17 @@ public double computeLowerBound(boolean newMst, Integer firstLocked, Integer sta
 	
 	
 		
-
+ /** Setting the new recursion limit, but checking that it's over the cities to be permuted.
+  *  If the recursion limit is to high, it's set to as high as possible.
+  * @see api.Task#setRecLimit(int)
+  */
 	public void setRecLimit(int i){
-		this.RECURSIONLIMIT = i;
+		
+		if(i<=n){
+				this.RECURSIONLIMIT = i;}
+		else{
+					this.RECURSIONLIMIT = n;
+				}
 
 	}
 }
