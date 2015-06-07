@@ -30,7 +30,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	public double[][] distances;
 	
 	/** The limit to size of partial cities to by subdivided and executed by Computer*/
-	public static int RECURSIONLIMIT = 7; 
+	public int RECURSIONLIMIT = 7; 
 	
 	private boolean pruning=true;
 
@@ -49,6 +49,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		this.lockedCities = lockedCities;
 		this.id = id;
 		this.n = partialCityList.size();
+		this.RECURSIONLIMIT =7;
 	}
 
 
@@ -60,9 +61,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	@Override
 	public Result<?> call() throws RemoteException 
 	{
-		if(this.id.equals("062")){
-			System.out.println("thisis locked "+this.lockedCities);
-		}
+		
 		
 		Result<?> result = null;
 		List<Closure> childClosures = new ArrayList<Closure>();
@@ -86,7 +85,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 
 
 
-		if(n == TaskTsp.RECURSIONLIMIT) {
+		if(n == this.RECURSIONLIMIT) {
 			//int firstCity  = partialCityList.remove(0);
 			//int firstCity = lockedCities.get(lockedCities.size()-1);
 			List<Integer> shortestTour = new ArrayList<>( lockedCities );
@@ -114,9 +113,9 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 			
 			return new Result<>(shortestTour, shortestTourDistance, taskRunTime, this.id);
 		}
-		else if(n > TaskTsp.RECURSIONLIMIT) {
+		else if(n > this.RECURSIONLIMIT) {
 
-			if(n > TaskTsp.RECURSIONLIMIT + 1) {
+			if(n > this.RECURSIONLIMIT + 1) {
 				for (int city : partialCityList) {
 
 					List<Integer> newLockedList = new ArrayList<>(lockedCities);					
@@ -133,7 +132,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 					
 				}
 			}
-			else if(n == TaskTsp.RECURSIONLIMIT + 1) {
+			else if(n == this.RECURSIONLIMIT + 1) {
 				for (int city : partialCityList) {
 
 					List<Integer> newLockedList = new ArrayList<>(lockedCities);					
@@ -149,12 +148,14 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 					childClosures.add(c);
 				}
 			}
-			else {System.out.println("SPACE: The length of the partial city list is not correct");}
+			else {System.out.println("SPACE: The length of the partial city list is not correct1");}
 			long taskEndTime = System.nanoTime();
 			long taskRunTime = taskEndTime - taskStartTime;
 			result = new Result<>(childClosures, taskRunTime, this.getId());
 		}
-		else {System.out.println("SPACE: The length of the partial city list is not correct");}
+		else {System.out.println("SPACE: The length of the partial city list is not correct2");
+		System.out.println("n is "+this.n);
+		System.out.println("Recursion limit is "+RECURSIONLIMIT);;}
 		return result;
 	}
 
@@ -223,6 +224,12 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		return this.n;
 	}
 	public void setRecLimit(int i){
+		if(i<=n){
 		this.RECURSIONLIMIT = i;
+		}
+	}
+	
+	public int getRecursionLimit(){
+		return this.RECURSIONLIMIT;
 	}
 }

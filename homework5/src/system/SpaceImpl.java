@@ -145,8 +145,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	/**
 	 * Initiates the Space, sets it active and runs a new ComputerProxy thread
 	 * @param hasSpaceRunnableTasks2 
+	 * @throws RemoteException 
 	 */
-	private void runComputerProxy(boolean hasSpaceRunnableTasks) {
+	private void runComputerProxy(boolean hasSpaceRunnableTasks) throws RemoteException {
 		this.hasSpaceRunnableTasks = hasSpaceRunnableTasks;
 		int runner =0;
 		this.isActive = true; 
@@ -178,7 +179,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			}
 			long decomposeStart = System.nanoTime();
 			Task<?> task = null;
-			//printClosures();
+			printClosures();
 			try {
 				task = receivedTasks.take();
 				if(hasSpaceRunnableTasks) {
@@ -190,7 +191,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						worker.run();
 					}
 					// IF TSP task is a base case, then compute result locally on Space
-					else if(task.getType() == Type.TSP && task.getN() > TaskTsp.RECURSIONLIMIT) {
+					else if(task.getType() == Type.TSP && task.getN() > task.getRecursionLimit()) {
 						LocalWorker worker = new LocalWorker(task);
 						worker.run();
 					}

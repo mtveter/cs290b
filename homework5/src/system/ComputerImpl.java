@@ -226,7 +226,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		long workTime;
 		private  int id;
 		Random randomGenerator = new Random();
-		private int recLimit = 6;
+		private int recLimit = 8;
+		int inn =0;
 		
 		public ComputeThread(int id){
 			this.id = id;
@@ -239,6 +240,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				
 				Task<?> task = tasks.take();
 				
+					inn++;
+					System.out.println("inn is "+inn);
+					if( inn > 1 ){
+					System.out.println("Here CHANGEDH ");
+					recLimit = 6;}
+					
+				
+				
 				//Latency
 				Thread.sleep(getLatency());
 				
@@ -247,12 +256,13 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				Result<?> result;
 				
 				try {
-					//task.setRecLimit(recLimit);
+					task.setRecLimit(recLimit);
 					start = System.nanoTime();
 					result = task.call();
 					stop = System.nanoTime();
 					workTime = (stop-start)/1000000;
-					
+					System.out.println(result);
+					System.out.println(workTime);
 					result.setWorkTime(workTime);
 					
 					result.setLatency(getLatency());

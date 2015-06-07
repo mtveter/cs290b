@@ -32,4 +32,6 @@ public interface Task<T> extends Serializable{
 	
 	public void setRecLimit(int i);
 	
+	public int getRecursionLimit() throws RemoteException;
+	
 }

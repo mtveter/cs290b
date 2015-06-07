@@ -11,8 +11,8 @@ public class ComputerPreferences {
 	static int fastPruning;
 	
 	static int initRecLimit = 8;
-	static int slowRecLimit = 9;
-	static int fastRecLimit = 7;
+	static int slowRecLimit = 8;
+	static int fastRecLimit = 8;
 	
 	static int fast =100; //less than this is considered fast
 	
