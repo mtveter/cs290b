@@ -60,17 +60,17 @@ public class TspShared implements Shared,Serializable{
 
 	@Override
 	public void addNeighborToCity(Integer city, Integer neighbor) {
-		List<Integer> list = Collections.synchronizedList(lbAdjacencyMap.get(city));
+		List<Integer> list = lbAdjacencyMap.get(city);
 		list.add(neighbor);
 	}
 
 	@Override
 	public void removeNeighborFromCity(Integer city, Integer neighbor) {
-		Collections.synchronizedList(lbAdjacencyMap.get(city)).remove(new Integer(neighbor));
+		lbAdjacencyMap.get(city).remove(new Integer(neighbor));
 	}
 
 	@Override
 	public void clearAdjList(Integer key) {
-		Collections.synchronizedList(lbAdjacencyMap.get(key)).clear();
+		lbAdjacencyMap.get(key).clear();
 	}
 }

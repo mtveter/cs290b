@@ -1,7 +1,9 @@
 package gui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -18,7 +20,7 @@ public class LatencyData {
     }
     
     public void addComputer(String computer){
-        computerLatencies.put(computer, new ArrayList<Double>());
+        computerLatencies.put(computer, Collections.synchronizedList(new ArrayList<Double>()));
     }
     
     public void addLatencyValue(String computer, double value){
@@ -43,20 +45,19 @@ public class LatencyData {
     }*/
     
     public static double getAverage(List<Double> list){
-    	//synchronized(list){    		
+    	list = new ArrayList<Double>(list);
 		double sum = 0.0;
 		for (double d : list){
 			sum += d;
 		}
 		return sum/list.size();
-    	//}
     }
     
     public List<Double> getMostRecentLatencies(String computer, int n){
     	List<Double> latencies = computerLatencies.get(computer);
     	int size;
     	if (latencies == null || (size = latencies.size()) <= n) return latencies;
-    	else return latencies.subList(size-n, size);
+    	else return Collections.synchronizedList(latencies.subList(size-n, size));
     }
     
     public Set<String> getComputers(){
