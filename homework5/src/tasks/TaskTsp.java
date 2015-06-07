@@ -30,7 +30,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	public double[][] distances;
 	
 	/** The limit to size of partial cities to by subdivided and executed by Computer*/
-	public static int RECURSIONLIMIT = 6; 
+	public static int RECURSIONLIMIT = 7; 
 	
 	private boolean pruning = true;
 

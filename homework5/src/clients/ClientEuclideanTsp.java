@@ -36,7 +36,7 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
     	{ 3, 3 },//8
     	{ 6, 3 },
     	{ 6, 6 },//10
-    	/*{ 3, 6 }//,
+    	{ 3, 6 }//,
     	//{ 4, 4 }//,
     	//{ 5, 4 }//,
     	/*{ 5, 5 },
