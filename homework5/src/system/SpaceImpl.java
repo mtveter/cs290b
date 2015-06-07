@@ -531,9 +531,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						computer.setComputerPreferences(cs);
 						registeredComputers.put(computer);
 						
-						System.out.println("Computer avg btmct: "+cs.getAverageBottomcaseTime());
-						System.out.println("Computer avg tasktime "+cs.getAverageTaskTime());
-						System.out.println("Computer avg latency "+cs.getAverageLatency());
+						
 						
 					}else if (receivedTasks.size()>(computer.coreCount())){
 						System.out.println(" In other");
@@ -566,6 +564,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					}
 				}
 				
+				System.out.println("Computer avg btmct: "+cs.getAverageBottomcaseTime());
+				System.out.println("Computer avg tasktime "+cs.getAverageTaskTime());
+				System.out.println("Computer avg latency "+cs.getAverageLatency());
 				latencyData.addLatencyValue(computer.getNameString(), cs.getAverageLatency());
 
 			} catch (RemoteException e) {
