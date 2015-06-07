@@ -40,7 +40,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	private ComputerPreferences compPref;
 	private int recursionLimit = 9;
 	int variance;
-	
+	private boolean simulateLatency = false;
 
 	/**
 	 * @throws RemoteException If there is a connection error
@@ -100,9 +100,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		if(randomGenerator.nextBoolean()){
 			variance= variance *-1;
 		}
-		
-		return this.latency+variance;
-		
+		this.latency+=variance;
+		return this.latency;
 		
 	}
 	
@@ -257,6 +256,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		private  int id;
 		Random randomGenerator = new Random();
 		private int recLimit = 6;
+		private int latency;
 		
 		public ComputeThread(int id){
 			this.id = id;
@@ -270,6 +270,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				Task<?> task = tasks.take();
 				
 				//Latency
+				
 				Thread.sleep(getLatency());
 				
 				
@@ -280,6 +281,10 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 					task.setRecLimit(recLimit);
 					start = System.nanoTime();
 					result = task.call();
+					
+					result.setSimlateLatency(getSimlulateLatency());
+					result.setStartTime(task.getTime());
+					
 					stop = System.nanoTime();
 					workTime = (stop-start)/1000000;
 					
@@ -344,6 +349,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	@Override
 	public Shared getShared() {
 		return sharedObject;
+	}
+	public boolean getSimlulateLatency(){
+		return this.simulateLatency;
 	}
 
 	@Override
