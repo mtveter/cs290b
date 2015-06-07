@@ -31,7 +31,9 @@ public class Result<T> implements Serializable
     private Integer nrOfPrunedTasks = 0;
     
     private long latency = 0;
-    private long workTime =0; //in ms
+    private long workTime = 0; //in ms
+    
+	private int pruningDepth;
     
     private static MetaData md = new MetaData(-1, -1, -1);
     
@@ -73,7 +75,7 @@ public class Result<T> implements Serializable
         this.childClosures = null;
         this.taskReturnDistance = taskReturnDistance;
     }
-    public Result( T taskReturnValue, T taskReturnDistance, long taskRunTime, String id, boolean pruned, Integer nrOfPrunedTasks)
+    public Result( T taskReturnValue, T taskReturnDistance, long taskRunTime, String id, boolean pruned, Integer nrOfPrunedTasks, int pruningDepth)
     {
     	this.status = Status.COMPLETED;
         assert taskReturnValue != null;
@@ -85,6 +87,7 @@ public class Result<T> implements Serializable
         this.taskReturnDistance = taskReturnDistance;
         this.pruned = true;
         this.nrOfPrunedTasks = nrOfPrunedTasks;
+        this.pruningDepth = pruningDepth;
     }
     /**
      * Constructor used for result with a task value
@@ -128,6 +131,9 @@ public class Result<T> implements Serializable
 
 	public Integer getNrOfPrunedTasks() {
 		return nrOfPrunedTasks;
+	}
+	public int getPruningDepth() {
+		return pruningDepth;
 	}
 	public boolean isPruned() {
 		return this.pruned;
