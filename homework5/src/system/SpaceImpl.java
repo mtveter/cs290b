@@ -197,7 +197,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		while(isActive) {
 			if (!registeredComputers.isEmpty()){
 				double value = 30.0+new Random().nextDouble()*70;
-				System.out.println("Latency value added: "+value+" for computer: "+registeredComputers.peek().getNameString());
+//				System.out.println("Latency value added: "+value+" for computer: "+registeredComputers.peek().getNameString());
 				latencyData.addLatencyValue(registeredComputers.peek().getNameString(), value);
 			}
 			// Check if there are any Closure objects to process
@@ -293,7 +293,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 								c2.receiveResult(c.getAdder().getResult());
 								int level = c.getTask().getLevel();
 								if(level == 3){
-									System.out.println("#ID: "+c.getTask().getId());
 									progressModel.addCompletedTaskWeight(level);
 								}
 								
@@ -628,6 +627,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						
 						if(result.isPruned()){
 							progressModel.increaseTotalPrunedTasks(result.getNrOfPrunedTasks());
+							progressModel.increaseTotalPrunedLevels(result.getPruningDepth());
 							c.setJoinCounter(0);
 							c.getAdder().setResult(result);
 						}
