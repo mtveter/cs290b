@@ -22,10 +22,12 @@ public class ComputerStatus implements Serializable{
 	}
 
 	
-	public void addLatency(long latency){
+	public void addLatency(double latency){
 		// add it to average
+		if(latency<10000){
+		
 		this.sumLatency += latency;
-		this.countLatency+=1;
+		this.countLatency+=1;}
 	}
 	
 	public void addBottomcaseTime(long time ){
@@ -39,7 +41,9 @@ public class ComputerStatus implements Serializable{
 	}
 
 	public double getAverageLatency() {
-		
+		if (this.countLatency==0){
+			return 0;
+		}
 		return this.sumLatency/this.countLatency;
 	}
 	

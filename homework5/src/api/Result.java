@@ -151,11 +151,14 @@ public class Result<T> implements Serializable
     	
     }
     
-    public long getLatency(){
+    public double getLatency(){
     	if(this.simulateLatency){
     		return this.latency;	
     	}else{
-    		return ((System.nanoTime() - startTime)/1000000)-workTime;
+    		double current = (System.nanoTime() - startTime)/1000000;
+    		current -=workTime;
+    		
+    		return  current;
     	}
     	
     }

@@ -512,15 +512,16 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						System.out.println("SPACE: In buffermode");
 						
 						for (int i = 0; i < available; i++) {
-							Task t = receivedTasks.takeLast();
-							t.setTime();
-							computer.getTask(t);
+							Task task = receivedTasks.takeLast();
+							task.setTime();
+							computer.getTask(task);
 
 						}
 						for (int i = 0; i < available+1; i++) {
 							Result<?> r = computer.sendResult();
 							processResult(r);
 							cs.addLatency(r.getLatency());
+							
 							if(r.getStatus().equals(Status.COMPLETED)){
 								cs.addBottomcaseTime(r.getWorkTime());
 							}

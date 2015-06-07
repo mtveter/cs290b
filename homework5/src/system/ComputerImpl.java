@@ -283,7 +283,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 					result = task.call();
 					
 					result.setSimlateLatency(getSimlulateLatency());
+					
 					result.setStartTime(task.getTime());
+					
 					
 					stop = System.nanoTime();
 					workTime = (stop-start)/1000000;
