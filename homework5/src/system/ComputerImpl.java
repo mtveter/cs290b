@@ -270,9 +270,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				Task<?> task = tasks.take();
 				
 				//Latency
-				
+				if (getSimlulateLatency()){
 				Thread.sleep(getLatency());
-				
+				}
 				
 				
 				Result<?> result;
