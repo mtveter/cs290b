@@ -33,9 +33,14 @@ public class Result<T> implements Serializable
     private long latency = 0;
     private long workTime = 0; //in ms
     
+    private long startTime;
+    
+    
 	private int pruningDepth;
     
     private static MetaData md = new MetaData(-1, -1, -1);
+    
+    private boolean simulateLatency = false;
     
     public enum Status{
     	WAITING, COMPLETED;
@@ -147,7 +152,12 @@ public class Result<T> implements Serializable
     }
     
     public long getLatency(){
-    	return this.latency;
+    	if(this.simulateLatency){
+    		return this.latency;	
+    	}else{
+    		return ((System.nanoTime() - startTime)/1000000)-workTime;
+    	}
+    	
     }
     
     public long getWorkTime() {
@@ -159,5 +169,14 @@ public class Result<T> implements Serializable
 	public void setMetaData(MetaData m){
     	this.md = m;
     }
+	public void setSimlateLatency(boolean b){
+		this.simulateLatency = b;
+	}
+	public void setStartTime(long l){
+		this.startTime =l;
+	}
+	
+	
+	
 
 }

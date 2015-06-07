@@ -20,6 +20,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	private String id;
 
 	private final int n;
+	private long time = 0;
 
 	/** The partial list of cities that are to be permuted (excluding the first city). */
 	private List<Integer> partialCityList;
@@ -426,4 +427,20 @@ public double computeLowerBound(boolean newMst, Integer firstLocked, Integer sta
 				}
 
 	}
+
+@Override
+public void setTime() {
+	
+	this.time =System.nanoTime();
+	
+}
+
+@Override
+public long getTime() {
+	if(this.time==0){
+		System.out.println("ERROR the time was not set ");
+	}
+		return this.time;
+	
+}
 }
