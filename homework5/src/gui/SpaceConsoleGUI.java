@@ -7,6 +7,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.event.ItemEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;

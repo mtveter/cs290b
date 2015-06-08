@@ -168,9 +168,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		
 		registeredComputers.add(computer);
 		latencyData.addComputer(computer.getNameString());
-		/*for (int i=0; i<30; i++){
-			latencyData.addLatencyValue(computer.getNameString(), new Random().nextDouble()*70+30);
-		}*/
 		firePropertyChanged(SpaceListener.COMPUTER_ADDED, latencyData);
 	}
 	
@@ -196,6 +193,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		// Thread runs as long as Space is active
 		while(isActive) {
 			if (!registeredComputers.isEmpty()){
+				//Simulation values (For debugging)
 				double value = 30.0+new Random().nextDouble()*70;
 				System.out.println("Latency value added: "+value+" for computer: "+registeredComputers.peek().getNameString());
 				latencyData.addLatencyValue(registeredComputers.peek().getNameString(), value);
@@ -479,7 +477,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 						}
 						computer.setComputerPreferences(cs);
-						latencyData.addLatencyValue(computer.getNameString(), cs.sumLatency);
 						registeredComputers.put(computer);
 					}else{
 						// if theres no multicore and no prefetching we just use the old execute method
@@ -570,6 +567,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 
 				}
+				
+				//latencyData.addLatencyValue(computer.getNameString(), cs.getAverageLatency());
 
 			} catch (RemoteException e) {
 				// If there's a RemoteException, task is put back in the queue

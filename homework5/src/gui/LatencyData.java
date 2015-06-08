@@ -20,20 +20,20 @@ public class LatencyData {
     }
     
     public void addComputer(String computer){
-        computerLatencies.put(computer, Collections.synchronizedList(new ArrayList<Double>()));
+        computerLatencies.put(computer, new ArrayList<Double>());
     }
     
     public void addLatencyValue(String computer, double value){
-    	computerLatencies.get(computer).add(value);
-    	/*List<Double> latencies = computerLatencies.get(computer);
+    	List<Double> latencies = new ArrayList<Double>(computerLatencies.get(computer));
         synchronized(latencies){        	
         	latencies.add(value);
-        }*/
+        }
+        setLatencyList(computer, latencies);
     }
     
-    /*public void setLatencyList(String computer, List<Double> latencies){
+    private void setLatencyList(String computer, List<Double> latencies){
         computerLatencies.put(computer, latencies);
-    }*/
+    }
     
     /*public double getAvgLatency(String computer){
         List<Double> latencies = computerLatencies.get(computer);
@@ -45,12 +45,14 @@ public class LatencyData {
     }*/
     
     public static double getAverage(List<Double> list){
-    	list = new ArrayList<Double>(list);
-		double sum = 0.0;
-		for (double d : list){
-			sum += d;
-		}
-		return sum/list.size();
+    	//list = new ArrayList<Double>(list);
+    	synchronized(list){
+			double sum = 0.0;
+			for (double d : list){
+				sum += d;
+			}
+			return sum/list.size();
+    	}
     }
     
     public List<Double> getMostRecentLatencies(String computer, int n){
