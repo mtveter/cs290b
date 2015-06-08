@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="hw3" default="dist" basedir=".">
+<project name="project" default="dist" basedir=".">
     <description>Build xml for homework 5 - CS290B.</description>
 	
      <!-- set global properties for this build -->
@@ -8,19 +8,20 @@
   <property name="build" location="build" />
   <property name="dist"  location="dist" />
 
+  
   <target name="compile" description="compile the source" >
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build}"/>  
   
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac includeantruntime="false" srcdir="${src}" destdir="${build}"/>
+    <javac includeantruntime="false" srcdir="${src}" destdir="${build}" classpath="../lib/junit-4.10.jar"/>
   </target>
 
   <target name="dist" depends="compile" description="generate the distribution" >
     <!-- Create the distribution directory -->
     <mkdir dir="${dist}"/>
     <!-- Make computer jar file -->
-    <jar jarfile="${dist}/project.jar" basedir="${build}" includes="system/** api/** clients/** tasks/** util/**"/>
+    <jar jarfile="${dist}/project.jar" basedir="${build}" includes="system/** api/** clients/** models/** tasks/** test/** util/**"/>
   </target>
   
   <target name="generateJavadoc" depends="compile" description="create javadocs">
@@ -39,6 +40,15 @@
   	</java>
   </target>  
 	
+  <target name="runConsole" depends="dist" description="run space">
+	<java classname="gui.SpaceConsoleGUI" fork="true">
+		<jvmarg value="-Djava.security.policy=policy"/>
+			<classpath>
+		  		<pathelement location="dist/project.jar"/>
+		  	</classpath>
+		</java>
+  	</target>
+  
   <target name="runSpace" depends="dist" description="run space">
 	<java classname="system.SpaceImpl" fork="true">
 		<jvmarg value="-Djava.security.policy=policy"/>

@@ -1,7 +1,7 @@
 package test;
 
-import models.TasksProgressModel;
 import static org.junit.Assert.*;
+import models.TasksProgressModel;
 
 import org.junit.Test;
 
