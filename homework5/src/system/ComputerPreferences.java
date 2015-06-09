@@ -12,12 +12,12 @@ public class ComputerPreferences {
 	static int fastPruning;
 	
 	static int initRecLimit = 8;
-	static int slowRecLimit = 9;
-	static int fastRecLimit = 7;
+	static int slowRecLimit = 7;
+	static int fastRecLimit = 6;
 	
-	static int fast = 100; //less than this is considered fast
+	static int treshold = 40; //less than this is considered fast
 	
-	static int slow = 300; // slower than this is concidered slow
+	
 	
 	int recLimit;
 	int prining;
@@ -43,12 +43,10 @@ public class ComputerPreferences {
 	}
 	
 	public Speed getSpeed(){
-		if(getAvgLatency()>slow){
+		if(getAvgLatency()>treshold){
 			return Speed.SLOW;
-		}else if(getAvgLatency()<fast){
+		}else {
 			return Speed.FAST;
-		}else{
-			return Speed.DEFAULT;
 		}
 	}
 	

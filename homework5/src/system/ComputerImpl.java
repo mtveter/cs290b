@@ -13,8 +13,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import system.ComputerPreferences.Speed;
-
-
 import api.Result;
 import api.Space;
 import api.Task;
@@ -33,16 +31,17 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	/** True if amelioration functionality enabled */
 	private boolean amerlioration;
 	static Space space;
-	private static int buffer = 10;
+	private static int buffer = 5;
 	/** Object shared with other Computer's and Space */
 	private Shared sharedObject;
 
-	private long latency = 90;
+	private long latency = 50;
 	private Random randomGenerator= new Random();
 	private ComputerPreferences compPref;
-	private int recursionLimit = 9;
-	int variance;
+	private int recursionLimit = 7;
+	int variance = 10;
 	private boolean simulateLatency = false;
+	private boolean dynamic = true;
 
 	/**
 	 * 
@@ -86,6 +85,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 */
 	@Override
 	public Result<?> execute(Task<?> task) throws RemoteException {
+		if(getSimlulateLatency()){
+			try {
+				Thread.sleep(getLatency());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		Result<?> result = task.call();
 
 		MetaData md = new MetaData((int) getLatency(), -1, -1);
@@ -96,13 +103,13 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	}
 	
 	private long getLatency(){
-		variance = randomGenerator.nextInt(50);
+		int currentVar = randomGenerator.nextInt(variance);
 		
 		if(randomGenerator.nextBoolean()){
-			variance= variance *-1;
+			currentVar= currentVar *-1;
 		}
-		this.latency+=variance;
-		return this.latency;
+		
+		return this.latency+=currentVar;
 		
 	}
 	
@@ -119,6 +126,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 */
 	@Override
 	public void exit() throws RemoteException {
+		if(getSimlulateLatency()){
+			try {
+				Thread.sleep(getLatency());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		System.exit(0);
 	}
 	/**
@@ -178,6 +193,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	}
 
 	public String getId() {
+		if(getSimlulateLatency()){
+			try {
+				Thread.sleep(getLatency());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return this.id;
 	}
 
@@ -190,6 +213,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 */
 	@Override
 	public void getTask(Task<?> task) throws RemoteException {
+		if(getSimlulateLatency()){
+			try {
+				Thread.sleep(getLatency());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		task.setComputer(this);
 		tasks.add(task);
 	}
@@ -198,6 +229,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 */
 	@Override
 	public boolean bufferAvailable(){
+		
 		if(tasks.size()<=compPref.buffer && useAmerlioration() ){
 			return true;
 		}else{
@@ -233,6 +265,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 */
 	@Override
 	public Result<?> sendResult() throws RemoteException, InterruptedException {
+		if(getSimlulateLatency()){
+			try {
+				Thread.sleep(getLatency());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		Result<?> r = results.take();
 		return r;
 	}
@@ -240,6 +280,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 * {@inheritDoc}
 	 */
 	public boolean runsCores() throws RemoteException {
+		if(getSimlulateLatency()){
+			try {
+				Thread.sleep(getLatency());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return this.multicore;
 	}
 	/**
@@ -307,6 +355,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 */
 	@Override
 	public int coreCount() throws RemoteException {
+		if(getSimlulateLatency()){
+			try {
+				Thread.sleep(getLatency());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return this.cores;
 	}
 	
@@ -341,6 +397,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 */
 	@Override
 	public synchronized void setShared(Shared sharedObject) throws RemoteException {
+		if(getSimlulateLatency()){
+			try {
+				Thread.sleep(getLatency());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		if (this.sharedObject.isOlderThan(sharedObject)){
 			this.sharedObject = sharedObject;
 		}
@@ -360,6 +424,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 */
 	@Override
 	public String getNameString() throws RemoteException {
+		if(getSimlulateLatency()){
+			try {
+				Thread.sleep(getLatency());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		try {
 			return "Computer "+id+" ["+getClientHost()+"]";
 		} catch (ServerNotActiveException e) {
@@ -376,6 +448,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 * {@inheritDoc}
 	 */
 	public void setSharedForced(Shared sharedObject) throws RemoteException {
+		if(getSimlulateLatency()){
+			try {
+				Thread.sleep(getLatency());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		this.sharedObject = sharedObject;
 	}
 	/**
@@ -383,6 +463,14 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 */
 	
 	public ComputerStatus getComputerStatus() throws RemoteException {
+		if(getSimlulateLatency()){
+			try {
+				Thread.sleep(getLatency());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return new ComputerStatus();
 	}
 	/**
@@ -391,6 +479,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	@Override
 	public void setComputerPreferences(ComputerStatus cs ) throws RemoteException {
 		//updates latest results
+		
+		if(dynamic){
 		this.compPref.takeStatus(cs);
 		
 		if( this.compPref.getSpeed() == Speed.SLOW){
@@ -402,13 +492,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 			// set fastSettings
 			this.compPref.buffer = ComputerPreferences.fastBuffer;
 			this.recursionLimit = ComputerPreferences.fastRecLimit;
-		}else{
-			//set default settings
-			this.compPref.buffer = ComputerPreferences.initBuffer;
-			this.recursionLimit = ComputerPreferences.initRecLimit;
 		}
 		for(ComputeThread t: threads){
-			t.recLimit=this.recursionLimit;
-		}
+			t.recLimit=this.compPref.recLimit;
+		}}
 	}
 }
