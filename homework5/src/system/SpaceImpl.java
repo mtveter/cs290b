@@ -67,11 +67,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		this.isActive = false;
 		this.sharedObject = new TspShared(Double.MAX_VALUE);
 		this.progressModel = new TasksProgressModel();
-<<<<<<< HEAD
-=======
 		this.latencyData = new LatencyData();
 		this.listeners = new ArrayList<SpaceListener>();
->>>>>>> gui-2
 	}
 	/**
 	 * @see api.Space Space
@@ -88,11 +85,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		
 		List<Integer> cities = new ArrayList<Integer>();
 		double[][] distances = null;
-		
-<<<<<<< HEAD
-		this.progressModel.setTotalCities(taskList.size());
-=======
->>>>>>> gui-2
+	
 		
 		for(Task<?> task :  taskList) {
 			try {

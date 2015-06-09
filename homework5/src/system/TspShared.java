@@ -11,13 +11,8 @@ public class TspShared implements Shared,Serializable{
 	/** Generated serial idenitifer	 */
 	private static final long serialVersionUID = -5789613529078638250L;
 	private double value;
-<<<<<<< HEAD
-	public ConcurrentHashMap<Integer, ArrayList<Integer>> lbAdjacencyMap = new ConcurrentHashMap<Integer, ArrayList<Integer>>();
-	public double currentMstCost;	
-=======
 	public ConcurrentHashMap<Integer, List<Integer>> lbAdjacencyMap = new ConcurrentHashMap<Integer, List<Integer>>();
-	public Double currentMstCost;	
->>>>>>> gui-2
+	public Double currentMstCost;
 	
 	public TspShared(double value){
 		this.value = value;

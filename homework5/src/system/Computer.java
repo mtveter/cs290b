@@ -74,25 +74,6 @@ public interface Computer extends Remote {
 	 * @throws RemoteException	If there is a communication error when remote is referenced
 	 */
 	public Shared getShared() throws RemoteException;
-<<<<<<< HEAD
-	/**
-	 * Gets the unique identifier of the Computer
-	 * @return					Computer identifier
-	 * @throws RemoteException	If there is a communication error when remote is referenced
-	 */
-	public int getId() throws RemoteException;
-	/**
-	 * Sets the unique identifier of the Computer
-	 * @param id				Identifier
-	 * @throws RemoteException	If there is a communication error when remote is referenced
-	 */
-	public void setId(int id) throws RemoteException;
-	/**
-	 * Gets the ComputerStatus of the Computer
-	 * @return					The ComputerStatus object of the Computer
-	 * @throws RemoteException	If there is a communication error when remote is referenced
-	 */
-=======
 	
 	public String getNameString() throws RemoteException;
 
@@ -100,7 +81,6 @@ public interface Computer extends Remote {
 	
 	//public void setId(int id) throws RemoteException;
 
->>>>>>> gui-2
 	public ComputerStatus getComputerStatus() throws RemoteException;
 	/**
 	 * Sets the ComputerStatus of the Computer

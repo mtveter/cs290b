@@ -23,12 +23,9 @@ public class TasksProgressModel {
 	}
 	public void setTotalCities(int n){
 		this.numberOfCities = n;
-<<<<<<< HEAD:homework5/src/Models/TasksProgressModel.java
 	}
 	public int getTotalCities() {
 		return this.numberOfCities;
-=======
->>>>>>> gui-2:homework5/src/models/TasksProgressModel.java
 	}
 	public int getTotalPrunedTasks() {
 		return totalPrunedTasks;
@@ -42,27 +39,12 @@ public class TasksProgressModel {
 	public double getTasksCompletedPercentage() {
 		return tasksCompletedPercentage;
 	}
-<<<<<<< HEAD:homework5/src/Models/TasksProgressModel.java
-	// Find the percentage weight value of the completed task and adds it to total percentage progress
-	public void addCompletedTaskWeight(String id) {
-		int numberOfLevels = id.length();
-		double tempWeight = 100;
-		for(int level = 1; level < numberOfLevels; level++) {
-			tempWeight /= (numberOfCities - level); 
-		}
-=======
-	int counter;
 	// Find the percentage weight value of the completed task and adds it to total percentage progress
 	public void addCompletedTaskWeight(int numberOfLevels) {
-		System.out.println("AddCompletedTaskWeight #Count: "+(counter++));
 		double tempWeight = 100.0;
 		for(int level = 1; level < numberOfLevels; level++) {
 			tempWeight /= (numberOfCities - level); 
-			System.out.println("Reducing tempWeight: "+tempWeight);
 		}
-		System.out.println("Number of levels: "+numberOfLevels);
-		System.out.println("Final Temp weight: "+tempWeight);
->>>>>>> gui-2:homework5/src/models/TasksProgressModel.java
 		tasksCompletedPercentage += tempWeight;
 	}
 	/**

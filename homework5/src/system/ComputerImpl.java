@@ -36,29 +36,18 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	private static int buffer = 10;
 	/** Object shared with other Computer's and Space */
 	private Shared sharedObject;
-<<<<<<< HEAD
 	private long latency = 90;
-=======
 	//private String domainName;
-
-	private long latency =90;
->>>>>>> gui-2
 	//private ComputerStatus computerstatus;
 	private ComputerPreferences compPref;
 	private int recursionLimit = 9;
 
 	/**
-<<<<<<< HEAD
 	 * 
 	 * @param id				Identifier
 	 * @param mulitcore			Multiple core workers variable
 	 * @param amerlioration		Amelioration variable
 	 * @throws RemoteException	If there is a communication error when remote is referenced
-=======
-	 * @throws RemoteException If there is a connection error
-	 * @throws NotBoundException 
-	 * @throws MalformedURLException 
->>>>>>> gui-2
 	 */
 	protected ComputerImpl(String id, boolean mulitcore,boolean amerlioration, String domainName) throws RemoteException, MalformedURLException, NotBoundException {
 		super();
@@ -358,13 +347,10 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	public Shared getShared() {
 		return sharedObject;
 	}
-<<<<<<< HEAD
+
 	/**
 	 * {@inheritDoc}
 	 */
-=======
-
->>>>>>> gui-2
 	@Override
 	public String getNameString() throws RemoteException {
 		try {
@@ -378,15 +364,10 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	/*@Override
 	public void setId(int id) throws RemoteException {
 		this.id = id;
-<<<<<<< HEAD
 	}
 	/**
 	 * {@inheritDoc}
 	 */
-=======
-	}*/
-	@Override
->>>>>>> gui-2
 	public void setSharedForced(Shared sharedObject) throws RemoteException {
 		this.sharedObject = sharedObject;
 	}
