@@ -36,11 +36,13 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	private static int buffer = 10;
 	/** Object shared with other Computer's and Space */
 	private Shared sharedObject;
+
 	private long latency = 90;
-	//private String domainName;
-	//private ComputerStatus computerstatus;
+	private Random randomGenerator= new Random();
 	private ComputerPreferences compPref;
 	private int recursionLimit = 9;
+	int variance;
+	private boolean simulateLatency = false;
 
 	/**
 	 * 
@@ -89,7 +91,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 
 //		System.out.println("in execute");
 
-		System.out.println("in execute");
 		MetaData md = new MetaData((int) getLatency(), -1, -1);
 		
 		result.setMetaData(md);
@@ -98,12 +99,13 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	}
 	
 	private long getLatency(){
-		//long time =170;
-		//long time =200;
-		//time = randomGenerator.nextInt(600);
+		variance = randomGenerator.nextInt(50);
 		
+		if(randomGenerator.nextBoolean()){
+			variance= variance *-1;
+		}
+		this.latency+=variance;
 		return this.latency;
-		
 		
 	}
 	
@@ -255,6 +257,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		private  int id;
 		Random randomGenerator = new Random();
 		private int recLimit = 6;
+		private int latency;
 		
 		public ComputeThread(int id){
 			this.id = id;
@@ -268,16 +271,23 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				Task<?> task = tasks.take();
 				
 				//Latency
+				if (getSimlulateLatency()){
 				Thread.sleep(getLatency());
-				
+				}
 				
 				
 				Result<?> result;
 				
 				try {
-					//task.setRecLimit(recLimit);
+					task.setRecLimit(recLimit);
 					start = System.nanoTime();
 					result = task.call();
+					
+					result.setSimlateLatency(getSimlulateLatency());
+					
+					result.setStartTime(task.getTime());
+					
+					
 					stop = System.nanoTime();
 					workTime = (stop-start)/1000000;
 					
@@ -347,6 +357,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	public Shared getShared() {
 		return sharedObject;
 	}
+	public boolean getSimlulateLatency(){
+		return this.simulateLatency;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -402,7 +415,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		}
 		for(ComputeThread t: threads){
 			t.recLimit=this.recursionLimit;
-			System.out.println("Changed reclimit in thread to " + this.recursionLimit);
 		}
 	}
 }

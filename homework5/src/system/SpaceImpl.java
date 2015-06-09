@@ -192,12 +192,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
-			if (!registeredComputers.isEmpty()){
-				//Simulation values (For debugging)
+			/*if (!registeredComputers.isEmpty()){
 				double value = 30.0+new Random().nextDouble()*70;
-				System.out.println("Latency value added: "+value+" for computer: "+registeredComputers.peek().getNameString());
+//				System.out.println("Latency value added: "+value+" for computer: "+registeredComputers.peek().getNameString());
 				latencyData.addLatencyValue(registeredComputers.peek().getNameString(), value);
-			}
+			}*/
 			// Check if there are any Closure objects to process
 			runner++;
 			if(runner%30 == 1){
@@ -291,7 +290,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 								c2.receiveResult(c.getAdder().getResult());
 								int level = c.getTask().getLevel();
 								if(level == 3){
-									System.out.println("#ID: "+c.getTask().getId());
 									progressModel.addCompletedTaskWeight(level);
 								}
 								
@@ -488,7 +486,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						System.out.println("SPACE: in other");
 					}
 
-
 				}
 				/* this is if the computer runs multiple cores */
 				/* RUNS HERE */
@@ -512,13 +509,16 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						System.out.println("SPACE: In buffermode");
 						
 						for (int i = 0; i < available; i++) {
-							computer.getTask(receivedTasks.takeLast());
+							Task task = receivedTasks.takeLast();
+							task.setTime();
+							computer.getTask(task);
 
 						}
 						for (int i = 0; i < available+1; i++) {
 							Result<?> r = computer.sendResult();
 							processResult(r);
 							cs.addLatency(r.getLatency());
+							
 							if(r.getStatus().equals(Status.COMPLETED)){
 								cs.addBottomcaseTime(r.getWorkTime());
 							}
@@ -529,11 +529,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						computer.setComputerPreferences(cs);
 						registeredComputers.put(computer);
 						
-						System.out.println("Computer avg btmct: "+cs.getAverageBottomcaseTime());
-						System.out.println("Computer avg tasktime "+cs.getAverageTaskTime());
-						System.out.println("Computer avg latency "+cs.getAverageLatency());
 						
-
+						
 					}else if (receivedTasks.size()>(computer.coreCount())){
 						System.out.println(" In other");
 
@@ -563,12 +560,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 						registeredComputers.put(computer);
 					}
+				}	
 
-
-
-				}
-				
-				//latencyData.addLatencyValue(computer.getNameString(), cs.getAverageLatency());
+				System.out.println("Computer avg btmct: "+cs.getAverageBottomcaseTime());
+				System.out.println("Computer avg tasktime "+cs.getAverageTaskTime());
+				System.out.println("Computer avg latency "+cs.getAverageLatency());
+				latencyData.addLatencyValue(computer.getNameString(), cs.getAverageLatency());
 
 			} catch (RemoteException e) {
 				// If there's a RemoteException, task is put back in the queue
@@ -623,6 +620,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						
 						if(result.isPruned()){
 							progressModel.increaseTotalPrunedTasks(result.getNrOfPrunedTasks());
+							progressModel.increaseTotalPrunedLevels(result.getPruningDepth());
 							c.setJoinCounter(0);
 							c.getAdder().setResult(result);
 						}

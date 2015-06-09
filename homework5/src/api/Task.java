@@ -34,4 +34,8 @@ public interface Task<T> extends Serializable{
 	
 	public int getLevel();
 	
+	public void setTime();
+	
+	public long getTime();
+	
 }

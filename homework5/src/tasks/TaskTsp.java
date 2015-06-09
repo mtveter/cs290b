@@ -18,6 +18,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	private String id;
 
 	private final int n;
+	private long time = 0;
 
 	/** The partial list of cities that are to be permuted (excluding the first city). */
 	private List<Integer> partialCityList;
@@ -28,7 +29,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	public double[][] distances;
 	
 	/** The limit to size of partial cities to by subdivided and executed by Computer*/
-	public static int RECURSIONLIMIT = 6; 
+	public static int RECURSIONLIMIT = 7; 
 	
 	private boolean pruning = true;
 
@@ -80,7 +81,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 			for(int i = TaskTsp.RECURSIONLIMIT; i <= this.n; i++) {
 				nrOfPrunedTasks *= i;
 			}
-			return new Result<>(a, 160.0, 0l, this.id, true, nrOfPrunedTasks);
+			return new Result<>(a, 160.0, 0l, this.id, true, nrOfPrunedTasks, getLevel());
 		}
 
 		if(n == TaskTsp.RECURSIONLIMIT) {
@@ -180,7 +181,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 			lowerbound += pathDistance(lockedCities);
 			
 			if(upperbound < lowerbound){
-				System.out.println("PRUNED Task(s)");
+//				System.out.println("PRUNED Task(s)");
 				return true;
 			}
 		}
@@ -405,8 +406,33 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		
 		return costOfMst;
 	}
-	
+
+		
+ /** Setting the new recursion limit, but checking that it's over the cities to be permuted.
+  *  If the recursion limit is to high, it's set to as high as possible.
+  * @see api.Task#setRecLimit(int)
+  */
 	public void setRecLimit(int i){
-		TaskTsp.RECURSIONLIMIT = i;
+//		if(i<=n){
+//			TaskTsp.RECURSIONLIMIT = i;}
+//		else{
+//			TaskTsp.RECURSIONLIMIT = n;
+//		}
+	}
+
+	@Override
+	public void setTime() {
+		
+		this.time =System.nanoTime();
+		
+	}
+	
+	@Override
+	public long getTime() {
+		if(this.time==0){
+			System.out.println("ERROR the time was not set ");
+		}
+			return this.time;
+		
 	}
 }

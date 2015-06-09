@@ -59,7 +59,7 @@ public class LatencyData {
     	List<Double> latencies = computerLatencies.get(computer);
     	int size;
     	if (latencies == null || (size = latencies.size()) <= n) return latencies;
-    	else return Collections.synchronizedList(latencies.subList(size-n, size));
+    	else return Collections.synchronizedList(new ArrayList<Double>(latencies.subList(size-n, size)));
     }
     
     public Set<String> getComputers(){

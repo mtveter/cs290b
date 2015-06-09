@@ -7,18 +7,19 @@ package gui;
 
 import java.awt.Color;
 import java.awt.event.ItemEvent;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
+import javax.swing.DefaultListModel;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 
 /**
@@ -36,7 +37,7 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
     public SpaceConsoleGUI() {
         initComponents();
         spaceController = new SpaceController(this);
-        initThreads();
+        //initThreads();
     }
 
 	/**
@@ -48,59 +49,211 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
         mainPanel = new javax.swing.JPanel();
+        pruningEfficiencyLabel = new javax.swing.JLabel();
+        avgPruningDepthLabel = new javax.swing.JLabel();
+        activeTasksLabel = new javax.swing.JLabel();
+        completedTasksLabel = new javax.swing.JLabel();
+        generatedTasksLabel = new javax.swing.JLabel();
+        avgPruningDepthValueLabel = new javax.swing.JLabel();
+        pruningEfficiencyValueLabel = new javax.swing.JLabel();
+        generatedTasksValueLabel = new javax.swing.JLabel();
+        completedTasksValueLabel = new javax.swing.JLabel();
+        activeTasksValueLabel = new javax.swing.JLabel();
+        computersLabel = new javax.swing.JLabel();
+        computersValueLabel = new javax.swing.JLabel();
+        graphPanel = new gui.GraphPanel();
+        avgLatencyValueLabel = new javax.swing.JLabel();
+        avgLatencyLabel = new javax.swing.JLabel();
+        computersScrollPane = new javax.swing.JScrollPane();
+        computersList = new javax.swing.JList();
+        jSeparator1 = new javax.swing.JSeparator();
+        computerLatenciesHeaderLabel = new javax.swing.JLabel();
         jProgressBar1 = new javax.swing.JProgressBar();
         jLabelStatus = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        maxDepthLabel = new javax.swing.JLabel();
-        avgPruningDepthLabel = new javax.swing.JLabel();
-        percentageCompletedLabel = new javax.swing.JLabel();
-        finishedTasksLabel = new javax.swing.JLabel();
-        activeTasksLabel = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
+        estimatedTimeLeftLabel = new javax.swing.JLabel();
+        estimatedTimeLeftValueLabel = new javax.swing.JLabel();
         spaceLabel = new javax.swing.JLabel();
         hasSpaceRunnableCheckBox = new javax.swing.JCheckBox();
         startSpaceButton = new javax.swing.JButton();
-        avgPruningDepthValueLabel = new javax.swing.JLabel();
-        maxDepthValueLabel = new javax.swing.JLabel();
-        activeTasksValueLabel = new javax.swing.JLabel();
-        finishedTasksValueLabel = new javax.swing.JLabel();
-        percentageCompletedValueLabel = new javax.swing.JLabel();
-        estimatedTimeLeftValueLabel = new javax.swing.JLabel();
-        estimatedTimeLeftLabel = new javax.swing.JLabel();
-        latencyPanel = new javax.swing.JPanel();
-        graphPanel = new gui.GraphPanel();
-        computerComboBox = new javax.swing.JComboBox();
-        avgLatencyValueLabel = new javax.swing.JLabel();
-        avgLatencyLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jProgressBar1.setStringPainted(true);
+        mainPanel.setPreferredSize(new java.awt.Dimension(400, 540));
 
-        jLabelStatus.setText("");
-
-        jButton1.setText("Click");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        maxDepthLabel.setText("Max depth:");
+        pruningEfficiencyLabel.setText("Pruning efficiency (pruned / generated):");
 
         avgPruningDepthLabel.setText("Avg. pruning depth:");
 
-        percentageCompletedLabel.setText("Total tasks:");
-
-        finishedTasksLabel.setText("Finished tasks:");
-
         activeTasksLabel.setText("Active tasks:");
+
+        completedTasksLabel.setText("Completed tasks:");
+
+        generatedTasksLabel.setText("Generated tasks:");
+
+        avgPruningDepthValueLabel.setText("0");
+
+        pruningEfficiencyValueLabel.setText("0");
+
+        generatedTasksValueLabel.setText("0");
+
+        completedTasksValueLabel.setText("0");
+
+        activeTasksValueLabel.setText("0");
+
+        computersLabel.setText("Computers:");
+
+        computersValueLabel.setText("0");
+
+        avgLatencyValueLabel.setText("- ms");
+
+        avgLatencyLabel.setText("Avg. latency:");
+
+        javax.swing.GroupLayout graphPanelLayout = new javax.swing.GroupLayout(graphPanel);
+        graphPanel.setLayout(graphPanelLayout);
+        graphPanelLayout.setHorizontalGroup(
+            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, graphPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(avgLatencyLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(avgLatencyValueLabel)
+                .addContainerGap())
+        );
+        graphPanelLayout.setVerticalGroup(
+            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(graphPanelLayout.createSequentialGroup()
+                .addGroup(graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(avgLatencyValueLabel)
+                    .addComponent(avgLatencyLabel))
+                .addGap(0, 258, Short.MAX_VALUE))
+        );
+        
+        computersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        computersList.addListSelectionListener(new ListSelectionListener() {
+        	
+        	DefaultListSelectionModel model = (DefaultListSelectionModel) computersList.getSelectionModel();
+       
+        	// remember the last selection index
+             int lastSelectedIndex;
+   
+             public void valueChanged(ListSelectionEvent e)
+             {
+            	 if(!e.getValueIsAdjusting()) {
+                     int minIndex = model.getMinSelectionIndex();
+                     int maxIndex = model.getMaxSelectionIndex();
+                     int anchorIndex = model.getAnchorSelectionIndex();
+                     int leadIndex   = model.getLeadSelectionIndex();
+                     if(minIndex == -1)
+                     {
+                         model.setLeadSelectionIndex(lastSelectedIndex);
+                     }
+                     else
+                         lastSelectedIndex = minIndex;
+                     System.out.println("minIndex    = " + minIndex + " \t" +
+                                "maxIndex  = " + maxIndex + "\n" +
+                                "anchorIndex = " + anchorIndex + " \t" +
+                                "leadIndex = " + leadIndex + "\n");
+         }
+     }
+             });
+
+        computersScrollPane.setViewportView(computersList);
+
+        computerLatenciesHeaderLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        computerLatenciesHeaderLabel.setText("Computer Latencies");
+
+        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jSeparator1)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(computersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(computerLatenciesHeaderLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(graphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addComponent(activeTasksLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(activeTasksValueLabel))
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addComponent(computersLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(computersValueLabel))
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addComponent(generatedTasksLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(generatedTasksValueLabel))
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addComponent(completedTasksLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(completedTasksValueLabel)))
+                                .addGap(95, 95, 95)
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addComponent(pruningEfficiencyLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(pruningEfficiencyValueLabel))
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addComponent(avgPruningDepthLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(avgPruningDepthValueLabel)))))
+                        .addGap(0, 240, Short.MAX_VALUE))))
+        );
+        mainPanelLayout.setVerticalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(computersLabel)
+                    .addComponent(computersValueLabel))
+                .addGap(18, 18, 18)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(generatedTasksLabel)
+                    .addComponent(generatedTasksValueLabel)
+                    .addComponent(avgPruningDepthLabel)
+                    .addComponent(avgPruningDepthValueLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(completedTasksLabel)
+                    .addComponent(completedTasksValueLabel)
+                    .addComponent(pruningEfficiencyLabel)
+                    .addComponent(pruningEfficiencyValueLabel))
+                .addGap(6, 6, 6)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(activeTasksLabel)
+                    .addComponent(activeTasksValueLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 64, Short.MAX_VALUE)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(graphPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+                        .addComponent(computerLatenciesHeaderLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(computersScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(37, 37, 37))))
+        );
+
+        jProgressBar1.setStringPainted(true);
+
+        jLabelStatus.setText("Working...");
+
+        estimatedTimeLeftLabel.setText("Estimated time left:");
+
+        estimatedTimeLeftValueLabel.setText("N/A");
 
         spaceLabel.setText("Space");
 
-        hasSpaceRunnableCheckBox.setText("hasSpaceRunnable");
+        hasSpaceRunnableCheckBox.setText("SpaceRunnable");
         hasSpaceRunnableCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hasSpaceRunnableCheckBoxActionPerformed(evt);
@@ -114,229 +267,58 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
             }
         });
 
-        avgPruningDepthValueLabel.setText("0");
-
-        maxDepthValueLabel.setText("0");
-
-        activeTasksValueLabel.setText("0");
-
-        finishedTasksValueLabel.setText("0");
-
-        percentageCompletedValueLabel.setText("0");
-
-        estimatedTimeLeftValueLabel.setText("");
-        estimatedTimeLeftValueLabel.setVisible(false);
-
-        estimatedTimeLeftLabel.setText("Estimated time left:");
-        estimatedTimeLeftLabel.setVisible(false);
-
-        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
-        mainPanel.setLayout(mainPanelLayout);
-        mainPanelLayout.setHorizontalGroup(
-            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator1)
-            .addGroup(mainPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(spaceLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 376, Short.MAX_VALUE)
-                        .addComponent(hasSpaceRunnableCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(startSpaceButton))
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1)
-                            .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(avgPruningDepthLabel)
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jProgressBar1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(spaceLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(hasSpaceRunnableCheckBox)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(avgPruningDepthValueLabel))
-                            .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(maxDepthLabel)
+                                .addComponent(startSpaceButton))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabelStatus)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(estimatedTimeLeftLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(maxDepthValueLabel))
-                            .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(activeTasksLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(activeTasksValueLabel))
-                            .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(finishedTasksLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(finishedTasksValueLabel))
-                            .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(percentageCompletedLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(percentageCompletedValueLabel)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(jLabelStatus)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(estimatedTimeLeftLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(estimatedTimeLeftValueLabel)))
+                                .addComponent(estimatedTimeLeftValueLabel)))))
                 .addContainerGap())
         );
-        mainPanelLayout.setVerticalGroup(
-            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainPanelLayout.createSequentialGroup()
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(spaceLabel)
-                        .addComponent(hasSpaceRunnableCheckBox))
-                    .addComponent(startSpaceButton))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(spaceLabel)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(startSpaceButton)
+                        .addComponent(hasSpaceRunnableCheckBox)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(activeTasksLabel)
-                    .addComponent(activeTasksValueLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(finishedTasksLabel)
-                    .addComponent(finishedTasksValueLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(percentageCompletedLabel)
-                    .addComponent(percentageCompletedValueLabel))
-                .addGap(18, 18, 18)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(avgPruningDepthLabel)
-                    .addComponent(avgPruningDepthValueLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(maxDepthLabel)
-                    .addComponent(maxDepthValueLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelStatus)
-                    .addComponent(estimatedTimeLeftValueLabel)
-                    .addComponent(estimatedTimeLeftLabel))
+                    .addComponent(estimatedTimeLeftLabel)
+                    .addComponent(estimatedTimeLeftValueLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Main", mainPanel);
-
-        javax.swing.GroupLayout graphPanelLayout = new javax.swing.GroupLayout(graphPanel);
-        graphPanel.setLayout(graphPanelLayout);
-        graphPanelLayout.setHorizontalGroup(
-            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        graphPanelLayout.setVerticalGroup(
-            graphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 255, Short.MAX_VALUE)
-        );
-
-        //computerComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Computer 1 [192.212.233.12]", "Computer 2 [192.212.234.1]", "Computer 3 [192.189.201.5]", "Computer 4 [192.189.201.10]" }));
-        computerComboBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                computerComboBoxItemStateChanged(evt);
-            }
-        });
-        computerComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                computerComboBoxActionPerformed(evt);
-            }
-        });
-
-        avgLatencyValueLabel.setText("-");
-
-        avgLatencyLabel.setText("Avg. latency:");
-
-        javax.swing.GroupLayout latencyPanelLayout = new javax.swing.GroupLayout(latencyPanel);
-        latencyPanel.setLayout(latencyPanelLayout);
-        latencyPanelLayout.setHorizontalGroup(
-            latencyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(graphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(latencyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(computerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 326, Short.MAX_VALUE)
-                .addComponent(avgLatencyLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(avgLatencyValueLabel)
-                .addContainerGap())
-        );
-        latencyPanelLayout.setVerticalGroup(
-            latencyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, latencyPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(latencyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(computerComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(avgLatencyValueLabel)
-                    .addComponent(avgLatencyLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(graphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab("Latency", latencyPanel);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
-        );
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        //jProgressBar1.setValue(jProgressBar1.getValue()+5);
-        TimeLeftEstimation tle = new TimeLeftEstimation();
-        Thread t = new Thread(new Runnable(){
-
-            @Override
-            public void run() {
-                tle.start();
-                estimatedTimeLeftLabel.setVisible(true);
-                estimatedTimeLeftValueLabel.setVisible(true);
-                estimatedTimeLeftValueLabel.setText("-");
-                int progress;
-                while ((progress = jProgressBar1.getValue()) <= 100){
-                    graphPanel.addValue((double) new Random().nextDouble()*100);
-                    jProgressBar1.setValue(progress+1);
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(SpaceConsoleGUI.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    if (progress > 5){
-                    	tle.updateEstimation(progress);
-                    	estimatedTimeLeftValueLabel.setText(tle.toString());
-                    }
-                }
-                jLabelStatus.setText("Done.");
-            }
-            
-        });
-        t.start();
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void hasSpaceRunnableCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hasSpaceRunnableCheckBoxActionPerformed
         spaceController.setHasSpaceRunnableTasks(hasSpaceRunnableCheckBox.isSelected());
     }//GEN-LAST:event_hasSpaceRunnableCheckBoxActionPerformed
-
-    private void computerComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_computerComboBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_computerComboBoxActionPerformed
-
-    private void computerComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_computerComboBoxItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            //graphPanel.setRandomScores();
-        	updateLatencies();
-        }
-    }//GEN-LAST:event_computerComboBoxItemStateChanged
     
 	private void startSpaceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSpaceButtonActionPerformed
         spaceController.startSpace();
@@ -386,78 +368,29 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
     private javax.swing.JLabel avgLatencyValueLabel;
     private javax.swing.JLabel avgPruningDepthLabel;
     private javax.swing.JLabel avgPruningDepthValueLabel;
-    private javax.swing.JComboBox computerComboBox;
+    private javax.swing.JLabel completedTasksLabel;
+    private javax.swing.JLabel completedTasksValueLabel;
+    private javax.swing.JLabel computerLatenciesHeaderLabel;
+    private javax.swing.JLabel computersLabel;
+    private javax.swing.JList computersList;
+    private javax.swing.JScrollPane computersScrollPane;
+    private javax.swing.JLabel computersValueLabel;
     private javax.swing.JLabel estimatedTimeLeftLabel;
     private javax.swing.JLabel estimatedTimeLeftValueLabel;
-    private javax.swing.JLabel finishedTasksLabel;
-    private javax.swing.JLabel finishedTasksValueLabel;
+    private javax.swing.JLabel generatedTasksLabel;
+    private javax.swing.JLabel generatedTasksValueLabel;
     private gui.GraphPanel graphPanel;
     private javax.swing.JCheckBox hasSpaceRunnableCheckBox;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabelStatus;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JPanel latencyPanel;
     private javax.swing.JPanel mainPanel;
-    private javax.swing.JLabel maxDepthLabel;
-    private javax.swing.JLabel maxDepthValueLabel;
+    private javax.swing.JLabel pruningEfficiencyLabel;
+    private javax.swing.JLabel pruningEfficiencyValueLabel;
     private javax.swing.JLabel spaceLabel;
     private javax.swing.JButton startSpaceButton;
-    private javax.swing.JLabel percentageCompletedLabel;
-    private javax.swing.JLabel percentageCompletedValueLabel;
     // End of variables declaration//GEN-END:variables
 
-	@Override
-	public void setActiveTasks(int n) {
-		activeTasksValueLabel.setText(n+"");
-	}
-
-	@Override
-	public void setFinishedTasks(int n) {
-		finishedTasksValueLabel.setText(n+"");
-	}
-
-	@Override
-	public void setPercentageCompleted(double n) {
-		percentageCompletedValueLabel.setText(n+"");
-	}
-
-	@Override
-	public void setAvgPruningDepth(double d) {
-		avgPruningDepthValueLabel.setText(d+"");
-	}
-
-	@Override
-	public void setMaxDepth(int n) {
-		maxDepthValueLabel.setText(n+"");
-	}
-
-	@Override
-	public void setProgress(int n) {
-		jProgressBar1.setValue((int) n);
-	}
-
-	@Override
-	public void setStatus(String s) {
-		jLabelStatus.setText(s);
-	}
-
-	@Override
-	public void setEstimatedTimeLeft(String s) {
-		estimatedTimeLeftValueLabel.setText(s);
-	}
-
-	/*@Override
-	public void setLatencyData(LatencyData latencyData) {
-		this.latencyData = latencyData;
-	}*/
-
-	/*@Override
-	public void addLatencyValue(String computer, double value) {
-		graphPanel.addValue(value);
-	}*/
-    
     @Override
     public void updateComputersList(){
     	LatencyData latencyData = spaceController.getLatencyData();
@@ -465,11 +398,19 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
     	String[] computersArray = new String[computers.size()];
     	computersArray = computers.toArray(computersArray);
     	Arrays.sort(computersArray);
-    	computerComboBox.setModel(new DefaultComboBoxModel<String>(computersArray));
+    	DefaultListModel<String> model = new DefaultListModel<String>();
+    	for (String computer : computersArray){
+    		model.addElement(computer);
+    	}
+    	computersList.setModel(model);
+    	int selectIndex;
+    	if (computersList.getSelectedIndex() == - 1 && (selectIndex = computersList.getFirstVisibleIndex()) != -1){
+    		computersList.setSelectedIndex(selectIndex);
+    	}
     }
 
 	private void updateLatencies() {
-		Object selectedItem = computerComboBox.getSelectedItem();
+		Object selectedItem = computersList.getSelectedValue();
 		if (selectedItem == null) return;
 		String computer = selectedItem.toString();
 		System.out.println("Selected computer: "+computer);
@@ -520,4 +461,48 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
     	estimatedTimeLeftValueLabel.setVisible(false);
     }
 
+	@Override
+	public void setComputers(int n) {
+		computersValueLabel.setText(n+"");
+	}
+
+	@Override
+	public void setGeneratedTasks(int n) {
+		generatedTasksValueLabel.setText(n+"");
+	}
+
+	@Override
+	public void setCompletedTasks(int n) {
+		completedTasksValueLabel.setText(n+"");
+	}
+
+	@Override
+	public void setActiveTasks(int n) {
+		activeTasksValueLabel.setText(n+"");
+	}
+
+	@Override
+	public void setAvgPruningDepth(double d) {
+		avgPruningDepthValueLabel.setText(d+"");
+	}
+
+	@Override
+	public void setPruningEfficiency(double d) {
+		pruningEfficiencyValueLabel.setText(d+"");
+	}
+
+	@Override
+	public void setProgress(int n) {
+		jProgressBar1.setValue(n);
+	}
+
+	@Override
+	public void setStatus(String s) {
+		jLabelStatus.setText(s);
+	}
+
+	@Override
+	public void setEstimatedTimeLeft(String s) {
+		estimatedTimeLeftValueLabel.setText(s);
+	}
 }

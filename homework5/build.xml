@@ -21,7 +21,7 @@
     <!-- Create the distribution directory -->
     <mkdir dir="${dist}"/>
     <!-- Make computer jar file -->
-    <jar jarfile="${dist}/project.jar" basedir="${build}" includes="system/** api/** clients/** models/** tasks/** test/** util/**"/>
+    <jar jarfile="${dist}/project.jar" basedir="${build}" includes="system/** api/** clients/** gui/** models/** tasks/** test/** util/**"/>
   </target>
   
   <target name="generateJavadoc" depends="compile" description="create javadocs">

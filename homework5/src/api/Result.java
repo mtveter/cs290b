@@ -33,9 +33,15 @@ public class Result<T> implements Serializable
     private long latency = 0;
     private long workTime = 0; //in ms
     
+    private long startTime;
+    
+    
+	private int pruningDepth;
+    
     private static MetaData md = new MetaData(-1, -1, -1);
     
-    /** Result is completed if it the bottom case of the recursion tree, or belonging task has been pruned*/ 
+    private boolean simulateLatency = false;
+    
     public enum Status{
     	WAITING, COMPLETED;
     }
@@ -74,7 +80,7 @@ public class Result<T> implements Serializable
         this.childClosures = null;
         this.taskReturnDistance = taskReturnDistance;
     }
-    public Result( T taskReturnValue, T taskReturnDistance, long taskRunTime, String id, boolean pruned, Integer nrOfPrunedTasks)
+    public Result( T taskReturnValue, T taskReturnDistance, long taskRunTime, String id, boolean pruned, Integer nrOfPrunedTasks, int pruningDepth)
     {
     	this.status = Status.COMPLETED;
         assert taskReturnValue != null;
@@ -86,6 +92,7 @@ public class Result<T> implements Serializable
         this.taskReturnDistance = taskReturnDistance;
         this.pruned = true;
         this.nrOfPrunedTasks = nrOfPrunedTasks;
+        this.pruningDepth = pruningDepth;
     }
     /**
      * Constructor used for result with a task value
@@ -130,6 +137,9 @@ public class Result<T> implements Serializable
 	public Integer getNrOfPrunedTasks() {
 		return nrOfPrunedTasks;
 	}
+	public int getPruningDepth() {
+		return pruningDepth;
+	}
 	public boolean isPruned() {
 		return this.pruned;
 	}
@@ -138,8 +148,16 @@ public class Result<T> implements Serializable
     	this.latency = latency;
     	
     }
-    public long getLatency(){
-    	return this.latency;
+    
+    public double getLatency(){
+    	if(this.simulateLatency){
+    		return this.latency;	
+    	}else{
+    		double current = (System.nanoTime() - startTime)/1000000;
+    		current -=workTime;
+    		
+    		return  current;
+    	}
     }
     
     public long getWorkTime() {
@@ -151,5 +169,14 @@ public class Result<T> implements Serializable
 	public void setMetaData(MetaData m){
     	this.md = m;
     }
+	public void setSimlateLatency(boolean b){
+		this.simulateLatency = b;
+	}
+	public void setStartTime(long l){
+		this.startTime =l;
+	}
+	
+	
+	
 
 }
