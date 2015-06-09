@@ -79,7 +79,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		
 		// Print acknowledgement
 		System.out.println("Computer started and registered at space " + domainName);
-		//System.out.println("Computer name: "+getNameString());
 	}
 	
 	/**
@@ -88,8 +87,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	@Override
 	public Result<?> execute(Task<?> task) throws RemoteException {
 		Result<?> result = task.call();
-
-//		System.out.println("in execute");
 
 		MetaData md = new MetaData((int) getLatency(), -1, -1);
 		
@@ -344,11 +341,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 */
 	@Override
 	public synchronized void setShared(Shared sharedObject) throws RemoteException {
-		//System.out.println("COMPUTER changed shared object");
-		//System.out.println("to "+sharedObject.get());
 		if (this.sharedObject.isOlderThan(sharedObject)){
 			this.sharedObject = sharedObject;
-			//space.setShared(sharedObject);
 		}
 	}
 	/**

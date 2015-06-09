@@ -38,11 +38,8 @@ public class ComputerPreferences {
 	}
 	
 	public void takeStatus(ComputerStatus cs){
-		System.out.println("Average latency "+cs.getAverageLatency());
 		averageLatencycount++;
-		averageLatency+=cs.getAverageLatency();
-		
-		
+		averageLatency += cs.getAverageLatency();
 	}
 	
 	public Speed getSpeed(){

@@ -78,7 +78,6 @@ public class SpaceController implements SpaceListener {
 
     @Override
     public void update(String propertyName, Object value) {
-        System.out.println(propertyName+": "+value);
         if (propertyName.equals(SpaceListener.COMPUTER_ADDED)){
         	console.updateComputersList();
         	console.setComputers(latencyData.getComputers().size());
@@ -105,7 +104,6 @@ public class SpaceController implements SpaceListener {
     	console.setAvgPruningDepth(tasksProgressModel.getAveragePruningDepth());
     	
     	int progress = (int) Math.round(tasksProgressModel.getTasksCompletedPercentage());
-    	System.out.println("Progress: "+progress);
     	console.setProgress(progress);
     	if (progress > 5){
     		timeLeftEstimation.updateEstimation(progress);

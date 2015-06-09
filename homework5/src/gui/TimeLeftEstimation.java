@@ -48,7 +48,6 @@ public class TimeLeftEstimation {
     public static void main(String[] args){
         TimeLeftEstimation e = new TimeLeftEstimation();
         e.estimateTimeLeft(50, 415500);
-        System.out.println(e.toString());
     }
     
 }

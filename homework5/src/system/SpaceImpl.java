@@ -416,8 +416,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		 */
 		@Override
 		public void run() {
-			
-			
 			Computer computer = null;
 			ComputerStatus cs = new ComputerStatus();
 			
@@ -430,10 +428,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				try {
 					computer.setShared(sharedObject);
 					
-					
-					
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					System.out.println("Could not set shared object to computer");
 				}
 
@@ -441,15 +436,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				e2.printStackTrace();
 			}
 
-
-
 			try {
 				if(!computer.runsCores()){
-					
-					System.out.println("SPACE: in other");
-
-
-					/**
+					/*
 					 * Checks if the computer runs buffer, and also if there are enough waiting tasks, so the system 
 					 * doesn't wait if there's not enough tasks.
 					 */
@@ -460,10 +449,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 						// Sends tasks to computer
 						for (int i = 0; i < available; i++) {
-
 							computer.getTask(receivedTasks.takeLast());
-
-
 						}
 
 						/* Receives all the tasks from space, but they are processed as fast as they come in 
@@ -476,24 +462,22 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						}
 						computer.setComputerPreferences(cs);
 						registeredComputers.put(computer);
-					}else{
+					}
+					else {
 						// if theres no multicore and no prefetching we just use the old execute method
 						Result<?> result = (Result<?>) computer.execute(task);
 						cs.addLatency(result.getLatency());
 						processResult(result);
 						computer.setComputerPreferences(cs);
 						registeredComputers.put(computer);
-						System.out.println("SPACE: in other");
 					}
 
 				}
 				/* this is if the computer runs multiple cores */
 				/* RUNS HERE */
-				else{
-
+				else {
 					computer.getTask(task);
-					
-					/**
+					/*
 					 * Checks if the computer runs buffer, and also if there are enough waiting tasks, so the system 
 					 * doesn't wait if there's not enough tasks.
 					 */
@@ -502,11 +486,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						int available;
 						if(receivedTasks.size()>(computer.bufferSize()+computer.coreCount())){
 							available = computer.bufferSize()+computer.coreCount();
-						}else{
+						}
+						else{
 							available = receivedTasks.size();
 						}
-						
-						System.out.println("SPACE: In buffermode");
 						
 						for (int i = 0; i < available; i++) {
 							Task task = receivedTasks.takeLast();
@@ -532,7 +515,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						
 						
 					}else if (receivedTasks.size()>(computer.coreCount())){
-						System.out.println(" In other");
 
 						int available =computer.coreCount();
 						
@@ -594,7 +576,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		 */
 		private void processResult(Result<?> result) throws InterruptedException, RemoteException {
 
-			//System.out.println("in process result");
 			if(result.getStatus().equals(Status.WAITING)) {
 				List<Closure> closures = result.getChildClosures();
 				// Add Closures from
@@ -608,8 +589,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			else if(result.getStatus().equals(Status.COMPLETED)) {
 				double oldShared = (Double) getShared().get();
 				double newShared = (Double) result.getTaskReturnDistance();
+				
 				if (newShared<oldShared){
-//					System.out.println("Space is setting new TSP shared");
 					setShared(new TspShared(newShared));
 				}
 				// return to parent closure
@@ -632,8 +613,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			else {
 				System.out.println("Result received did not have a valid Status");
 			}
-
-
 		}
 	}
 
@@ -689,10 +668,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 //		System.out.println("SPACE changed shared object");
 		if (this.sharedObject.isOlderThan(sharedObject)){
 			this.sharedObject = sharedObject;
-//			System.out.println("its a newer object");
 			//Propagate to all computers
 			for (Computer computer : registeredComputers){
-//				System.out.println("SPACE updating computer");
 				computer.setShared(sharedObject);
 			}
 		}

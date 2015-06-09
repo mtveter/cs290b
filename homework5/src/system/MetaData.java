@@ -7,14 +7,8 @@ public class MetaData {
 	public long workTime=-1;
 	
 	public MetaData(int latency,long splitTime,long workTime) {
-		// TODO Auto-generated constructor stub
-		
-		this.latency= latency;
+		this.latency = latency;
 		this.splitTime =splitTime;
 		this.workTime = workTime;
-		
-		
 	}	
-	
-	
 }
