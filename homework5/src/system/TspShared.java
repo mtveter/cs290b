@@ -2,6 +2,8 @@ package system;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TspShared implements Shared,Serializable{
@@ -9,8 +11,13 @@ public class TspShared implements Shared,Serializable{
 	/** Generated serial idenitifer	 */
 	private static final long serialVersionUID = -5789613529078638250L;
 	private double value;
+<<<<<<< HEAD
 	public ConcurrentHashMap<Integer, ArrayList<Integer>> lbAdjacencyMap = new ConcurrentHashMap<Integer, ArrayList<Integer>>();
 	public double currentMstCost;	
+=======
+	public ConcurrentHashMap<Integer, List<Integer>> lbAdjacencyMap = new ConcurrentHashMap<Integer, List<Integer>>();
+	public Double currentMstCost;	
+>>>>>>> gui-2
 	
 	public TspShared(double value){
 		this.value = value;
@@ -28,7 +35,7 @@ public class TspShared implements Shared,Serializable{
 	}
 	
 	@Override
-	public ArrayList<Integer> getLbAdjacencyMapValue(Integer key) {
+	public List<Integer> getLbAdjacencyMapValue(Integer key) {
 		return lbAdjacencyMap.get(key);
 	}
 	
@@ -36,7 +43,7 @@ public class TspShared implements Shared,Serializable{
 	public void putAdjacencyList(int n) {
 		if(lbAdjacencyMap.isEmpty()) {
 			for (int v = 0; v < n; v++) {
-				lbAdjacencyMap.put(v, new ArrayList<Integer>());
+				lbAdjacencyMap.put(v, Collections.synchronizedList(new ArrayList<Integer>()));
 			}
 		}
 	}
@@ -64,7 +71,7 @@ public class TspShared implements Shared,Serializable{
 
 	@Override
 	public void addNeighborToCity(Integer city, Integer neighbor) {
-		ArrayList<Integer> list = lbAdjacencyMap.get(city);
+		List<Integer> list = lbAdjacencyMap.get(city);
 		list.add(neighbor);
 	}
 

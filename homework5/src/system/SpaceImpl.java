@@ -1,5 +1,8 @@
 package system;
 
+import gui.LatencyData;
+import gui.SpaceListener;
+
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -7,10 +10,15 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import java.util.Random;
+
 import java.util.concurrent.BlockingDeque;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 import models.TasksProgressModel;
 import api.Result;
@@ -33,9 +41,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	
 	/* Model for progress of branch and bound  */
 	private TasksProgressModel progressModel;
+	
+	private LatencyData latencyData;
+
 	/* Integer representing the integer value to assign to the next registered computer
 	 * Counting mechanism ensure uniqueness of all identifier values */
-	private int computerUniqueIdGenerator;
+	//private int computerUniqueIdGenerator;
 
 	private BlockingQueue<Computer>  registeredComputers = new LinkedBlockingQueue<Computer>();
 	/* Lifo queue for tasks */
@@ -48,13 +59,19 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	long compose_T;
 	long maxSubtask_T;
 	long T_1;
+	
+	private ArrayList<SpaceListener> listeners;
 
 	public SpaceImpl() throws RemoteException {
 		super();
 		this.isActive = false;
-		//this.sharedObject=new TspShared(Double.MAX_VALUE);
 		this.sharedObject = new TspShared(Double.MAX_VALUE);
 		this.progressModel = new TasksProgressModel();
+<<<<<<< HEAD
+=======
+		this.latencyData = new LatencyData();
+		this.listeners = new ArrayList<SpaceListener>();
+>>>>>>> gui-2
 	}
 	/**
 	 * @see api.Space Space
@@ -62,6 +79,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	@Override
 	public void putAll(List<Task<?>> taskList) throws RemoteException {
 		System.out.println("SPACE: List of tasks received from Job");
+		firePropertyChanged(SpaceListener.MASTER_TASK_STARTED, null);
 		
 		this.sharedObject=new TspShared(Double.MAX_VALUE);
 		for(Computer c:registeredComputers){
@@ -71,7 +89,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		List<Integer> cities = new ArrayList<Integer>();
 		double[][] distances = null;
 		
+<<<<<<< HEAD
 		this.progressModel.setTotalCities(taskList.size());
+=======
+>>>>>>> gui-2
 		
 		for(Task<?> task :  taskList) {
 			try {
@@ -91,9 +112,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 			}
 		}
 		
+		/* Sets the pruning model */
+		this.progressModel.setTotalCities(distances.length);
+		
 		for (int i = 0; i < distances.length; i++) {
 			cities.add(i);
-			
 		}
 		
 		System.out.println("THIS IS UPPER BOUND "+TspBounds.computeUpperBound(cities, distances));
@@ -106,6 +129,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public Result<?> take() throws RemoteException {
 		try {
 			Result <?> r= completedResult.take();
+			firePropertyChanged(SpaceListener.MASTER_TASK_FINISHED, null);
 			System.out.println("SPACE: length of best tour is "+r.getTaskReturnDistance());
 			double milli = 1000000.0;
 			System.out.println("T_Decompose: "+decompose_T/milli + " ms");
@@ -145,11 +169,17 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		System.out.println("New computer registerd");
 		
 		/* Sets a unique integer identifier for the computer */
-		int id = computerUniqueIdGenerator;
+		/*int id = computerUniqueIdGenerator;
 		computer.setId(id);
-		computerUniqueIdGenerator += 1;
+		computerUniqueIdGenerator += 1;*/
 		
 		registeredComputers.add(computer);
+		latencyData.addComputer(computer.getNameString());
+		firePropertyChanged(SpaceListener.COMPUTER_ADDED, latencyData);
+	}
+	
+	public boolean hasActiveComputers(){
+		return !registeredComputers.isEmpty();
 	}
 	/**
 	 * Checks if space is running
@@ -161,13 +191,20 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	/**
 	 * Initiates the Space, sets it active and runs a new ComputerProxy thread
 	 * @param hasSpaceRunnableTasks2 
+	 * @throws RemoteException 
 	 */
-	private void runComputerProxy(boolean hasSpaceRunnableTasks) {
+	private void runComputerProxy(boolean hasSpaceRunnableTasks) throws RemoteException {
 		this.hasSpaceRunnableTasks = hasSpaceRunnableTasks;
 		int runner = 0;
 		this.isActive = true; 
 		// Thread runs as long as Space is active
 		while(isActive) {
+			if (!registeredComputers.isEmpty()){
+				//Simulation values (For debugging)
+				double value = 30.0+new Random().nextDouble()*70;
+				System.out.println("Latency value added: "+value+" for computer: "+registeredComputers.peek().getNameString());
+				latencyData.addLatencyValue(registeredComputers.peek().getNameString(), value);
+			}
 			// Check if there are any Closure objects to process
 			runner++;
 			if(runner%30 == 1){
@@ -245,6 +282,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				
 				// Check if current Closure is completed
 				if(c.isCompleted()){
+					
 					long taskRunTime = c.getAdder().getResult().getTaskRunTime();
 					if (taskRunTime > maxSubtask_T) maxSubtask_T = taskRunTime;
 					T_1 += taskRunTime;
@@ -258,6 +296,12 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 							if(parent.equals(c2.getTask().getId())){
 								// Passes result of completed Closure to parent Closure
 								c2.receiveResult(c.getAdder().getResult());
+								int level = c.getTask().getLevel();
+								if(level == 3){
+									System.out.println("#ID: "+c.getTask().getId());
+									progressModel.addCompletedTaskWeight(level);
+								}
+								
 								if (parent.equals("0")){
 									compose_T += System.nanoTime() - composeStart;
 								}
@@ -342,7 +386,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 * @param args Not needed
 	 * @throws RemoteException If there is a connection error
 	 */
-	public static void main(String[] args) throws RemoteException {
+	/*public static void main(String[] args) throws RemoteException {
 		// Construct and set a security manager
 		System.setSecurityManager( new SecurityManager() );
 
@@ -365,7 +409,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		System.out.println("Computer Space: Ready. on port " + Space.PORT);
 
 		space.runComputerProxy(hasSpaceRunnableTasks);
-	}
+	}*/
 
 	/**
 	 * Thread that allocate tasks to computers and execute computation
@@ -441,7 +485,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 						}
 						computer.setComputerPreferences(cs);
 						registeredComputers.put(computer);
-
 					}else{
 						// if theres no multicore and no prefetching we just use the old execute method
 						Result<?> result = (Result<?>) computer.execute(task);
@@ -531,6 +574,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 
 
 				}
+				
+				//latencyData.addLatencyValue(computer.getNameString(), cs.getAverageLatency());
 
 			} catch (RemoteException e) {
 				// If there's a RemoteException, task is put back in the queue
@@ -582,6 +627,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 					if(c.getTask().getId().equals(result.getId())){
 						
 						c.receiveResult(result);
+						
 						if(result.isPruned()){
 							progressModel.increaseTotalPrunedTasks(result.getNrOfPrunedTasks());
 							c.setJoinCounter(0);
@@ -605,6 +651,34 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	 * @param args Not needed
 	 * @throws RemoteException If there is a connection error
 	 */
+	public static void main(String[] args) throws RemoteException {
+		boolean hasSpaceRunnableTasks = false;
+		if(args.length > 0 && args[0].equals("true")) {
+			hasSpaceRunnableTasks = true;
+		}
+
+		new SpaceImpl().startSpace(hasSpaceRunnableTasks);
+	}
+	
+	public void startSpace(boolean hasSpaceRunnableTasks) throws RemoteException{
+		// Construct and set a security manager
+		System.setSecurityManager( new SecurityManager() );
+
+
+		// Instantiate a computer server object
+		//SpaceImpl space = new SpaceImpl();
+
+		// Construct an RMI-registry within this JVM using the default port
+		Registry registry = LocateRegistry.createRegistry( Space.PORT  );
+
+		// Bind Compute Space server in RMI-registry
+		registry.rebind( Space.SERVICE_NAME, this);
+
+		// Print acknowledgement
+		System.out.println("Computer Space: Ready. on port " + Space.PORT);
+
+		runComputerProxy(hasSpaceRunnableTasks);
+	}
 
 	/**
 	 * Print method to print all Closure object with their current join counter
@@ -636,4 +710,29 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 	public Shared getShared() {
 		return sharedObject;
 	}
+	
+    public void addSpaceListener(SpaceListener listener){
+        listeners.add(listener);
+    }
+    
+    public void firePropertyChanged(String propertyName, Object value){
+        for (SpaceListener listener : listeners){
+            listener.update(propertyName, value);
+        }
+    }
+    
+    public TasksProgressModel getTasksProgressModel(){
+    	return progressModel;
+    }
+    
+    public LatencyData getLatencyData(){
+    	return latencyData;
+    }
+    
+    private AtomicLong idCounter = new AtomicLong();
+
+    public String createId() throws RemoteException {
+        return String.valueOf(idCounter.getAndIncrement());
+    };
+    
 }

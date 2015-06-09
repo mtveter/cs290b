@@ -3,6 +3,7 @@ package api;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import system.Computer;
 import system.Shared;
@@ -45,4 +46,6 @@ public interface Space extends Remote
     void setShared(Shared sharedObject) throws RemoteException;
     
     Shared getShared() throws RemoteException;
+    
+    public String createId() throws RemoteException;
 }

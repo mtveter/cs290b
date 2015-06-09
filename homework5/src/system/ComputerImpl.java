@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import system.ComputerPreferences.Speed;
 
+
 import api.Result;
 import api.Space;
 import api.Task;
@@ -21,7 +23,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 
 	/** Generated serial ID	 */
 	private static final long serialVersionUID = -3092303569928556422L;
-	private int id;
+	private String id;
 	private transient List<ComputeThread> threads= new ArrayList<ComputerImpl.ComputeThread>();
 	private transient BlockingQueue<Result<?>> results= new LinkedBlockingQueue<Result<?>>();
 	private transient BlockingQueue<Task<?>> tasks= new LinkedBlockingQueue<Task<?>>();
@@ -34,27 +36,61 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	private static int buffer = 10;
 	/** Object shared with other Computer's and Space */
 	private Shared sharedObject;
+<<<<<<< HEAD
 	private long latency = 90;
+=======
+	//private String domainName;
+
+	private long latency =90;
+>>>>>>> gui-2
 	//private ComputerStatus computerstatus;
 	private ComputerPreferences compPref;
 	private int recursionLimit = 9;
- 
+
 	/**
+<<<<<<< HEAD
 	 * 
 	 * @param id				Identifier
 	 * @param mulitcore			Multiple core workers variable
 	 * @param amerlioration		Amelioration variable
 	 * @throws RemoteException	If there is a communication error when remote is referenced
+=======
+	 * @throws RemoteException If there is a connection error
+	 * @throws NotBoundException 
+	 * @throws MalformedURLException 
+>>>>>>> gui-2
 	 */
-	protected ComputerImpl(int id, boolean mulitcore,boolean amerlioration) throws RemoteException {
+	protected ComputerImpl(String id, boolean mulitcore,boolean amerlioration, String domainName) throws RemoteException, MalformedURLException, NotBoundException {
 		super();
 		this.id = id;
 		this.amerlioration = amerlioration;
 		this.multicore = mulitcore;
-		this.sharedObject= new TspShared(Double.MAX_VALUE); 
+		this.sharedObject= new TspShared(Double.MAX_VALUE);
 		this.compPref = new ComputerPreferences();
 		
+		// Construct and set a security manager
+		System.setSecurityManager( new SecurityManager() );
+
+		// Get url of remote space
+		String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;
+		// Try to get remote reference from rmiregistry and register new computer to space
+
+		space = (Space) Naming.lookup( url );
+		this.id = space.createId();
+		if(runsCores()) {	
+			createThreads();
+			space.register(this);
+		}
+		else {
+			space.register(this);
+			run();
+		}
+		
+		// Print acknowledgement
+		System.out.println("Computer started and registered at space " + domainName);
+		//System.out.println("Computer name: "+getNameString());
 	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -107,9 +143,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	 */
 	public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
 		// If no argument is passed, then connect to local host, otherwise to IPv4 specified 
-		String domainName;
 		boolean multicore;
 		boolean prefetch;
+		String domainName;
 		if(args.length > 0) {
 			domainName = args[0];
 			multicore =(args.length > 1)? Boolean.parseBoolean(args[1]): true;
@@ -122,7 +158,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 			prefetch= true;
 			
 		}
-
+		new ComputerImpl("N/A", multicore, prefetch, domainName);
+/*
 		// Constructs and set a security manager
 		System.setSecurityManager( new SecurityManager() );
 
@@ -149,15 +186,17 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		}
 		// Print acknowledgement
 		System.out.println("Computer started and registered at space " + domainName);
+		*/
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int getId() {
+
+	public String getId() {
 		return this.id;
 	}
+
+	/*@Override
+	public int getId() {
+		return this.id;
+	}*/
 	/**
 	 * {@inheritDoc}
 	 */
@@ -247,7 +286,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 				Result<?> result;
 				
 				try {
-					task.setRecLimit(recLimit);
+					//task.setRecLimit(recLimit);
 					start = System.nanoTime();
 					result = task.call();
 					stop = System.nanoTime();
@@ -319,17 +358,35 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	public Shared getShared() {
 		return sharedObject;
 	}
+<<<<<<< HEAD
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+=======
 
+>>>>>>> gui-2
+	@Override
+	public String getNameString() throws RemoteException {
+		try {
+			return "Computer "+id+" ["+getClientHost()+"]";
+		} catch (ServerNotActiveException e) {
+			e.printStackTrace();
+		}
+		return "Computer "+id+" [N/A]";
+	}
+
+	/*@Override
 	public void setId(int id) throws RemoteException {
 		this.id = id;
+<<<<<<< HEAD
 	}
 	/**
 	 * {@inheritDoc}
 	 */
+=======
+	}*/
+	@Override
+>>>>>>> gui-2
 	public void setSharedForced(Shared sharedObject) throws RemoteException {
 		this.sharedObject = sharedObject;
 	}

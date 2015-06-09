@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import api.Result;
+import api.Task;
 import system.Closure;
 import system.Shared;
 import util.PermutationEnumerator;
@@ -27,7 +28,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	public double[][] distances;
 	
 	/** The limit to size of partial cities to by subdivided and executed by Computer*/
-	public static int RECURSIONLIMIT = 7; 
+	public static int RECURSIONLIMIT = 6; 
 	
 	private boolean pruning = true;
 
@@ -46,6 +47,15 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 		this.id = id;
 		this.n = partialCityList.size();
 	}
+	
+	public int getLevel(){
+		return 1 + id.length() - id.replace(".", "").length();
+	}
+	
+	/*public static void main(String[] args) {
+		Task task = new TaskTsp(null, new ArrayList<Integer>(), null, "0.12.4.5.8.9");
+		System.out.println("Level: "+task.getLevel());
+	}*/
 
 	/**
 	 * {@inheritDoc}
@@ -110,7 +120,7 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 					subPartialCityList.remove((Integer) city);
 					newLockedList.add((Integer)city);
 					
-					TaskTsp task = new TaskTsp(newLockedList, subPartialCityList, distances, this.id+city);
+					TaskTsp task = new TaskTsp(newLockedList, subPartialCityList, distances, this.id+ "." + city);
 
 					Closure c = new Closure(subPartialCityList.size(), this.id, task);
 					childClosures.add(c);	
