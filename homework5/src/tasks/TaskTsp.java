@@ -6,10 +6,8 @@ import java.util.List;
 
 import api.Result;
 import system.Closure;
-import system.Computer;
 import system.Shared;
 import util.PermutationEnumerator;
-import util.TspBounds;
 
 public final class TaskTsp extends BaseTask<List<Integer>>{
 
@@ -233,13 +231,12 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	/**
 	 * Calculates the lower
 	 * @param newMst				true if a new mst needs to be computed
-	 * @param city 					Start node in TSP problem
+	 * @param firstLocked 			Start node in TSP problem
+	 * @param startCityId			Identifier of the starting city
 	 * @param cityIdentifierList	List of identifier of all cities in subproblem
-	 * @param cities				Array of all distances between cities in the multi-graph
 	 * @return	The total value of the lower bound
 	 */
-
-public double computeLowerBound(boolean newMst, Integer firstLocked, Integer startCityId, List<Integer> cityIdentifierList) {
+	public double computeLowerBound(boolean newMst, Integer firstLocked, Integer startCityId, List<Integer> cityIdentifierList) {
 		double result = 0; 
 		
 		try {
@@ -290,7 +287,6 @@ public double computeLowerBound(boolean newMst, Integer firstLocked, Integer sta
 	 * @param num		Number of neighbors of the last locked city
 	 * @param city		Last locked City
 	 */
-	
 	public void removeCityFromMst(Integer num, Integer city) {
 		try {
 			Shared shared = getComputer().getShared();
@@ -332,7 +328,6 @@ public double computeLowerBound(boolean newMst, Integer firstLocked, Integer sta
 	 * @param cityIdList	List of identifiers of all cities in partial list to find a MST of
 	 * @return				Cost of all edges in the calculated MST of the given input cities
 	 */
-	
 	private double primsMstCost(List<Integer> cityIdList)  {
 		
 		double costOfMst = 0;
@@ -401,11 +396,7 @@ public double computeLowerBound(boolean newMst, Integer firstLocked, Integer sta
 		return costOfMst;
 	}
 	
-	
-		
-
 	public void setRecLimit(int i){
-		this.RECURSIONLIMIT = i;
-
+		TaskTsp.RECURSIONLIMIT = i;
 	}
 }

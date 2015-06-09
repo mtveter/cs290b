@@ -26,18 +26,25 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	private transient BlockingQueue<Result<?>> results= new LinkedBlockingQueue<Result<?>>();
 	private transient BlockingQueue<Task<?>> tasks= new LinkedBlockingQueue<Task<?>>();
 	int cores;
+	/** True if multiple worker threads functionality enabled */
 	private boolean multicore;
+	/** True if amelioration functionality enabled */
 	private boolean amerlioration;
 	static Space space;
-	private static int buffer=10;
+	private static int buffer = 10;
+	/** Object shared with other Computer's and Space */
 	private Shared sharedObject;
-	private long latency =90;
+	private long latency = 90;
 	//private ComputerStatus computerstatus;
 	private ComputerPreferences compPref;
 	private int recursionLimit = 9;
  
 	/**
-	 * @throws RemoteException If there is a connection error
+	 * 
+	 * @param id				Identifier
+	 * @param mulitcore			Multiple core workers variable
+	 * @param amerlioration		Amelioration variable
+	 * @throws RemoteException	If there is a communication error when remote is referenced
 	 */
 	protected ComputerImpl(int id, boolean mulitcore,boolean amerlioration) throws RemoteException {
 		super();
@@ -49,7 +56,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		
 	}
 	/**
-	 * @see system.Computer Computer
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Result<?> execute(Task<?> task) throws RemoteException {
@@ -205,12 +212,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public boolean runsCores() throws RemoteException {
 		return this.multicore;
 	}
-	
-	
 	/**
 	 * Thread that only does work on tasks
 	 * @author steffenfb
@@ -297,7 +301,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		}catch(InterruptedException e){	}	
 	}
 	
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized void setShared(Shared sharedObject) throws RemoteException {
 		//System.out.println("COMPUTER changed shared object");
@@ -307,53 +313,58 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 			//space.setShared(sharedObject);
 		}
 	}
-	@Override
+	/**
+	 * {@inheritDoc}
+	 */
 	public Shared getShared() {
 		return sharedObject;
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 
 	public void setId(int id) throws RemoteException {
 		this.id = id;
 	}
-	@Override
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setSharedForced(Shared sharedObject) throws RemoteException {
-		// TODO Auto-generated method stub
 		this.sharedObject = sharedObject;
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
+	
 	public ComputerStatus getComputerStatus() throws RemoteException {
-		// TODO Auto-generated method stub
 		return new ComputerStatus();
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setComputerPreferences(ComputerStatus cs ) throws RemoteException {
-		// TODO Auto-generated method stub
-		
 		//updates latest results
 		this.compPref.takeStatus(cs);
 		
 		if( this.compPref.getSpeed() == Speed.SLOW){
 			//set slow preferences
-			this.compPref.buffer = compPref.slowBuffer;
-			this.compPref.recLimit = compPref.slowRecLimit;
+			this.compPref.buffer = ComputerPreferences.slowBuffer;
+			this.compPref.recLimit = ComputerPreferences.slowRecLimit;
 			
 		}else if(this.compPref.getSpeed()== Speed.FAST){
 			// set fastSettings
-			this.compPref.buffer = compPref.fastBuffer;
-			this.recursionLimit = compPref.fastRecLimit;
+			this.compPref.buffer = ComputerPreferences.fastBuffer;
+			this.recursionLimit = ComputerPreferences.fastRecLimit;
 		}else{
 			//set default settings
-			this.compPref.buffer = compPref.initBuffer;
-			this.recursionLimit = compPref.initRecLimit;
-			
-			
+			this.compPref.buffer = ComputerPreferences.initBuffer;
+			this.recursionLimit = ComputerPreferences.initRecLimit;
 		}
 		for(ComputeThread t: threads){
 			t.recLimit=this.recursionLimit;
-			System.out.println("Changed reclimit in thread to "+this.recursionLimit);
+			System.out.println("Changed reclimit in thread to " + this.recursionLimit);
 		}
-		
 	}
-
 }

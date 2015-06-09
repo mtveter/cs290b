@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class ComputerStatus implements Serializable{
 	
+	/** Generated serial id	 */
+	private static final long serialVersionUID = 7341247897923089093L;
 	double taskTime;
 	double taskTimeCount;
 	
@@ -21,7 +23,6 @@ public class ComputerStatus implements Serializable{
 		
 	}
 
-	
 	public void addLatency(long latency){
 		// add it to average
 		this.sumLatency += latency;
@@ -43,21 +44,16 @@ public class ComputerStatus implements Serializable{
 		return this.sumLatency/this.countLatency;
 	}
 	
-	
 	public double getAverageTaskTime() {
 		return this.taskTime/this.taskTimeCount;
 	}
-
 	
 	public double getAverageBottomcaseTime() {
 		return this.bottomcaseTime/this.bottomcaseCount;
 	}
 
-
-//done
 	public void setAverageLatency(double averageLatency) {
 		this.sumLatency += averageLatency;
 		this.countLatency+=1;
 	}
-
 }

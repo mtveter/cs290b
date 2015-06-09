@@ -559,10 +559,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 		 */
 		private void processResult(Result<?> result) throws InterruptedException, RemoteException {
 
-			List<Closure> cl = result.getChildClosures();
-			
-
-
 			//System.out.println("in process result");
 			if(result.getStatus().equals(Status.WAITING)) {
 				List<Closure> closures = result.getChildClosures();

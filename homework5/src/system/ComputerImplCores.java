@@ -15,9 +15,9 @@ public class ComputerImplCores extends ComputerImpl implements Runnable {
 	
 	/** Generated Serial ID */
 	private static final long serialVersionUID = 2894424877938702903L;
-	private transient List<ComputeThread> threads= new ArrayList<ComputerImplCores.ComputeThread>();
-	private transient BlockingQueue<Result<?>> results= new LinkedBlockingQueue<Result<?>>();
-	private transient BlockingQueue<Task<?>> tasks= new LinkedBlockingQueue<Task<?>>();
+	private transient List<ComputeThread> threads = new ArrayList<ComputerImplCores.ComputeThread>();
+	private transient BlockingQueue<Result<?>> results = new LinkedBlockingQueue<Result<?>>();
+	private transient BlockingQueue<Task<?>> tasks = new LinkedBlockingQueue<Task<?>>();
 	private int cores;
 	private static boolean runscores;
 	private static boolean prefetch;
@@ -30,7 +30,9 @@ public class ComputerImplCores extends ComputerImpl implements Runnable {
 	public boolean runsCores(){
 		return true;
 	}
-	
+	/**
+	 * 
+	 */
 	@Override
 	public Result<?> sendResult() throws RemoteException, InterruptedException {
 		Result<?> result = results.take();
@@ -77,14 +79,4 @@ public class ComputerImplCores extends ComputerImpl implements Runnable {
 			}
 		}
 	}
-
-
-
-
-
-
-
-
-	
-
 }

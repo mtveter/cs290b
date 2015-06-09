@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TspShared implements Shared,Serializable{
 	
+	/** Generated serial idenitifer	 */
+	private static final long serialVersionUID = -5789613529078638250L;
 	private double value;
 	public ConcurrentHashMap<Integer, ArrayList<Integer>> lbAdjacencyMap = new ConcurrentHashMap<Integer, ArrayList<Integer>>();
 	public double currentMstCost;	

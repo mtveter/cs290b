@@ -21,20 +21,21 @@ public class Result<T> implements Serializable
     private final long taskRunTime;
     /** Identifier of Result */
     private final String id;
-    /**  */
+    /** Status of this result */
     private Status status;
-    /** */
+    /** List of children Closures in task decomposition tree */
     private List<Closure> childClosures = new ArrayList<>();
     /** True if result is a result of a tasks that pruned all subtasks */
     private boolean pruned = false;
-    /** */
+    /** Number of child tasks that has been pruned from the tasks this result is of */
     private Integer nrOfPrunedTasks = 0;
     
     private long latency = 0;
-    private long workTime =0; //in ms
+    private long workTime = 0; //in ms
     
     private static MetaData md = new MetaData(-1, -1, -1);
     
+    /** Result is completed if it the bottom case of the recursion tree, or belonging task has been pruned*/ 
     public enum Status{
     	WAITING, COMPLETED;
     }
@@ -132,14 +133,11 @@ public class Result<T> implements Serializable
 	public boolean isPruned() {
 		return this.pruned;
 	}
-
-    
     public void setLatency(long latency){
     	
     	this.latency = latency;
     	
     }
-    
     public long getLatency(){
     	return this.latency;
     }
