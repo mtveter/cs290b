@@ -81,6 +81,9 @@ public class SpaceController implements SpaceListener {
         if (propertyName.equals(SpaceListener.COMPUTER_ADDED)){
         	console.updateComputersList();
         	console.setComputers(latencyData.getComputers().size());
+        } else if (propertyName.equals(SpaceListener.COMPUTER_REMOVED)){
+        	//console.updateComputersList();
+        	console.setComputers((int) value);
         } else if (propertyName.equals(SpaceListener.MASTER_TASK_STARTED)){
         	isTaskActive = true;
         	timeLeftEstimation = new TimeLeftEstimation();

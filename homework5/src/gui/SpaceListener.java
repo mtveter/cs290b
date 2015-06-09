@@ -15,6 +15,7 @@ public interface SpaceListener {
     public static final String MASTER_TASK_FINISHED = "MasterTaskFinished";
     public static final String OVERALL_PROGRESS = "OverallProgress";
     public static final String COMPUTER_ADDED = "ComputerAdded";
+    public static final String COMPUTER_REMOVED = "ComputerRemoved";
     
     public void update(String propertyName, Object value);
     

@@ -28,7 +28,7 @@ import javax.swing.event.ListSelectionListener;
  */
 public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole {
 
-    private static final int MAX_NO_OF_LATENCIES_IN_GRAPH = 20;
+    private static final int MAX_NO_OF_LATENCIES_IN_GRAPH = 50;
 	SpaceController spaceController;
     
     /**
@@ -37,7 +37,7 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
     public SpaceConsoleGUI() {
         initComponents();
         spaceController = new SpaceController(this);
-        //initThreads();
+        initThreads();
     }
 
 	/**
@@ -150,10 +150,11 @@ public class SpaceConsoleGUI extends javax.swing.JFrame implements SpaceConsole 
                      }
                      else
                          lastSelectedIndex = minIndex;
-                     System.out.println("minIndex    = " + minIndex + " \t" +
+                     /*System.out.println("minIndex    = " + minIndex + " \t" +
                                 "maxIndex  = " + maxIndex + "\n" +
                                 "anchorIndex = " + anchorIndex + " \t" +
-                                "leadIndex = " + leadIndex + "\n");
+                                "leadIndex = " + leadIndex + "\n");*/
+                     updateLatencies();
          }
      }
              });

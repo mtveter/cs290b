@@ -560,6 +560,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space {
 				// Unregister the faulty computer from list of available computers in Space
 				if(!computer.equals(null)) {
 					registeredComputers.remove(computer);
+					firePropertyChanged(SpaceListener.COMPUTER_REMOVED, registeredComputers.size());
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
