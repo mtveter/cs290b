@@ -413,11 +413,11 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
   * @see api.Task#setRecLimit(int)
   */
 	public void setRecLimit(int i){
-//		if(i<=n){
-//			TaskTsp.RECURSIONLIMIT = i;}
-//		else{
-//			TaskTsp.RECURSIONLIMIT = n;
-//		}
+		if(i<=n){
+			TaskTsp.RECURSIONLIMIT = i;}
+		else{
+			TaskTsp.RECURSIONLIMIT = n;
+		}
 	}
 
 	@Override

@@ -301,7 +301,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer,Runnab
 		long workTime;
 		private  int id;
 		Random randomGenerator = new Random();
-		private int recLimit = 6;
+		private int recLimit = 7;
 		private int latency;
 		
 		public ComputeThread(int id){

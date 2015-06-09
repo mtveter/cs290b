@@ -15,7 +15,7 @@ public class ComputerPreferences {
 	static int slowRecLimit = 7;
 	static int fastRecLimit = 6;
 	
-	static int treshold = 40; //less than this is considered fast
+	static int treshold = 38; //less than this is considered fast
 	
 	
 	
@@ -33,7 +33,7 @@ public class ComputerPreferences {
 	public ComputerPreferences() {
 		// TODO Auto-generated constructor stub
 		this.averageLatency=0;
-		this.recLimit = initRecLimit;
+		this.recLimit = slowRecLimit;
 		this.buffer = initBuffer;
 	}
 	
