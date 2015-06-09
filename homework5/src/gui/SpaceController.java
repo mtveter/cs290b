@@ -80,7 +80,8 @@ public class SpaceController implements SpaceListener {
     public void update(String propertyName, Object value) {
         System.out.println(propertyName+": "+value);
         if (propertyName.equals(SpaceListener.COMPUTER_ADDED)){
-        	console.updateComputersList();        	
+        	console.updateComputersList();
+        	console.setComputers(latencyData.getComputers().size());
         } else if (propertyName.equals(SpaceListener.MASTER_TASK_STARTED)){
         	isTaskActive = true;
         	timeLeftEstimation = new TimeLeftEstimation();
@@ -96,12 +97,12 @@ public class SpaceController implements SpaceListener {
     
     private void updateConsole(){
     	// Update GUI Console
-    	console.setActiveTasks(tasksProgressModel.getTotalGeneratedTasks());
-    	console.setFinishedTasks(tasksProgressModel.getTotalCompletedTasks());
-    	console.setPercentageCompleted(tasksProgressModel.getTasksCompletedPercentage());
+    	console.setGeneratedTasks(tasksProgressModel.getTotalGeneratedTasks());
+    	console.setCompletedTasks(tasksProgressModel.getTotalCompletedTasks());
+    	console.setActiveTasks(tasksProgressModel.getTotalGeneratedTasks()-tasksProgressModel.getTotalCompletedTasks());
     	
     	console.setAvgPruningDepth(tasksProgressModel.getPrunedOfTotalTasksRatio());
-    	console.setMaxDepth((int) tasksProgressModel.getPrunedOfGeneratedTasksRatio());
+    	console.setPruningEfficiency(tasksProgressModel.getPrunedOfGeneratedTasksRatio());
     	
     	int progress = (int) Math.round(tasksProgressModel.getTasksCompletedPercentage());
     	System.out.println("Progress: "+progress);
