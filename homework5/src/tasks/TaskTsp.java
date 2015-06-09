@@ -429,10 +429,6 @@ public final class TaskTsp extends BaseTask<List<Integer>>{
 	
 	@Override
 	public long getTime() {
-		if(this.time==0){
-			System.out.println("ERROR the time was not set ");
-		}
-			return this.time;
-		
+		return this.time;
 	}
 }
